@@ -1,0 +1,22 @@
+.option-profile-button {
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 2rem;
+    color: #000;
+    border: solid 2px transparent;
+}
+
+.option-profile-button > a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+}
+
+.option-profile-button:hover {
+    background-color: var(--second-color);
+    border-radius: var(--border-radius-profile);
+    border: 2px solid var(--main-color);
+}

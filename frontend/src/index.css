@@ -1,0 +1,20 @@
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --border-radius-profile: 20px;
+    --main-color: rgb(48,68,68);
+    --second-color: rgb(240,84,36);
+    --nav-color-text: #fff;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+ }
+
+body {
+    font-family:'Poppins';
+}
+

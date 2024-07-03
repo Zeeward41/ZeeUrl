@@ -1,0 +1,38 @@
+.nav {
+    font-size: 18px;
+    background: var(--main-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 0 20% ;
+    box-shadow: var(--shadow);
+
+}
+
+.site-title {
+    font-size: 2rem;
+    color: var(--nav-color-text);
+    font-weight: bold;
+}
+
+.nav > ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    padding: 0.4rem;
+}
+
+.nav > a,
+.nav > ul > li > a {
+    color: var(--nav-color-text);
+    text-decoration: none;
+    padding: 0.5rem;
+    font-weight: 600;
+}
+
+.nav > ul > li > a:hover {
+    border-radius: var(--border-radius-profile);
+    background-color: var(--second-color);
+    padding: 0.5rem;
+}

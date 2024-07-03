@@ -1,0 +1,38 @@
+.profile-button {
+    padding: 0.5rem;
+    margin: 0.25rem;
+    border-radius: var(--border-radius-profile);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    color: var(--nav-color-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-button > i {
+    font-size: 1.3rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: rgba(220, 213, 213, 0.578);
+}
+
+.profile-button:hover, 
+.profile-button.active { 
+    background-color: var(--second-color);
+}
+
+.profile-menu.active {
+    width: 10rem;
+    position: absolute;
+    top: 4rem;
+    right: 0%;
+    background-color: #d6d2d2;
+    border-radius: var(--border-radius-profile);
+    box-shadow: var(--shadow);
+}
+.profile-menu.hidden {
+    display: none;
+}
