@@ -2,7 +2,7 @@ import './Navbar.css'
 import ProfileButton from './ProfileButton/ProfileButton.jsx'
 import {Link} from 'react-router-dom'
 
-const isAuth = true
+const isAuth = false
 function Navbar() {
     return (
         <nav className="nav">
