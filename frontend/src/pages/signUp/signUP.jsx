@@ -17,6 +17,7 @@ export default function Signup() {
 
     function handleSubmit(e) {
         e.preventDefault()
+        console.log(values)
     }
     function onChange(e) {
         const newDict = {...values}
