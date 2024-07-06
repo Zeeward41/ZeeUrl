@@ -30,6 +30,7 @@ export default function Signup() {
     return (
         <div className='form-container' >
             <form
+            id='form-signup'
             onSubmit={handleSubmit}>
                 <h1>Create Account</h1>
                 {fields.map((fieldName) => {
@@ -46,7 +47,7 @@ export default function Signup() {
                         />
                     )
                 })}
-                <button>Submit</button>
+                <button className='button-submit'>Submit</button>
             </form>
         </div>
     )

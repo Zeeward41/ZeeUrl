@@ -6,7 +6,7 @@
     
 
 }
-form {
+.form-container > form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,14 +20,14 @@ form {
     gap: 2rem;
 }
 
-h1 {
+form > h1 {
     margin: 2rem 0;
     color: var(--main-color);
     font-size: 50px;
     text-align: center;
 }
 
-button {
+.button-submit {
     width: 100%;
     height: 50px;
     padding: 10px;
@@ -44,11 +44,11 @@ button {
     transition: transform 0.1s, box-shadow 0.1s; /* Ajout de transitions pour une animation fluide */
 }
 
-button:hover {
+.button-submit:hover {
     background-color: var(--second-color);
 }
 
-button:active {
+.button-submit:active {
     transform: translateY(2px); /* Déplace le bouton vers le bas */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Réduit l'ombre pour simuler l'effet d'enfoncement */
 }

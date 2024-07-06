@@ -22,7 +22,7 @@ export default function Login() {
 
     }
     return (
-        <div className='container-login'>
+        <div className='form-container'>
             <form
             onSubmit={handleSubmit}>
                 <h1>Login</h1>
@@ -36,7 +36,7 @@ export default function Login() {
                     value={values.fieldName}
                     />
                 )})}
-                <button>Submit</button>
+                <button className='button-submit'>Submit</button>
             </form>
         </div>
     )
