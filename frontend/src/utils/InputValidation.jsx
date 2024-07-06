@@ -26,7 +26,7 @@ const InputValidation = [
 },
 'password' : {
     name: "password",
-    type: "text",
+    type: "password",
     placeholder: "Password",
     errorMessage: "Password should be 8-20 characters and include at least 1 letter, 1 number, 1 special character, 1 lowercase letter and 1 uppercase letter!",
     label: "Password",
@@ -35,7 +35,7 @@ const InputValidation = [
 },
 'confirmPassword':{
     name: "confirmPassword",
-    type: "text",
+    type: "password",
     placeholder: "Confirm Password",
     errorMessage: "Passwords don't match!",
     label: "Confirm Password",
