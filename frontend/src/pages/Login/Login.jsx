@@ -34,6 +34,7 @@ export default function Login() {
                     label={field.name}
                     onChange={onChange}
                     value={values.fieldName}
+                    type={field.name === 'password' ? field.type : ''}
                     />
                 )})}
                 <button className='button-submit'>Submit</button>
