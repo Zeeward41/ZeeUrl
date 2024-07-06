@@ -28,7 +28,7 @@ const InputValidation = [
     name: "password",
     type: "password",
     placeholder: "Password",
-    errorMessage: "Password should be 8-20 characters and include at least 1 letter, 1 number, 1 special character, 1 lowercase letter and 1 uppercase letter!",
+    errorMessage: "Password should be 8-20 characters and include at least 1 letter, 1 number, 1 special character!",
     label: "Password",
     pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W).{8,20}$`,
     required: true,
