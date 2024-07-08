@@ -3,10 +3,16 @@ import colors from 'colors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 
+// import Routes
+import auth from './routes/auth.js'
+
 // Load env vars
 dotenv.config({path: './config/config.env'})
 
 const app = express()
+
+// Mount Routers
+app.use('/api/v1/auth', auth)
 
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
