@@ -9,6 +9,12 @@ import auth from './routes/auth.js'
 // Load env vars
 dotenv.config({path: './config/config.env'})
 
+// import DB
+import connectDB from './config/db.js'
+
+// Connect DB
+connectDB()
+
 const app = express()
 
 // Body Parser
