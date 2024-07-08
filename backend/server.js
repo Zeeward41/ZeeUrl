@@ -14,6 +14,7 @@ const app = express()
 // Mount Routers
 app.use('/api/v1/auth', auth)
 
+
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
 }
