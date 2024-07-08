@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Please add a password'],
-        match: [/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W).{8,20}$/],
+        // match: [/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W).{8,20}$/],
         minlength: 6,
         // select: false est utilisé pour que le champ ne soit pas inclus par défaut dans les requêtes de sélection
         select: false

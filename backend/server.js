@@ -2,6 +2,7 @@ import express from 'express'
 import colors from 'colors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
+import errorHandler from './middleware/error.js'
 
 // import Routes
 import auth from './routes/auth.js'
@@ -22,6 +23,9 @@ app.use(express.json())
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
+
+// ErrorHandler
+app.use(errorHandler)
 
 
 if(process.env.NODE_ENV === 'development') {
