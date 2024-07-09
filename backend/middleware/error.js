@@ -6,8 +6,8 @@ const errorHandler = (err, req, res, next) => {
 
     error.message = err.message
 
-    //Log to console for dev
-    console.log(err.stack.red)
+    // Log to console for dev
+    process.env.NODE_ENV === 'development' ? console.log(err.stack.red) : ''
 
     // Mongoose duplicate key
     if(err.code === 11000) {
@@ -17,7 +17,8 @@ const errorHandler = (err, req, res, next) => {
 
     res.status(error.statusCode || 500).json({
         success: false,
-        error: error.message || 'Server Error'
+        error: error.message || 'Server Error',
+        // stack: process.env.NODE_ENV === 'development' ? err.stack : {}
     })
 }
 
