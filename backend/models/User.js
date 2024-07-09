@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -34,6 +35,13 @@ const UserSchema = new mongoose.Schema({
         default: Date.now
     }
 
+})
+
+// Encrypt password using bcrypt
+UserSchema.pre('save', async function(next) {
+    // The higher the number of rounds (in this case 10), the more secure it is, but it also becomes more taxing on the system.
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
 })
 
 export default mongoose.model('User', UserSchema)
