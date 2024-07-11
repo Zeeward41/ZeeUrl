@@ -3,6 +3,7 @@ import colors from 'colors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import errorHandler from './middleware/error.js'
+import cors from 'cors'
 
 // import Routes
 import auth from './routes/auth.js'
@@ -20,6 +21,13 @@ const app = express()
 
 // Body Parser
 app.use(express.json())
+
+// Cors
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
