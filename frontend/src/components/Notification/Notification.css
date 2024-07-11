@@ -1,0 +1,45 @@
+.notif-container {
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    gap: 1rem;
+
+}
+
+.notif-container > i {
+    font-size: 1.5rem;
+    padding: 0.6rem;
+    border-radius: 50%;
+}
+
+.notif-container > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.notif-title {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.notif-container.error {
+    background-color: #ecccc8;
+    color: #b4302c;
+    border: solid 1px #b4302c;
+}
+.notif-container.error > i {
+    color: #b4302c;
+    background-color: #dcacaa;
+}
+
+.notif-container.success {
+    background-color: #e0f4d4;
+    color: #5c7354;
+    border: solid 1px #5c7354;
+}
+.notif-container.success > i {
+    color: #5c7354;
+    background-color: #b4cca4;
+}
