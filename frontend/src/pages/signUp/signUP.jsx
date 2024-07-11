@@ -1,11 +1,14 @@
 import React from 'react'
 import FormInput from '../../components/FormInput/FormInput.jsx'
 import InputValidation from '../../utils/InputValidation.jsx'
+import Notification from '../../components/Notification/Notification.jsx'
+import  {ENDPOINTS} from '../../../config.js'
 
 import './signUP.css'
 
 export default function Signup() {
     const fields = ['username', 'email', 'birthday', 'password','confirmPassword']
+    const endpointRegister= ENDPOINTS.REGISTER
 
     const [values, setValues] = React.useState({
         username: "",
@@ -14,10 +17,57 @@ export default function Signup() {
         password: "",
         confirmPassword: "",
     })
+    
+    // idle | loading | success | error
+    const [formState, setFormState] = React.useState({
+        status: 'idle',
+        message: ''
+    })
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault()
+        
+        setFormState({
+            status: 'loading',
+            message: ''
+        })
+
+        const response = await fetch(endpointRegister, {
+            method: "POST",
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: values.username,
+                email: values.email,
+                birthday: values.birthday,
+                password: values.password
+            }),
+        })
+
+        const json = await response.json()
+        console.log(json) 
+
+        if (json.success) {
+            setFormState({
+                status: 'success',
+                message: 'Account created successfully!'
+            })
+            
+        } else if(json.error === 'Duplicate field value entered'){
+            setFormState({
+                status: 'error',
+                message: 'An account with this email already exists.'
+            })
+        }else {
+            setFormState({
+                status: 'error',
+                message: 'Something went wrong!'
+            })
+        }
     }
+
+
     function onChange(e) {
         const newDict = {...values}
         newDict[e.target.name] = e.target.value
@@ -46,7 +96,16 @@ export default function Signup() {
                         />
                     )
                 })}
-                <button className='button-submit'>Submit</button>
+                {(formState.status === 'success' || formState.status === 'error') && (
+                <Notification 
+                    type={formState.status} 
+                    message={formState.message}
+                />
+            )}
+                <button 
+                className='button-submit'
+                disabled={status === 'loading'}>
+                {status === 'loading' ? 'Submitting...' : 'Submit'}</button>
             </form>
         </div>
     )
