@@ -4,6 +4,8 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import errorHandler from './middleware/error.js'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
 
 // import Routes
 import auth from './routes/auth.js'
@@ -21,6 +23,21 @@ const app = express()
 
 // Body Parser
 app.use(express.json())
+
+// Cookie Parser
+app.use(cookieParser())
+
+// Session and Cookie
+app.use(session({
+    secret: process.env.COOKIE_SECRET,
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'development' ? false: true,
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000 // 1h en ms  
+    }
+}))
 
 // Cors
 app.use(cors({
