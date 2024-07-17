@@ -47,6 +47,12 @@ export const login = asyncHandler(async (req, res, next) => {
     }
 
     console.log(user)
+
+    const userInfo = user.toObject({virtuals: true}) // copie l'objet sans les metadatas
+    delete userInfo.password
+
+    req.session.user = userInfo
+
     
     res.status(200).json({success: true})
 })
