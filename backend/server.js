@@ -21,8 +21,16 @@ connectDB()
 
 const app = express()
 
+// Cors
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
+
 // Body Parser
 app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 
 // Cookie Parser
 app.use(cookieParser())
@@ -39,12 +47,6 @@ app.use(session({
     }
 }))
 
-// Cors
-app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}))
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
