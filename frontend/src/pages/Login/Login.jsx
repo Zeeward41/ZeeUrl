@@ -1,17 +1,63 @@
 import React from 'react'
 import FormInput from '../../components/FormInput/FormInput.jsx'
 import InputValidation from '../../utils/InputValidation.jsx'
+import Notification from '../../components/Notification/Notification.jsx'
+import { ENDPOINTS } from '../../../config.js'
 
 export default function Login() {
     const fields = ['email', 'password']
+    const endpointLogin = ENDPOINTS.LOGIN
 
     const [values, setValues] = React.useState({
         email: "",
         password: "",
     })
 
-    function handleSubmit(e) {
+    // idle  | loading  | success  | error
+    const [formState, setFormState] = React.useState({
+        status: 'idle',
+        message: ''
+    })
+
+    async function handleSubmit(e) {
         e.preventDefault()
+
+        setFormState({
+            status: 'loading',
+            message: ''
+        })
+
+        const response = await fetch(endpointLogin, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: values.email,
+                password: values.password
+            }),
+        })
+
+        const json = await response.json()
+        console.log(json)
+
+        if (json.success) {
+            setFormState({
+                status: 'success',
+                message: 'You have successfully logged in.'
+            })
+        } else if (json.error === 'User not found. Please check your email and try again.' || json.error === 'Invalid credentials. Please check your password and try again.') {
+            setFormState({
+                status: 'error',
+                message: 'Incorrect email or password. Please try again.'
+            })
+        } else {
+            setFormState({
+                status: 'error',
+                message: 'Something went wrong!'
+            })
+        }
     }
 
     function onChange(e) {
@@ -36,7 +82,18 @@ export default function Login() {
                     type={field.name === 'password' ? field.type : ''}
                     />
                 )})}
-                <button className='button-submit'>Submit</button>
+
+                {(formState.status === 'success' || formState.status === 'error') && (
+                    <Notification
+                        type={formState.status}
+                        message={formState.message}
+                    />
+                )}
+                <button 
+                className='button-submit'
+                disabled={formState.status === 'loading'}>
+                {formState.status === 'loading' ? 'Submitting...' : 'Submit'}
+                </button>
             </form>
         </div>
     )
