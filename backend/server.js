@@ -9,6 +9,7 @@ import session from 'express-session'
 
 // import Routes
 import auth from './routes/auth.js'
+import user from './routes/user.js'
 
 // Load env vars
 dotenv.config({path: './config/config.env'})
@@ -50,6 +51,7 @@ app.use(session({
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
+app.use('/api/v1/user', user)
 
 // ErrorHandler
 app.use(errorHandler)
