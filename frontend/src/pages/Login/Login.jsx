@@ -3,10 +3,12 @@ import FormInput from '../../components/FormInput/FormInput.jsx'
 import InputValidation from '../../utils/InputValidation.jsx'
 import Notification from '../../components/Notification/Notification.jsx'
 import { ENDPOINTS } from '../../../config.js'
+import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
     const fields = ['email', 'password']
     const endpointLogin = ENDPOINTS.LOGIN
+    const navigate = useNavigate()
 
     const [values, setValues] = React.useState({
         email: "",
@@ -47,6 +49,10 @@ export default function Login() {
                 status: 'success',
                 message: 'You have successfully logged in.'
             })
+
+            setTimeout(() => {
+                navigate('/')
+            },1000)
         } else if (json.error === 'User not found. Please check your email and try again.' || json.error === 'Invalid credentials. Please check your password and try again.') {
             setFormState({
                 status: 'error',

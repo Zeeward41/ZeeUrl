@@ -3,12 +3,14 @@ import FormInput from '../../components/FormInput/FormInput.jsx'
 import InputValidation from '../../utils/InputValidation.jsx'
 import Notification from '../../components/Notification/Notification.jsx'
 import  {ENDPOINTS} from '../../../config.js'
+import { useNavigate } from 'react-router-dom'
 
 import './signUP.css'
 
 export default function Signup() {
     const fields = ['username', 'email', 'birthday', 'password','confirmPassword']
     const endpointRegister= ENDPOINTS.REGISTER
+    const navigate = useNavigate()
 
     const [values, setValues] = React.useState({
         username: "",
@@ -53,6 +55,10 @@ export default function Signup() {
                 status: 'success',
                 message: 'Account created successfully!'
             })
+
+            setTimeout(() => {
+                navigate('/')
+            },1000)
             
         } else if(json.error === 'Duplicate field value entered'){
             setFormState({
