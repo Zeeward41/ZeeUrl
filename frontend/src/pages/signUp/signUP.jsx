@@ -104,8 +104,8 @@ export default function Signup() {
             )}
                 <button 
                 className='button-submit'
-                disabled={status === 'loading'}>
-                {status === 'loading' ? 'Submitting...' : 'Submit'}</button>
+                disabled={formState.status === 'loading'}>
+                {formState.status === 'loading' ? 'Submitting...' : 'Submit'}</button>
             </form>
         </div>
     )
