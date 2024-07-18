@@ -6,8 +6,7 @@ import ErrorResponse from "../utils/errorResponse.js"
 // @route       GET /api/v1/user/me
 //access        Private
 export const getMe = asyncHandler(async (req, res, next) => {
-    const userInfo = req.session.user
-    const user = await User.findById(userInfo._id).select('-password')
+    const user = req.user
 
     if(!user) {
         return next(new ErrorResponse('User Not found', 404))

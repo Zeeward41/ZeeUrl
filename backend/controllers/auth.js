@@ -46,8 +46,6 @@ export const login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse(`Invalid credentials. Please check your password and try again.`, 401))
     }
 
-    console.log(user)
-
     const userInfo = user.toObject({virtuals: true}) // copie l'objet sans les metadatas
     delete userInfo.password
 

@@ -12,7 +12,7 @@ import auth from './routes/auth.js'
 import user from './routes/user.js'
 
 // Load env vars
-dotenv.config({path: './config/config.env'})
+dotenv.config({path: './config/.env'})
 
 // import DB
 import connectDB from './config/db.js'
