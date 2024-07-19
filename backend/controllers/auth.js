@@ -52,5 +52,8 @@ export const login = asyncHandler(async (req, res, next) => {
     req.session.user = userInfo
 
     
-    res.status(200).json({success: true})
+    res.status(200).json({
+        success: true,
+        data: userInfo
+    })
 })
