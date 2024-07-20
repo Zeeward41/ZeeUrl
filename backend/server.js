@@ -39,6 +39,7 @@ app.use(cookieParser())
 
 // Session and Cookie
 app.use(session({
+    name: 'user_session',
     secret: process.env.COOKIE_SECRET,
     saveUninitialized: false,
     resave: false,

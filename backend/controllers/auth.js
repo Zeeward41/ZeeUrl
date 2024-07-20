@@ -78,3 +78,22 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     })
     
 })
+
+// @desc        Logout User
+// @route       GET /api/v1/auth/logout
+// @access      Private
+export const logout = asyncHandler(async (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return next(new ErrorResponse('Failed to destroy session', 500));
+        }
+
+        res.clearCookie('user_session');
+
+        res.status(200).json({
+            success: true,
+            message: 'Logout successfully'
+        })
+
+    })
+})
