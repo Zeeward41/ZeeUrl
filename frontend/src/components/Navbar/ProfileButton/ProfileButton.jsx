@@ -8,7 +8,7 @@ const variousOption = [
     {icon: "fa-solid fa-right-from-bracket", text: "Logout"},
     ]
 
-function ProfileButton() {
+function ProfileButton({userInfo}) {
     const [showProfilMenu, setShowProfilMenu] = React.useState(false)
     const ref = React.useRef()
 
@@ -24,7 +24,7 @@ function ProfileButton() {
         }}
         >
             <i className="fa-solid fa-user"></i>
-            <span className="user">Mirthslflsfhsql</span>
+            <span className="user">{userInfo.name}</span>
             <div className={`profile-menu ${showProfilMenu ? 'active' : 'hidden'}`}>
                 {variousOption.map(({icon, text}) => {
                     return (

@@ -1,13 +1,14 @@
 import './Navbar.css'
 import ProfileButton from './ProfileButton/ProfileButton.jsx'
 import {Link} from 'react-router-dom'
+import React from 'react'
 
-const isAuth = false
-function Navbar() {
+function Navbar({isAuthenticated, userInfo}) {
+    console.log(`isAuthenticated: ${isAuthenticated}`)
     return (
         <nav className="nav">
             <Link to="/" className="site-title">ZeeURL</Link>
-        {isAuth === true ? <ProfileButton />:
+        {isAuthenticated ? <ProfileButton userInfo={userInfo}/>:
             <ul>
                 <li>
                     <Link to="/signup" >Sign Up</Link>
@@ -19,7 +20,7 @@ function Navbar() {
             }
         </nav>
     )
+   
 }
 
 export default Navbar
-
