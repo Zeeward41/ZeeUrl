@@ -23,7 +23,7 @@ export const register = asyncHandler(async (req, res, next) => {
 // @route       POST /api/v1/auth/login
 //access        Public
 export const login = asyncHandler(async (req, res, next) => {
-    const {email, password} = req.body
+    const {email, password} = req.matchedData
 
     // Validate email and password
     if(!email || !password) {
