@@ -52,7 +52,10 @@ export default function Login() {
             setTimeout(() => {
                 navigate('/')
             },1000)
-        } else if (json.error === 'User not found. Please check your email and try again.' || json.error === 'Invalid credentials. Please check your password and try again.') {
+        } else if (json.error === 'User not found. Please check your email and try again.' ||
+             json.error === 'Invalid credentials. Please check your password and try again.' ||
+             json.error === "Password must be at least 8 characters long, Password must contain at least one letter, one number, and one special character" ||
+             json.error === 'Please enter a valid email' ) {
             setFormState({
                 status: 'error',
                 message: 'Incorrect email or password. Please try again.'
