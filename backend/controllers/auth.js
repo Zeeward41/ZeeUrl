@@ -57,3 +57,24 @@ export const login = asyncHandler(async (req, res, next) => {
         data: userInfo
     })
 })
+
+
+// @desc        Check if the user is authenticated.
+// @route       GET /api/v1/auth/check
+//access        Public
+export const checkAuth = asyncHandler(async (req, res, next) => {
+    const user = req.session.user
+
+    if(!user) {
+        return res.status(401).json({
+            success: false,
+            message: 'Not authenticated'
+        })
+    }
+
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+    
+})
