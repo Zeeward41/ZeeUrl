@@ -3,11 +3,12 @@ import Navbar from '../components/Navbar/Navbar.jsx'
 import React from 'react'
 import { ENDPOINTS } from '../../config.js'
 import { useNavigate} from 'react-router-dom'
+import { useAuthContext } from '../context/AuthContext.jsx'
 
 const MainLayout = () => {
 
-    const [isAuthenticated, setIsAuthenticated] = React.useState(null)
-    const [userInfo, setUserInfo] = React.useState(null)
+    const { authState, setAuthState} = useAuthContext()
+
     const navigate = useNavigate()
     const endpointCheck = ENDPOINTS.CHECK_AUTH
 
@@ -26,15 +27,21 @@ const MainLayout = () => {
                 const json = await response.json()
 
                 if (json.success) {
-                    setUserInfo(json.data)
-                    setIsAuthenticated(true)
+                    setAuthState({
+                        userInfo: json.data,
+                        isAuthenticated: true
+                    })
                 } else {
-                    setIsAuthenticated(false)
-                    setUserInfo(null)
+                    setAuthState({
+                        userInfo: null,
+                        isAuthenticated: false
+                    })
                 }
             } catch (err) {
-                setIsAuthenticated(false)
-                setUserInfo(null)
+                setAuthState({
+                    userInfo: null,
+                    isAuthenticated: false
+                })
             }
         }
         checkAuth()
@@ -42,8 +49,8 @@ const MainLayout = () => {
 
     return (
         <>
-            <Navbar isAuthenticated={isAuthenticated} userInfo={userInfo} />
-            <Outlet context={{setIsAuthenticated, setUserInfo}}/>
+            <Navbar />
+            <Outlet />
         </>
     )
 }

@@ -3,6 +3,7 @@ import Signup from './pages/signUp/signUP.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/Login/Login.jsx'
 import {Route, createBrowserRouter, createRoutesFromElements, RouterProvider} from 'react-router-dom'
+import AuthContextProvider from './context/AuthContext.jsx'
 
 import MainLayout from './layouts/MainLayout.jsx'
 
@@ -21,7 +22,9 @@ const router = createBrowserRouter(
 
 const App = () => {
   return (
-    <RouterProvider router={router} />
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+    </AuthContextProvider>
   )
 }
 

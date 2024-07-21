@@ -2,13 +2,15 @@ import './Navbar.css'
 import ProfileButton from './ProfileButton/ProfileButton.jsx'
 import {Link} from 'react-router-dom'
 import React from 'react'
+import { useAuthContext } from '../../context/AuthContext.jsx'
 
-function Navbar({isAuthenticated, userInfo}) {
-    console.log(`isAuthenticated: ${isAuthenticated}`)
+function Navbar() {
+    const {authState} = useAuthContext()
+    console.log(`isAuthenticated : ${authState.isAuthenticated}`)
     return (
         <nav className="nav">
             <Link to="/" className="site-title">ZeeURL</Link>
-        {isAuthenticated ? <ProfileButton userInfo={userInfo}/>:
+        {authState.isAuthenticated ? <ProfileButton />:
             <ul>
                 <li>
                     <Link to="/signup" >Sign Up</Link>

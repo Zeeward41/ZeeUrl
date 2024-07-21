@@ -4,13 +4,13 @@ import InputValidation from '../../utils/InputValidation.jsx'
 import Notification from '../../components/Notification/Notification.jsx'
 import { ENDPOINTS } from '../../../config.js'
 import { useNavigate } from 'react-router-dom'
-import { useOutletContext } from 'react-router-dom'
+import { useAuthContext } from '../../context/AuthContext.jsx'
 
 export default function Login() {
     const fields = ['email', 'password']
     const endpointLogin = ENDPOINTS.LOGIN
     const navigate = useNavigate()
-    const context = useOutletContext()
+    const {setAuthState} = useAuthContext()
 
     const [values, setValues] = React.useState({
         email: "",
@@ -53,8 +53,10 @@ export default function Login() {
 
             setTimeout(() => {
                 navigate('/')
-                context.setIsAuthenticated(true)
-                context.setUserInfo(json.data)
+                setAuthState({
+                    userInfo: json.data,
+                    isAuthenticated: true
+                })
             },1000)
         } else if (json.error === 'User not found. Please check your email and try again.' ||
              json.error === 'Invalid credentials. Please check your password and try again.' ||
