@@ -22,6 +22,10 @@
 .profile-button:hover, 
 .profile-button.active { 
     background-color: var(--second-color);
+    color: black;
+    font-weight: 600;
+    text-shadow: 0 0 1px rgba(0,0,0,0.3);
+    font-size: 1.1rem;
 }
 
 .profile-menu.active {

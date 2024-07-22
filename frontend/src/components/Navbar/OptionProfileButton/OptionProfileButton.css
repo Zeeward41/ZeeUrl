@@ -4,15 +4,18 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 0.5rem 2rem;
+    padding: 0.5rem 1.5rem;
     color: #000;
     border: solid 2px transparent;
 }
 
-.option-profile-button > a {
+.option-profile-button > button {
     text-decoration: none;
     color: inherit;
     font-weight: bold;
+    border: none;
+    background-color: transparent;
+    font-size: 1.2rem;
 }
 
 .option-profile-button:hover {
