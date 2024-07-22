@@ -2,14 +2,12 @@ import {Outlet} from 'react-router-dom'
 import Navbar from '../components/Navbar/Navbar.jsx'
 import React from 'react'
 import { ENDPOINTS } from '../../config.js'
-import { useNavigate} from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext.jsx'
 
 const MainLayout = () => {
 
     const { authState, setAuthState} = useAuthContext()
 
-    const navigate = useNavigate()
     const endpointCheck = ENDPOINTS.CHECK_AUTH
 
     React.useEffect(() => {

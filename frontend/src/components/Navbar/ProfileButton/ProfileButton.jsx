@@ -5,8 +5,8 @@ import {useOnClickOutside} from '../../../hooks/useOnClickOutside.jsx'
 import { useAuthContext } from '../../../context/AuthContext.jsx'
 
 const variousOption = [
-    {icon: "fa-solid fa-user", text: "Profil"},
-    {icon: "fa-solid fa-right-from-bracket", text: "Logout"},
+    {icon: "fa-solid fa-user", text: "Profil", redirect: '/toto'},
+    {icon: "fa-solid fa-right-from-bracket", text: "Logout", redirect: '/'},
     ]
 
 function ProfileButton() {
@@ -28,9 +28,9 @@ function ProfileButton() {
             <i className="fa-solid fa-user"></i>
             <span className="user">{authState.userInfo.name}</span>
             <div className={`profile-menu ${showProfilMenu ? 'active' : 'hidden'}`}>
-                {variousOption.map(({icon, text}) => {
+                {variousOption.map(({icon, text, redirect}) => {
                     return (
-                    <OptionProfileButton key={text} icon={icon} text={text} />
+                    <OptionProfileButton key={text} icon={icon} text={text} redirect={redirect} />
                 )})}
             </div>
         </div>
