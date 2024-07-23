@@ -66,9 +66,9 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     const user = req.session.user
 
     if(!user) {
-        return res.status(401).json({
+        return res.status(200).json({
             success: false,
-            message: 'Not authenticated'
+            data: {}
         })
     }
 
@@ -87,7 +87,6 @@ export const logout = asyncHandler(async (req, res, next) => {
         if (err) {
             return next(new ErrorResponse('Failed to destroy session', 500));
         }
-
         res.clearCookie('user_session');
 
         res.status(200).json({
