@@ -18,17 +18,31 @@ export default function AuthContextProvider({children}) {
 
     const logout = async () => {
         try {
-            await fetch(endpointLogout, {
+            const response = await fetch(endpointLogout, {
                 method: "GET",
                 credentials: "include"
             })
 
-            setAuthState({
-                userInfo: null,
-                isAuthenticated: false
-            })
+            const json = await response.json()
+
+            if (!response.ok) {
+                throw new Error(json.error || 'Unexpected error!')
+            }
+
+            if(json.success) {
+                setAuthState({
+                    userInfo: null,
+                    isAuthenticated: false
+                })
+                return json
+            }
+
+
         } catch (err) {
-            console.log(err)
+            return {
+                success: false,
+                message: err.message
+            }
         }
     }
 
@@ -37,8 +51,6 @@ export default function AuthContextProvider({children}) {
         setAuthState,
         logout
     }
-
-
 
     return <AuthContext.Provider
     value={valueAuthContext}>
