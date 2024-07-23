@@ -6,7 +6,6 @@ import { useAuthContext } from '../../context/AuthContext.jsx'
 
 function Navbar() {
     const {authState} = useAuthContext()
-    console.log(`isAuthenticated : ${authState.isAuthenticated}`)
     return (
         <nav className="nav">
             <Link to="/" className="site-title">ZeeURL</Link>

@@ -1,16 +1,24 @@
 import './OptionProfileButton.css'
 import { useAuthContext } from '../../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 export default function OptionProfileButton({icon, text, redirect}) {
     const {logout} = useAuthContext()
     const navigate = useNavigate()
 
-    function handleClick() {
+    async function handleClick() {
         if(text === 'Logout') {
-            logout()
+            const logoutState = await logout()
+            if (logoutState.success) {
+                navigate(redirect) 
+            } else {
+                console.log(logoutState.message)
+            }
         }
-        navigate(redirect) 
+        if(text === 'Profil') {
+            navigate(redirect)
+        }
         }
 
     
@@ -18,6 +26,7 @@ export default function OptionProfileButton({icon, text, redirect}) {
         <div className="option-profile-button">
             <i className={icon}></i>
             <button onClick={handleClick} >{text}</button>
+
         </div>
 
     )
