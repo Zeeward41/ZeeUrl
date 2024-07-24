@@ -2,6 +2,7 @@ import Home from './pages/Home.jsx'
 import Signup from './pages/signUp/signUP.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/Login/Login.jsx'
+import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import {Route, createBrowserRouter, createRoutesFromElements, RouterProvider} from 'react-router-dom'
 import AuthContextProvider from './context/AuthContext.jsx'
 
@@ -14,6 +15,7 @@ const router = createBrowserRouter(
       <Route index element={<Home />}/>
       <Route path='/signup' element={<Signup />}/>
       <Route path='/login' element={<Login />}/>
+      <Route path='/dashboard' element={<Dashboard />}/>
       <Route path='*' element={<NotFound />}/>
     </Route>
 
