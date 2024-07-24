@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar/Navbar.jsx'
 import React from 'react'
 import { ENDPOINTS } from '../../config.js'
 import { useAuthContext } from '../context/AuthContext.jsx'
+import ModalMessageContextProvider from '../context/ModalMessageContext.jsx'
 
 const MainLayout = () => {
 
@@ -47,7 +48,9 @@ const MainLayout = () => {
 
     return (
         <>
-            <Navbar />
+            <ModalMessageContextProvider>
+                <Navbar />
+            </ModalMessageContextProvider>
             <Outlet />
         </>
     )

@@ -1,0 +1,27 @@
+.modalMessage-container {
+    width: 500px;
+    height: 150px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    box-shadow: var(--shadow);
+
+}
+
+.modalMessage-message {
+    font-size: 2rem;
+}
+
+.modalMessage-container.success {
+    border: green 2px solid;
+    background-color: rgb(219, 244, 219);
+}
+
+.modalMessage-container.error {
+    border: red 2px solid;
+    background-color: rgb(244, 219, 219);
+}

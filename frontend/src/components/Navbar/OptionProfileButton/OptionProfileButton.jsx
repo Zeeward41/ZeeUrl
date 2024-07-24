@@ -1,25 +1,32 @@
 import './OptionProfileButton.css'
 import { useAuthContext } from '../../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useModalMessageContext } from '../../../context/ModalMessageContext'
 
 export default function OptionProfileButton({icon, text, redirect}) {
     const {logout} = useAuthContext()
     const navigate = useNavigate()
+    const {openModal, closeModal} = useModalMessageContext()
 
     async function handleClick() {
+
+        // cas logout
         if(text === 'Logout') {
-            const logoutState = await logout()
-            if (logoutState.success) {
-                navigate(redirect) 
+            const response = await logout()
+            if (response.success) {
+            openModal('success', response.message)
             } else {
-                console.log(logoutState.message)
+            openModal('error', response.message)
             }
-        }
+            closeModal(2000)
+            navigate(redirect)
+
+        // cas profile
         if(text === 'Profil') {
             navigate(redirect)
         }
         }
+    }
 
     
     return (
