@@ -3,13 +3,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
+    cursor: pointer; 
+    border-radius: var(--border-radius-profile);
+    width: 100%; 
     padding: 0.5rem 1.5rem;
     color: #000;
     border: solid 2px transparent;
+    background-color: #d6d2d2;
+    transition: all 0.3s ease;
 }
 
-.option-profile-button > button {
+.option-profile-button > span {
     text-decoration: none;
     color: inherit;
     font-weight: bold;
@@ -22,4 +26,5 @@
     background-color: var(--second-color);
     border-radius: var(--border-radius-profile);
     border: 2px solid var(--main-color);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }

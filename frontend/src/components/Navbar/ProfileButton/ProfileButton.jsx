@@ -5,7 +5,7 @@ import {useOnClickOutside} from '../../../hooks/useOnClickOutside.jsx'
 import { useAuthContext } from '../../../context/AuthContext.jsx'
 
 const variousOption = [
-    {icon: "fa-solid fa-user", text: "Profil", redirect: '/toto'},
+    {icon: "fa-solid fa-user", text: "Profil", redirect: '/dashboard'},
     {icon: "fa-solid fa-right-from-bracket", text: "Logout", redirect: '/'},
     ]
 

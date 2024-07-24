@@ -20,21 +20,22 @@ export default function OptionProfileButton({icon, text, redirect}) {
             }
             closeModal(2000)
             navigate(redirect)
+        }
 
         // cas profile
         if(text === 'Profil') {
             navigate(redirect)
         }
-        }
+        
     }
 
     
     return (
-        <div className="option-profile-button">
+        <button className="option-profile-button" onClick={handleClick} >
             <i className={icon}></i>
-            <button onClick={handleClick} >{text}</button>
+            <span>{text}</span>
 
-        </div>
+        </button>
 
     )
 }
