@@ -1,0 +1,69 @@
+.reducer-container {
+    font-size: 1.3rem;
+    max-width: 700px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.reducer-domain {
+    font-family: inherit;
+    border: 1px solid var(--main-color);
+    color: grey;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    flex: 150px 0 0;
+}
+
+.reducer-form {
+    height: 100%;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+#reducer-input {
+    height: 100%;
+    flex: auto 1 1;
+    font-family: inherit;
+    font-size: 1.3rem;
+    border: 1px solid var(--main-color);
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+}
+
+#reducer-input:focus {
+    border: var(--second-color) 2px solid;
+    outline: none;
+}
+
+.reducer-button {
+    font-family: inherit;
+    height: 100%;
+    min-width: 50px;
+    max-width: 100px;
+    display: flex;
+    flex: 80px 1 1;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: var(--main-color);
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.3rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.reducer-button:hover {
+    background-color: var(--second-color);
+    box-shadow: var(--shadow);
+}
+
+.reducer-button:active {
+    transform: scale(0.95);
+    background-color: var(--second-color);
+}
