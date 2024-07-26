@@ -1,12 +1,19 @@
+.nav-container {
+    width: 100vw;
+    background: var(--main-color);
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: center;
+}
 .nav {
     font-size: 18px;
+    max-width: 1286px;
     background: var(--main-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
-    padding: 0 20% ;
-    box-shadow: var(--shadow);
+    flex: 1286px 0 1;
+    padding: 0 3rem;
 
 }
 

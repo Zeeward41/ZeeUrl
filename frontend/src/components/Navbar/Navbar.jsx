@@ -10,7 +10,7 @@ function Navbar() {
     const {authState} = useAuthContext()
     const {showLogoutMessage, typeModal, messageModal} = useModalMessageContext()
     return (
-        <>
+        <div className="nav-container">
             <nav className="nav">
                 <Link to="/" className="site-title">ZeeURL</Link>
             {authState.isAuthenticated ? <ProfileButton />:
@@ -25,7 +25,7 @@ function Navbar() {
                 }
             </nav>
             {showLogoutMessage ? <ModalMessage type={typeModal} message={messageModal}/> : ''}
-        </>
+        </div>
     )
    
 }

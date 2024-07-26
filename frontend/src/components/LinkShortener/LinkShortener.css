@@ -1,69 +1,80 @@
 .reducer-container {
     font-size: 1.3rem;
-    max-width: 700px;
-    height: 50px;
+    font-family: inherit;
     display: flex;
-    align-items: center;
+    flex-direction: column;
 }
 
-.reducer-domain {
-    font-family: inherit;
-    border: 1px solid var(--main-color);
-    color: grey;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 0.5rem;
-    flex: 150px 0 0;
+.reducer-random {
+    height: 50px;
+    margin-bottom: 2rem;
 }
 
 .reducer-form {
-    height: 100%;
     display: flex;
-    flex-grow: 1;
-    align-items: center;
+    height: 100%;
+    margin-top: 0.5rem;
 }
 
 #reducer-input {
-    height: 100%;
-    flex: auto 1 1;
-    font-family: inherit;
     font-size: 1.3rem;
-    border: 1px solid var(--main-color);
-    padding: 0 0.5rem;
-    box-sizing: border-box;
+    padding-left: 1.5rem;
+    flex: 200px 1 1;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 2px solid var(--main-color);
+    font-family: inherit;
+    
 }
 
 #reducer-input:focus {
-    border: var(--second-color) 2px solid;
     outline: none;
+    border: 2px solid var(--second-color);
+}
+
+.reducer-custom {
+    height: 50px;
+    margin-top: 1rem;
+}
+
+.reducer-custom-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.custom-input {
+    font-size: 1.3rem;
+    padding-left: 1.5rem;
+    flex: 50px 1 1;
+    border-radius: 10px;
+    border: 2px solid var(--main-color);
+    margin: 1rem 0;
+    outline: none;
+    font-family: inherit;
+}
+
+.custom-input:focus {
+    border: 2px solid var(--second-color);
 }
 
 .reducer-button {
-    font-family: inherit;
-    height: 100%;
-    min-width: 50px;
-    max-width: 100px;
-    display: flex;
-    flex: 80px 1 1;
-    border-bottom-right-radius: 10px;
-    border-top-right-radius: 10px;
-    background-color: var(--main-color);
-    align-items: center;
-    justify-content: center;
-    color: #fff;
+    border-radius: 10px;
+    height: 50px;
     font-size: 1.3rem;
+    background-color: var(--main-color);
+    color: #fff;
+    width: 100%;
     border: none;
-    cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
+    font-family: inherit;
+    cursor: pointer;
 }
 
 .reducer-button:hover {
     background-color: var(--second-color);
-    box-shadow: var(--shadow);
 }
 
 .reducer-button:active {
     transform: scale(0.95);
-    background-color: var(--second-color);
 }
