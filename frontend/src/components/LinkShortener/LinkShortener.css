@@ -6,22 +6,19 @@
 }
 
 .reducer-random {
-    height: 50px;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .reducer-form {
     display: flex;
-    height: 100%;
-    margin-top: 0.5rem;
+    height: 50px;
 }
 
 #reducer-input {
     font-size: 1.3rem;
     padding-left: 1.5rem;
     flex: 200px 1 1;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-radius: 10px;
     border: 2px solid var(--main-color);
     font-family: inherit;
     
@@ -33,25 +30,23 @@
 }
 
 .reducer-custom {
-    height: 50px;
-    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .reducer-custom-form {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
 }
 
 .custom-input {
     font-size: 1.3rem;
     padding-left: 1.5rem;
-    flex: 50px 1 1;
     border-radius: 10px;
     border: 2px solid var(--main-color);
-    margin: 1rem 0;
     outline: none;
     font-family: inherit;
+    margin-bottom: 1rem;
+    height: 50px;
 }
 
 .custom-input:focus {

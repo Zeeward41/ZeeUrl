@@ -18,7 +18,7 @@ export default function LinkShortener() {
         ///////////////////////////////////
         <div className="reducer-container">
             <div className='reducer-random'>
-                <span><i class="fa-solid fa-link"></i> Minify a long URL ?</span>
+                <span><i className="fa-solid fa-link"></i> Minify a long URL ?</span>
                 <form className='reducer-form'>
                     <input type='url' id='reducer-input' placeholder='Enter the URL to shorten' required />
                 </form>
@@ -26,8 +26,8 @@ export default function LinkShortener() {
 
             <div className='reducer-custom'>
                 <form className='reducer-custom-form'>
-                    <label htmlFor='custom-input'><i class="fa-solid fa-wand-magic"></i>  Want to Customize your URL ?</label>
-                    <input type='text' className="custom-input" placeholder='Enter alias' />
+                    <label htmlFor='custom-input'><i className="fa-solid fa-wand-magic"></i>  Want to Customize your URL ?</label>
+                    <input type='text' id='custom-input' className="custom-input" placeholder='Enter alias' />
                 </form>
 
             <button className='reducer-button'>Minify</button>

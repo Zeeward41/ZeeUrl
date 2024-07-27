@@ -1,0 +1,115 @@
+.url-container {
+    background-color: rgb(237, 234, 234);
+    border-radius: 10px;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 1rem;
+    gap: 2rem;
+    border: 2px solid transparent;
+}
+
+.url-container:hover {
+    border: 2px solid var(--second-color);
+}
+
+.url-container:hover .fa-copy {
+    visibility: visible;
+}
+
+.left-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.url-qr {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem; 
+    margin-bottom: 0.5rem;
+}
+
+
+.url-qr > .fa-qrcode {
+    font-size: 2.5rem;
+    cursor: pointer;
+}
+
+.url-qr > .fa-copy {
+    visibility: hidden;
+}
+
+.url-qr > .fa-qrcode:hover,
+.url-qr > .fa-copy:hover {
+    color: var(--second-color);
+}
+
+
+.minify-url {
+    color: var(--second-color);
+    text-decoration: none;
+}
+
+.minify-url:hover,
+.minify-url:active {
+    text-decoration: underline;
+}
+
+.original-url {
+    text-decoration: none;
+}
+
+.original-url:hover,
+.origial-url:active {
+    text-decoration: underline;
+}
+.url-qr > .fa-copy {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.right-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.box-stats {
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+.box-stats:hover {
+    color: var(--second-color);
+}
+
+.num-stats {
+    margin-right: 0.5rem;
+}
+
+.url-config {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex: 0 1 80px;
+    height: 50px;
+    background-color: var(--main-color);
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    border:none;
+    border-radius: 10px;
+}
+
+.url-config:hover {
+    background-color: var(--second-color);
+    outline: none;
+}
+
+.url-config:active {
+    transform: scale(0.95);
+}
