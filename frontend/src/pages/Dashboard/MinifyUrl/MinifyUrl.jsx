@@ -1,7 +1,7 @@
 import './MinifyUrl.css'
 import OptionConfigLink from './OptionConfigLink/OptionConfigLink.jsx'
 import { useState, useRef } from 'react'
-import {useOnClickOutside} from '../../hooks/useOnClickOutside.jsx'
+import {useOnClickOutside} from '../../../hooks/useOnClickOutside.jsx'
 
 export default function MinifyUrl() {
     const options = [
