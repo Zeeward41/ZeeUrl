@@ -1,0 +1,26 @@
+.option-config-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.option-config-container:hover {
+    background-color: var(--second-color);
+    border-radius: 10px;
+    color: #fff;
+}
+
+.option-config-container:active {
+    transform: scale(0.95);
+}
+
+.option-config-icon {
+    color: var(--main-color);
+}
+
+.option-config-text {
+    font-weight: 500;
+}
