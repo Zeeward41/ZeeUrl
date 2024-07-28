@@ -15,7 +15,7 @@ export default function MinifyUrl() {
     const [showPanel, setShowPanel] = useState(false)
 
     function handleClick() {
-        setShowPanel(true)
+        setShowPanel(!showPanel)
     }
     
     const refPanel = useRef()
@@ -40,9 +40,9 @@ export default function MinifyUrl() {
                     <i className="fa-solid fa-chart-simple"></i>
                 </div>
                 <span className='creation-date'>06/29/24</span>
-                <button onClick={handleClick} className='url-config'><i className="fa-solid fa-gear"></i><i className="fa-solid fa-caret-down"></i></button>
+                <button onClick={handleClick} ref={refPanel} className='url-config'><i className="fa-solid fa-gear"></i><i className="fa-solid fa-caret-down"></i></button>
                 {showPanel ? 
-                <div className='option-config-panel' ref={refPanel}>
+                <div className='option-config-panel'>
                 {options.map(({text, icon}) => {
                     return (
                         <OptionConfigLink key={text} text={text} icon={icon} />
