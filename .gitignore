@@ -3,3 +3,7 @@ frontend/.eslintrc.cjs
 
 backend/node_modules
 backend/config/.env
+
+
+range-server/node_modules
+range-server/config/.env
