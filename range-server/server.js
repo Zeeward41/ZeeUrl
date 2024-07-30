@@ -15,7 +15,6 @@ const app = express()
 app.use(cors({
     origin: process.env.SERVER_BACKEND,
     methods: ['GET'],
-    allowedHeaders: ['content-Type']
 }))
 
 // Body Parser

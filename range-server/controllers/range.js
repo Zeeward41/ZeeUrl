@@ -1,5 +1,3 @@
-// const rangeService = require('./rangeService');
-// import rangeService from '../utils/rangeService.js'
 
 import { getRangeNumber } from '../utils/rangeService.js'
 

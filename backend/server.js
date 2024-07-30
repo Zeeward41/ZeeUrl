@@ -7,12 +7,13 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
-// import Routes
-import auth from './routes/auth.js'
-import user from './routes/user.js'
 
 // Load env vars
 dotenv.config({path: './config/.env'})
+
+// import Routes
+import auth from './routes/auth.js'
+import user from './routes/user.js'
 
 // import DB
 import connectDB from './config/db.js'
