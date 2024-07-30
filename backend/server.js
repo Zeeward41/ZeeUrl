@@ -7,6 +7,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
+import { getRangeNumber } from './utils/getRange.js'
+
 
 // Load env vars
 dotenv.config({path: './config/.env'})
@@ -51,6 +53,9 @@ app.use(session({
     }
 }))
 
+// GetRange
+let rangeNumber = 0
+rangeNumber = getRangeNumber()
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
