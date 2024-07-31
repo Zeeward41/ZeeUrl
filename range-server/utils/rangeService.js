@@ -14,7 +14,7 @@ export const getRangeNumber = async () => {
         const start = lastNumber + 1
         const end = start + (process.env.RANGE_NUMBER - 1)
         lastNumber = end
-        return [start, end]
+        return {start: start, end: end}
     } finally {
         release()
     }
