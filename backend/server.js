@@ -7,7 +7,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
-import { getRangeNumber } from './utils/getRange.js'
+import RangeManager from './utils/rangeNumber.js'
 
 
 // Load env vars
@@ -16,6 +16,7 @@ dotenv.config({path: './config/.env'})
 // import Routes
 import auth from './routes/auth.js'
 import user from './routes/user.js'
+import generate from './routes/linkUrl.js'
 
 // import DB
 import connectDB from './config/db.js'
@@ -24,6 +25,7 @@ import connectDB from './config/db.js'
 connectDB()
 
 const app = express()
+export const rangeManager = new RangeManager()
 
 // Cors
 app.use(cors({
@@ -54,12 +56,12 @@ app.use(session({
 }))
 
 // GetRange
-let rangeNumber = 0
-rangeNumber = getRangeNumber()
+rangeManager.getNewRange()
 
 // Mount Routers
 app.use('/api/v1/auth', auth)
 app.use('/api/v1/user', user)
+app.use('/api/v1/minify', generate)
 
 // ErrorHandler
 app.use(errorHandler)
