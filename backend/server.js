@@ -7,7 +7,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
-import RangeManager from './utils/rangeNumber.js'
+import RangeManager from './utils/rangeManager.js'
 
 
 // Load env vars
