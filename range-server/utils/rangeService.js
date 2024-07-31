@@ -2,9 +2,6 @@ import  { Mutex} from 'async-mutex'
 
 let lastNumber = 0
 
-const rangeSize = parseInt(process.env.RANGE_NUMBER, 10)
-
-
 const mutex = new Mutex()
 
 export const getRangeNumber = async () => {
