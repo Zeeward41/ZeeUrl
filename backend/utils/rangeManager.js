@@ -21,7 +21,6 @@ class RangeManager {
     this.currentNumber = this.currentRange.start;
       console.log('Nouvelle plage obtenue:', this.currentRange);
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
       throw error;
     }
   }
