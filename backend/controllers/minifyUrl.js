@@ -1,17 +1,31 @@
 import asyncHandler from "../middleware/async.js"
 import ErrorResponse from "../utils/errorResponse.js"
 import { rangeManager } from "../server.js"
+import toBase62 from "../utils/convertBase62.js"
+import LinkUrl from '../models/linkUrl.js'
 
 // @desc        Create minify URL
 // @route       POST /api/v1/minify/generate
 //access        Private
 export const generate = asyncHandler(async (req, res, next) => {
-    const t = await rangeManager.getNextNumber()
-    console.log(t)
+    const {url, alias} = req.matchedData
 
-    return res.status(200).json({
-        success: true,
-        valeur: t
+    let token  = ""
+
+    if (!alias) {
+        const number = await rangeManager.getNextNumber()
+        token = toBase62(number)
+    } else {
+        token = alias
+    }
+
+    const newLink = await LinkUrl.create({
+        token,
+        link_original: url,
+    })
+
+    return res.status(201).json({
+        success: true
     })
 
 })

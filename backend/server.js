@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
 import RangeManager from './utils/rangeManager.js'
+import toBase62 from './utils/convertBase62.js'
 
 
 // Load env vars
