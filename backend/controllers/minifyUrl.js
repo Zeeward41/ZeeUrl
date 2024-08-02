@@ -8,6 +8,8 @@ import LinkUrl from '../models/linkUrl.js'
 // @route       POST /api/v1/minify/generate
 //access        Private
 export const generate = asyncHandler(async (req, res, next) => {
+    const userId = req.user.id
+
     const {url, alias} = req.matchedData
 
     let token  = ""
@@ -22,6 +24,7 @@ export const generate = asyncHandler(async (req, res, next) => {
     const newLink = await LinkUrl.create({
         token,
         link_original: url,
+        user: userId
     })
 
     return res.status(201).json({
