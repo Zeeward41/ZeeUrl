@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
 import RangeManager from './utils/rangeManager.js'
-import toBase62 from './utils/convertBase62.js'
 
 
 // Load env vars
@@ -17,7 +16,7 @@ dotenv.config({path: './config/.env'})
 // import Routes
 import auth from './routes/auth.js'
 import user from './routes/user.js'
-import generate from './routes/linkUrl.js'
+import minify from './routes/linkUrl.js'
 
 // import DB
 import connectDB from './config/db.js'
@@ -62,7 +61,7 @@ rangeManager.getNewRange()
 // Mount Routers
 app.use('/api/v1/auth', auth)
 app.use('/api/v1/user', user)
-app.use('/api/v1/minify', generate)
+app.use('/api/v1/minify', minify)
 
 // ErrorHandler
 app.use(errorHandler)
