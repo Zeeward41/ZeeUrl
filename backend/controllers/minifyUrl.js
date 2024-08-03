@@ -120,18 +120,3 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
 
 })
 
-
-// a mettre dasn un controller admin
-
-// @desc        Get a specific minify URL from an user.
-// @route       GET /api/v1/users/:email/minify/:alias
-//access        Admin 
-
-// @desc        Get all minify URL for a specific user
-// @route       GET /api/v1/users/:email/minify/
-//access        Admin 
-
-
-// @desc        Get all users
-// @route       GET /api/v1/users
-//access        Admin
