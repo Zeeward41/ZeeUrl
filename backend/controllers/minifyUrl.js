@@ -3,6 +3,7 @@ import ErrorResponse from "../utils/errorResponse.js"
 import { rangeManager } from "../server.js"
 import toBase62 from "../utils/convertBase62.js"
 import LinkUrl from '../models/linkUrl.js'
+import { applyQueryOptions, pagination } from "../middleware/advancedResults.js"
 
 // @desc        Create minify URL
 // @route       POST /api/v1/minify/generate
@@ -67,12 +68,19 @@ export const getUrls = asyncHandler(async (req, res, next) => {
     const user = req.user
 
     let links
+    let query
 
-    if (user.role === 'admin') {
-        links = await LinkUrl.find()
-    } else {
-        links = await LinkUrl.find({user: user.id})
-    }
+    const {filters} = req.advancedQuery
+    let baseQuery = {...filters}
+
+    
+    user.role === 'admin' ? query = LinkUrl.find(baseQuery) : query = LinkUrl.find({ $and: [{user: user.id}, baseQuery]})
+
+    const total = await LinkUrl.countDocuments(query)
+
+    query = applyQueryOptions(query, req.advancedQuery)
+
+    links = await query
 
     if(!links || links.length === 0) {
         const errorMessage = user.role === 'admin'?
@@ -81,9 +89,12 @@ export const getUrls = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse(`No Urls found`, 404))
     }
 
+    const paginations = pagination(query, req.advancedQuery, total)
+
     return res.status(200).json({
         success: true,
-        count: links.length,
+        count: total,
+        paginations,
         data: links
     })
 })
