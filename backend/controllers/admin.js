@@ -9,7 +9,7 @@ import {applyQueryOptions, pagination } from '../middleware/advancedResults.js'
 //access        Admin
 export const getUsers = asyncHandler(async (req, res, next) => {
     const user = req.user
-    const {filters} = req.advancedQuery //ddddd
+    const {filters} = req.advancedQuery 
     let baseQuery = { ...filters}
 
 
@@ -20,7 +20,6 @@ export const getUsers = asyncHandler(async (req, res, next) => {
     const users = await query
 
 
-    
 
     if (users.length === 0 || !users) {
         return next(new ErrorResponse(`No user Found`, 404))

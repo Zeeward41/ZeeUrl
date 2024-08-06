@@ -8,7 +8,7 @@ const validateUrl = [
   
     body('alias')
       .optional()
-      .matches(/^[a-zA-Z0-9-_]+$/)
+      .matches(/^[a-zA-Z0-9-_]{3,20}$/)
       .withMessage('Alias not valid'),
   
       (req, res, next) => {
@@ -31,7 +31,7 @@ const validateUpdateUrl = [
   
     body('token')
       .optional()
-      .matches(/^[a-zA-Z0-9-_]+$/)
+      .matches(/^[a-zA-Z0-9-_]{3,20}$/)
       .withMessage('Alias not valid'),
     
     body('num_visit')
