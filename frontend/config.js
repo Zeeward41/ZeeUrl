@@ -3,6 +3,7 @@ export const ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/v1/auth/register`,
   LOGIN: `${API_BASE_URL}/v1/auth/login`,
   CHECK_AUTH: `${API_BASE_URL}/v1/auth/check`,
-  LOGOUT: `${API_BASE_URL}/v1/auth/logout`
+  LOGOUT: `${API_BASE_URL}/v1/auth/logout`,
+  GENERATE: `${API_BASE_URL}/v1/minify/generate`
 };
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import FormInput from '../../components/FormInput/FormInput.jsx'
-import InputValidation from '../../utils/InputValidation.jsx'
+import {InputValidation} from '../../utils/InputValidation.jsx'
 import Notification from '../../components/Notification/Notification.jsx'
 import  {ENDPOINTS} from '../../../config.js'
 import { useNavigate } from 'react-router-dom'

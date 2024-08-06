@@ -25,7 +25,8 @@
     min-width: 220px;
     flex-grow: 1;
 }
-.separator {
+/* .separator {
     height: 3px;
     background-color: grey;
-}
+    margin-top: 2rem;
+} */

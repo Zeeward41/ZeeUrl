@@ -1,23 +1,24 @@
 .reducer-container {
     font-size: 1.3rem;
     font-family: inherit;
+}
+
+.reducer-form {
     display: flex;
     flex-direction: column;
 }
 
 .reducer-random {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 1rem;
 }
 
-.reducer-form {
-    display: flex;
-    height: 50px;
-}
-
 #reducer-input {
+    height: 50px;
     font-size: 1.3rem;
     padding-left: 1.5rem;
-    flex: 200px 1 1;
+    /* flex: 200px 1 0; */
     border-radius: 10px;
     border: 2px solid var(--main-color);
     font-family: inherit;
@@ -31,6 +32,8 @@
 
 .reducer-custom {
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .reducer-custom-form {
@@ -72,4 +75,13 @@
 
 .reducer-button:active {
     transform: scale(0.95);
+}
+
+.separator {
+    height: 3px;
+    background-color: grey;
+}
+
+.separator.notif {
+    margin-top: 2rem;
 }

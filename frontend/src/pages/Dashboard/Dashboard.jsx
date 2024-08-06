@@ -5,12 +5,14 @@ import MinifyUrl from './MinifyUrl/MinifyUrl.jsx'
 import UsageStats from './UsageStats/UsageStats.jsx'
 
 export default function Dashboard() {
+
+    
     return (
     <div className='outer-container'>
         <div className='dashboard-container'>
             <div className='dashboard-left'>
                 <LinkShortener />
-                <div className='separator' />
+                {/* <div className='separator' /> */}
                 <MinifyUrl />
                 <MinifyUrl />
                 <MinifyUrl />

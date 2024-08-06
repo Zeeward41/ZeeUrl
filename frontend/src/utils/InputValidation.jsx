@@ -1,7 +1,7 @@
 
 const InputValidation = [
     {
-    username: {
+    'username': {
     name: 'username',
     type: 'text',
     placeholder: "Username",
@@ -43,5 +43,26 @@ const InputValidation = [
 }
 }]
 
-export default InputValidation
+const minifyUrlValidation = [
+    {
+        'url': {
+        name: 'minifyLink-url',
+        type: 'url',
+        placeholder: 'Enter the URL to shorten',
+        errorMessage: 'Not a valid URL',
+        label: 'Minify a long URL ?',
+        required: true,
+    },
+    'alias': {
+        name: 'alias',
+        type: 'text',
+        placeholder: 'Enter Alias',
+        errorMessage: "Invalid alias. Only letters, numbers, and underscores are allowed. Must be between 3 and 20 characters.",
+        label: ' Want to Customize your URL ?',
+        pattern: '^[a-zA-Z0-9\_]{3,20}$'
+    }
+    }
+]
+
+export {InputValidation, minifyUrlValidation}
 
