@@ -4,6 +4,7 @@ export const ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/v1/auth/login`,
   CHECK_AUTH: `${API_BASE_URL}/v1/auth/check`,
   LOGOUT: `${API_BASE_URL}/v1/auth/logout`,
-  GENERATE: `${API_BASE_URL}/v1/minify/generate`
+  GENERATE: `${API_BASE_URL}/v1/minify/generate`,
+  GETURLS: `${API_BASE_URL}/v1/minify`
 };
 
