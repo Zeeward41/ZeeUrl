@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal.jsx'
 import { ENDPOINTS } from '../../../../config.js'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const [showPanel, setShowPanel] = useState(false)
@@ -62,22 +63,34 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         let json
         switch (task) {
             case 'Delete Link': 
-            response = await fetch(`${endpointDeleteUrl}/${token}`, {
-                method: "DELETE",
-                credentials: "include"
-            })
+                try {
+                    response = await fetch(`${endpointDeleteUrl}/${token}`, {
+                        method: "DELETE",
+                        credentials: "include"
+                    })
+                    json = await response.json()
 
-            json = await response.json()
-
-
-            if(json.success) {
-                navigate(0)
-            }
-
-            setShowConfirmationModal(false)
-            break
-
+                    if (!response.ok){
+                        switch (response.status) {
+                            case 404:
+                                toast.error('URL not found')
+                                break
+                            case 401:
+                                toast.error('no Authorized to delete this URL')
+                                break
+                            default:
+                                toast.error('Something went wrong!')
+                        }
+                    } else if (json.success) {
+                        navigate(0)
+                    }
+                } catch (error) {
+                    toast.error('Something went wrong... try again !')
+                }
+                setShowConfirmationModal(false)
+                break
             case 'Reset Stats': 
+            try {
             response = await fetch(`${endpointUpdateUrl}/${token}`, {
                 method: "PUT",
                 credentials: "include",
@@ -92,8 +105,24 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
 
             json = await response.json()
 
-            if(json.success) {
+            if (!response.ok) {
+                switch (response.status) {
+                    case 404:
+                        toast.error('Urn not found')
+                        break
+                    case 401:
+                        toast.error('No Authorized to update this URL')
+                        break
+                    default:
+                        toast.error('Something went Wrong!')
+                }
+            } else if (json.success) {
                 navigate(0)
+            }
+
+
+            } catch (error) {
+                toast.error('Something went wrong... try again !')
             }
             setShowConfirmationModal(false)
             break

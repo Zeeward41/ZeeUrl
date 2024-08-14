@@ -4,6 +4,8 @@ import React from 'react'
 import { ENDPOINTS } from '../../config.js'
 import { useAuthContext } from '../context/AuthContext.jsx'
 import ModalMessageContextProvider from '../context/ModalMessageContext.jsx'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const MainLayout = () => {
 
@@ -52,6 +54,7 @@ const MainLayout = () => {
                 <Navbar />
             </ModalMessageContextProvider>
             <Outlet />
+            <ToastContainer />
         </>
     )
 }
