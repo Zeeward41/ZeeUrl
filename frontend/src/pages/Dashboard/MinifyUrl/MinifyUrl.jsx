@@ -8,6 +8,7 @@ import { ENDPOINTS } from '../../../../config.js'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getOptions } from './optionsConfig.js'
+import EditUrl from './EditUrl/EditUrl.jsx'
 
 export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const [showPanel, setShowPanel] = useState(false)
@@ -17,6 +18,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const endpointDeleteUrl = ENDPOINTS.DELETEURLS
     const endpointUpdateUrl = ENDPOINTS.UPDATEURLS
     const navigate = useNavigate()
+    const [showEditUrl, setShowEditUrl] = useState(false)
 
     
 
@@ -52,8 +54,13 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         setShowConfirmationModal(true)
 
     }
+
+    function editUrl() {
+        setShowPanel(false)
+        setShowEditUrl(true)
+    }
     
-    const options = getOptions(copyUrlToClipboard, resetUrl, deleteUrl)
+    const options = getOptions(copyUrlToClipboard, resetUrl, deleteUrl, editUrl)
     
     async function handleConfirmAction() {
         let response
@@ -94,7 +101,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         if (!response.ok) {
             switch (response.status) {
                 case 404:
-                    toast.error(task === 'Delete Link' ? 'URL not found' : 'URN not found')
+                    toast.error('URL not found')
                     break
                 case 401:
                     toast.error(task === 'Delete Link' ? 'Not Authorized to delete this URL' : 'Not Authorized to update this URL')
@@ -110,6 +117,11 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     function handleCancel() {
         setShowConfirmationModal(false)
     }
+
+    function closeEdit() {
+        setShowEditUrl(false)
+    }
+
     
 
     return (
@@ -139,6 +151,9 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
                 </div> : ''}
             </div>
             {showConfirmationModal ? <ConfirmationModal onCancel={handleCancel} onConfirm={handleConfirmAction} /> : ''}
+            {showEditUrl && (
+                <EditUrl token={token} linkOriginal={linkOriginal} onClose={closeEdit} />
+            )}
         </div>
     )
 }

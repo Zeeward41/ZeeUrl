@@ -1,0 +1,94 @@
+.editUrl-wrapper {
+    border-radius: var(--border-radius-profile);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    /* flex: 0 1 1500px; */
+    z-index: 1;
+    box-shadow: var(--shadow);
+}
+
+.editUrl-header {
+    background-color: var(--main-color);
+    color: #fff;
+    display: flex;
+    height: 3rem; 
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-top-left-radius: var(--border-radius-profile);
+    border-top-right-radius: var(--border-radius-profile);
+    border: 2px solid var(--main-color);
+}
+
+.editUrl-span {
+    padding-left: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.editUrl-close {
+    background-color: transparent;
+    border: none;
+    font-size: 1.3rem;
+    color: #fff;
+    padding-right: 0.5rem;
+    cursor: pointer;
+}
+
+.editUrl-close:hover {
+    color: var(--second-color);
+}
+
+.editUrl-form {
+    font-size: 1.5rem;
+    padding: 1rem;
+}
+
+.editUrl-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+.editUrl-box > input {
+    font-size: 1.5rem;
+}
+
+.editUrl-box > input:focus {
+    border: 2px solid var(--second-color);
+    outline:none;
+}
+.editUrl-box-buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+}
+
+.editUrl-button {
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--main-color);
+    cursor: pointer;
+    transition: transform 0.1s ease, background-color 0.3s ease;
+}
+
+
+.editUrl-button.save {
+    background-color: var(--main-color);
+    color: #fff;
+}
+
+.editUrl-button:hover {
+    background-color: var(--second-color);
+}
+
+.editUrl-button:active {
+    transform: scale(0.9);
+}

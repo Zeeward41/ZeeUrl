@@ -7,6 +7,6 @@ export const ENDPOINTS = {
   GENERATE: `${API_BASE_URL}/v1/minify/generate`,
   GETURLS: `${API_BASE_URL}/v1/minify`,
   DELETEURLS: `${API_BASE_URL}/v1/minify`,
-  UPDATEURLS: `${API_BASE_URL}/v1/minify`
+  UPDATEURLS: `${API_BASE_URL}/v1/minify`,
 };
 
