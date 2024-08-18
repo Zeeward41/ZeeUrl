@@ -4,12 +4,14 @@ import SearchLink from './SearchLink/SearchLink.jsx'
 import MinifyUrl from './MinifyUrl/MinifyUrl.jsx'
 import UsageStats from './UsageStats/UsageStats.jsx'
 import { useState,useEffect } from 'react'
-import { ENDPOINTS } from '../../../config.js'
+import { ENDPOINTS } from '../../../config.js' //ajout
 
 export default function Dashboard() {
 
     const endpointGetUrls = ENDPOINTS.GETURLS
     const [links, setLinks] = useState([])
+    const [linkSearch, setLinkSearch] = useState([])
+
 
     async function loadData() {
 
@@ -22,20 +24,21 @@ export default function Dashboard() {
         
         if (json.success) {
             setLinks(json.data)
+            setLinkSearch(json.data)
         }
     }
 
     useEffect(() => {
         loadData()
     },[])
-    
+
     return (
     <div className='outer-container'>
         <div className='dashboard-container'>
             <div className='dashboard-left'>
                 <LinkShortener />
                 {/* <div className='separator' /> */}
-                {links.map((link) => {
+                {linkSearch.map((link) => {
                     return (
                     <MinifyUrl 
                     key={link.token}
@@ -49,7 +52,7 @@ export default function Dashboard() {
 
             </div>
             <div className='dashboard-right'>
-                <SearchLink />
+                <SearchLink links={links} setLinkSearch={setLinkSearch} /> 
                 <UsageStats />
             </div>
         </div>
