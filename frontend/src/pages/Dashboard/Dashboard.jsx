@@ -4,7 +4,7 @@ import SearchLink from './SearchLink/SearchLink.jsx'
 import MinifyUrl from './MinifyUrl/MinifyUrl.jsx'
 import UsageStats from './UsageStats/UsageStats.jsx'
 import { useState,useEffect } from 'react'
-import { ENDPOINTS } from '../../../config.js' //ajout
+import { ENDPOINTS } from '../../../config.js'
 
 export default function Dashboard() {
 
@@ -37,7 +37,6 @@ export default function Dashboard() {
         <div className='dashboard-container'>
             <div className='dashboard-left'>
                 <LinkShortener />
-                {/* <div className='separator' /> */}
                 {linkSearch.map((link) => {
                     return (
                     <MinifyUrl 
