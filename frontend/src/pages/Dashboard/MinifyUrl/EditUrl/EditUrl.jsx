@@ -35,7 +35,6 @@ export default function EditUrl({token, linkOriginal, onClose}) {
             if (json.success) {
                 navigate(0)
             } else if (!json.ok) {
-                console.log(response.status)
                 switch (response.status) {
                     case 404:
                         toast.error('URL not Found')
