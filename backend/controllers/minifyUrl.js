@@ -131,3 +131,26 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
 
 })
 
+
+// @desc        Redirect to original URL
+// @route       GET /api/v1/minify/:alias
+//access        Public
+export const redirect = asyncHandler(async (req, res, next) => {
+    const token = req.params.alias
+
+    let link = await LinkUrl.findOneAndUpdate(
+        {token},
+        {$inc: {num_visit: 1} },
+        {new: true, runValidators: true}
+    )
+
+    if (!link) {
+        return next(new ErrorResponse(`No Minify Url with this alias: ${token}`, 404))
+    }
+
+    return res.status(200).json({
+        success: true,
+        data: link.link_original
+    })
+
+})
