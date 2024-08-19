@@ -40,7 +40,7 @@
     visibility: hidden;
 }
 
-.url-qr > .fa-qrcode:hover,
+
 .url-qr > .fa-copy:hover {
     color: var(--second-color);
 }
