@@ -12,12 +12,12 @@ function RedirectAlias() {
       try {
         const response = await fetch(`${endpointRedirect}/${alias}`, {
           method: "GET",
+          credentials: "include"
         });
 
         const json = await response.json();
 
         if (json.success) {
-            console.log(json.data)
             window.location.href = json.data
         } else if (!json.ok) {
           if (response.status === 404) {
@@ -31,7 +31,7 @@ function RedirectAlias() {
       }
     };
 
-    redirectToOriginalUrl();
+    return () => redirectToOriginalUrl();
   }, [alias]);
 
   return (
