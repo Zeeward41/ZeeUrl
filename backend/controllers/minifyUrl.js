@@ -3,6 +3,7 @@ import ErrorResponse from "../utils/errorResponse.js"
 import { rangeManager } from "../server.js"
 import toBase62 from "../utils/convertBase62.js"
 import LinkUrl from '../models/linkUrl.js'
+import LinkVisits from "../models/LinkVisits.js"
 import { applyQueryOptions, pagination } from "../middleware/advancedResults.js"
 
 // @desc        Create minify URL
@@ -137,17 +138,27 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
 //access        Public
 export const redirect = asyncHandler(async (req, res, next) => {
     const token = req.params.alias
+    const user = req.session?.user; 
+    const ip = req.ip
 
-    let link = await LinkUrl.findOneAndUpdate(
-        {token},
-        {$inc: {num_visit: 1} },
-        {new: true, runValidators: true}
-    )
+    let link = await LinkUrl.findOne({token})
 
     if (!link) {
         return next(new ErrorResponse(`No Minify Url with this alias: ${token}`, 404))
     }
 
+    const visit = await LinkVisits.create({
+        ipAddress: ip,
+        link: link._id,
+        userId: user ? user.id : null 
+    })
+
+    await LinkUrl.updateOne(
+        {token},
+        {$inc: {num_visit: 1}},
+        {new: true, runValidators: true}
+    )
+    
     return res.status(200).json({
         success: true,
         data: link.link_original
