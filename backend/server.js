@@ -18,6 +18,7 @@ import auth from './routes/auth.js'
 import user from './routes/user.js'
 import minify from './routes/linkUrl.js'
 import admin from './routes/admin.js'
+import stats from './routes/stats.js'
 
 // import DB
 import connectDB from './config/db.js'
@@ -64,6 +65,7 @@ app.use('/api/v1/auth', auth)
 app.use('/api/v1/user', user)
 app.use('/api/v1/minify', minify)
 app.use('/api/v1/users', admin)
+app.use('/api/v1/stats', stats)
 
 // ErrorHandler
 app.use(errorHandler)
