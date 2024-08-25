@@ -139,7 +139,7 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
 export const redirect = asyncHandler(async (req, res, next) => {
     const token = req.params.alias
     const user = req.session?.user; 
-    const ip = req.ip
+    const visitorId = req.visitorId || req.cookie.visitorId
 
     let link = await LinkUrl.findOne({token})
 
@@ -147,18 +147,45 @@ export const redirect = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse(`No Minify Url with this alias: ${token}`, 404))
     }
 
-    const visit = await LinkVisits.create({
-        ipAddress: ip,
+    // check if unique visit
+    const existingVisit = await LinkVisits.findOne({
         link: link._id,
-        userId: user ? user.id : null 
+        visitorId,
+        accessedAt: {
+            $gte: new Date(Date.now() - (24 * 60 * 60 * 1000)) // visit under 24h
+        }
     })
 
-    await LinkUrl.updateOne(
+    if (!existingVisit) {
+        // new unique visit
+        await LinkVisits.create({
+            link: link._id,
+            userId: user ? user.id : null,
+            visitorId
+        })
+
+        // update number of unique visit and total visit
+        await LinkUrl.updateOne(
         {token},
-        {$inc: {num_visit: 1}},
+        {$inc: {num_visit: 1, num_unique_visite: 1 }},
         {new: true, runValidators: true}
     )
-    
+
+    } else { // not unique visit
+
+        await LinkVisits.create({
+            link: link._id,
+            userId: user ? user.id : null,
+            visitorId
+        })
+
+        await LinkUrl.updateOne(
+            {token},
+            {$inc: {num_visit: 1}},
+            {new: true, runValidators: true}
+        )
+    } 
+
     return res.status(200).json({
         success: true,
         data: link.link_original

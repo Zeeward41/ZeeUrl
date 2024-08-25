@@ -1,10 +1,6 @@
 import mongoose from 'mongoose'
 
 const LinkVisitsSchema = new mongoose.Schema({
-    ipAddress: {
-        type: String,
-        required: true
-    },
     accessedAt: {
         type: Date,
         default: Date.now
@@ -18,6 +14,10 @@ const LinkVisitsSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         default: null
+    },
+    visitorId: {
+        type: String,
+        required: true
     }
 
 })
