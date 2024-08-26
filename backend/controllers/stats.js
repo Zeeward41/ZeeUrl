@@ -8,29 +8,64 @@ import calculateStats from '../utils/calculateStats.js'
 // @route       GET /api/v1/stats/:alias
 //access        Private/admin
 export const stats = asyncHandler(async (req, res, next) => {
-    const token = req.params.alias
     const user = req.user
-    console.log(user._id)
+    const reqQuery = {...req.query}
+
+    const token = reqQuery.alias
+    
+    let startDate = reqQuery.startDate 
+    let endDate = reqQuery.endDate 
 
     const link = await LinkUrl.findOne({token})
 
     if (!link) {
-        return next(new ErrorResponse(`No link with this alias - ${alias}`, 404))
+        return next(new ErrorResponse(`No link with this alias - ${token}`, 404))
     }
 
-    if (link.user.toString() !== user._id.toString()) {
+    if (user._id.toString() !== link.user.toString() && user.role.toString() !== 'admin' ) {
         return next(new ErrorResponse('Not authorized to acces this route', 401))
     }
+
+    // Check Date
+    if (!startDate) { // no startDate
+        startDate = link.createdAt.toISOString()
+    } else {
+    // timestamp to ISO 8601(format valid mongoose)
+        startDate = new Date(Number(startDate)*1000).toISOString() // * 1000 -> s to ms
+    } 
+
+    if (!endDate) { // on endDate
+        endDate = new Date().toISOString()
+    } else {
+    // timestamp to ISO 8601(format valid mongoose)
+        endDate = new Date(Number(endDate)*1000).toISOString() // * 1000 -> s to ms
+    }
+
+    const totalVisit = await LinkVisits.find({
+        link: link._id,
+        accessedAt: {
+            $gte: startDate,
+            $lte: endDate
+        }
+    })
     
-    const id = link._id
-    const linkCreatedAt = link.createdAt
+    const uniqueVisit = await LinkVisits.aggregate([
+        // step 1 : all link
+        { $match: {link: link._id}},
 
-    const totalVisit = await LinkVisits.find({link: id})
-
+        // step 2 : grouper par visitorId et obtenir le plus ancien (accessedAt)
+        {
+            $group: {
+                _id: "$visitorId",
+                earliestVisit: { $min: "$accessedAt"},
+                doc: {$first: "$$ROOT"} // conserver l'integralité des infos du lien
+            }
+        }
+    ])
 
     return res.status(200).json({
         success: true,
-        data: calculateStats(totalVisit, linkCreatedAt)
+        data: calculateStats(totalVisit.length, uniqueVisit.length, startDate)
     })
 
 })

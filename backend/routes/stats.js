@@ -4,6 +4,6 @@ import { stats } from '../controllers/stats.js'
 
 const router = express.Router()
 
-router.get('/:alias', protect, authorize('user', 'admin'), stats)
+router.get('/', protect, authorize('user', 'admin'), stats)
 
 export default router
