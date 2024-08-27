@@ -51,21 +51,34 @@ export const stats = asyncHandler(async (req, res, next) => {
     
     const uniqueVisit = await LinkVisits.aggregate([
         // step 1 : all link
-        { $match: {link: link._id}},
+        { $match: {
+            link: link._id,
+            accessedAt: {
+                $gte: new Date(startDate), // need to change the format it doesnt work for aggregate ...
+                $lte: new Date(endDate)
+               
+            }
+        }},
 
         // step 2 : grouper par visitorId et obtenir le plus ancien (accessedAt)
         {
             $group: {
                 _id: "$visitorId",
-                earliestVisit: { $min: "$accessedAt"},
+                firstVisit: { $first: "$accessedAt"},
                 doc: {$first: "$$ROOT"} // conserver l'integralité des infos du lien
             }
         }
     ])
 
+    const result = calculateStats(totalVisit.length, uniqueVisit.length, startDate)
+
     return res.status(200).json({
         success: true,
-        data: calculateStats(totalVisit.length, uniqueVisit.length, startDate)
+        data: {
+            stats: result,
+            link
+        }
+        
     })
 
 })
