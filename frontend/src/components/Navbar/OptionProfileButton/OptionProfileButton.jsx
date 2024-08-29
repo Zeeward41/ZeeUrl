@@ -23,7 +23,7 @@ export default function OptionProfileButton({icon, text, redirect}) {
         }
 
         // cas profile
-        if(text === 'Profil') {
+        if(text === 'Link') {
             navigate(redirect)
         }
         
