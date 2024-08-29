@@ -35,7 +35,7 @@ export const stats = asyncHandler(async (req, res, next) => {
     } 
 
     if (!endDate) { // on endDate
-        endDate = new Date().toISOString()
+        endDate = new Date()
     } else {
     // timestamp to ISO 8601(format valid mongoose)
         endDate = new Date(Number(endDate)*1000).toISOString() // * 1000 -> s to ms
@@ -76,7 +76,11 @@ export const stats = asyncHandler(async (req, res, next) => {
         success: true,
         data: {
             stats: result,
-            link
+            link,
+            date: {
+                startDate,
+                endDate
+            }
         }
         
     })
