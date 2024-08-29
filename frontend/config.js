@@ -1,4 +1,5 @@
 export const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000/api';
+export const WEB_SITE_URL = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:3000/'
 export const ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/v1/auth/register`,
   LOGIN: `${API_BASE_URL}/v1/auth/login`,
@@ -8,6 +9,7 @@ export const ENDPOINTS = {
   GETURLS: `${API_BASE_URL}/v1/minify`,
   DELETEURLS: `${API_BASE_URL}/v1/minify`,
   UPDATEURLS: `${API_BASE_URL}/v1/minify`,
-  REDIRECTURL: `${API_BASE_URL}/v1/minify`
+  REDIRECTURL: `${API_BASE_URL}/v1/minify`,
+  STATSURL: `${API_BASE_URL}/v1/stats`
 };
 
