@@ -34,9 +34,9 @@ export default function SearchLink({links,setLinkSearch}) {
     return (
         <form className='search-form' >
             <input className='search-input' type='text' placeholder='Search URL' value={value} onChange={handleChange} />
-            <button className='search-button'>
+            <div className='search-icon'>
                 <i className="fa-solid fa-magnifying-glass"></i>
-            </button>
+            </div>
         </form>
     )
 }
