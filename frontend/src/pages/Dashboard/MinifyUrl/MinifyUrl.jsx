@@ -5,6 +5,7 @@ import {useOnClickOutside} from '../../../hooks/useOnClickOutside.jsx'
 import { format } from 'date-fns'
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal.jsx'
 import { ENDPOINTS } from '../../../../config.js'
+import { WEB_SITE_URL } from '../../../../config.js'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getOptions } from './optionsConfig.js'
@@ -17,6 +18,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const [task, setTask] = useState('')
     const endpointDeleteUrl = ENDPOINTS.DELETEURLS
     const endpointUpdateUrl = ENDPOINTS.UPDATEURLS
+    const endpointStatsUrl = WEB_SITE_URL 
     const navigate = useNavigate()
     const [showEditUrl, setShowEditUrl] = useState(false)
 
@@ -60,7 +62,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         setShowEditUrl(true)
     }
     
-    const options = getOptions(copyUrlToClipboard, resetUrl, deleteUrl, editUrl)
+    const options = getOptions(copyUrlToClipboard, resetUrl, deleteUrl, editUrl, handleStats)
     
     async function handleConfirmAction() {
         let response
@@ -122,6 +124,11 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         setShowEditUrl(false)
     }
 
+    function handleStats() {
+        setTask('Stats')
+        setShowPanel(false)
+        navigate(`/stats?alias=${token}`)
+    }
     
 
     return (
@@ -135,7 +142,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
             <a href={linkOriginal} target="_blank" className='original-url'>{linkOriginal.length > 30 ? `${linkOriginal.slice(0,30)}...` : linkOriginal}</a>
             </div>
             <div className='right-box'>
-                <div className='box-stats'>
+                <div className='box-stats' onClick={handleStats}>
                     <span className='num-stats'>{numVisit}</span>
                     <i className="fa-solid fa-chart-simple"></i>
                 </div>
