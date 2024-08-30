@@ -127,7 +127,7 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
        const checkTokenAvailable = await LinkUrl.find({token: updateData.token})
 
         if (checkTokenAvailable.length > 0) {
-            return next(new ErrorResponse(`This alias ${updateData.token} is not available.`))
+            return next(new ErrorResponse(`This alias ${updateData.token} is not available.`,409))
     }
     }
 

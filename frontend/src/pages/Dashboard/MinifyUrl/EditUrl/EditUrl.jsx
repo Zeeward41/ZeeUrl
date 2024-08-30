@@ -42,6 +42,9 @@ export default function EditUrl({token, linkOriginal, onClose}) {
                     case 401:
                         toast.error('Not Authorized to edit this URL')
                         break
+                    case 409:
+                        toast.error('This alias is not available')
+                        break
                     default:
                         toast.error('Someting went wrong!')
                 }
