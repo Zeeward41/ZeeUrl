@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { minifyUrlValidation } from '../../../utils/InputValidation.jsx'
 import {ENDPOINTS} from '../../../../config.js'
 import Notification from '../../../components/Notification/Notification.jsx'
+import { useNavigate } from 'react-router-dom'
 
 export default function LinkShortener() {
 
@@ -10,6 +11,7 @@ export default function LinkShortener() {
     const [longUrl, setLongUrl] = useState('')
     const [customAlias, setCustomAlias] = useState('')
     const {url, alias} = {...minifyUrlValidation[0]}
+    const navigate = useNavigate()
 
     // idle  | loading | success | error
     const [formState, setFormState] = useState({
@@ -60,6 +62,9 @@ export default function LinkShortener() {
                 status: 'success',
                 message: 'URL minified successfully!'
             })
+            setTimeout(() => {
+                navigate(0)
+            }, 1000)
         } else if (json.error === 'Duplicate field value entered') {
             setFormState({
                 status: 'error',
