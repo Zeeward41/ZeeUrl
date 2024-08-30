@@ -126,10 +126,16 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
     if (updateData.token) {
        const checkTokenAvailable = await LinkUrl.find({token: updateData.token})
 
-       // if this alias already exist 
         if (checkTokenAvailable.length > 0) {
             return next(new ErrorResponse(`This alias ${updateData.token} is not available.`))
     }
+    }
+
+    // check if user want to reset Stats.
+    if (updateData.num_visit === 0 && updateData.num_unique_visite === 0) {
+        await LinkVisits.deleteMany({
+            link: link._id
+        })
     }
 
 
