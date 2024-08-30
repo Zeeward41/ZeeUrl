@@ -23,6 +23,7 @@ export const generateLink = asyncHandler(async (req, res, next) => {
         token = alias
     }
 
+
     const newLink = await LinkUrl.create({
         token,
         link_original: url,
@@ -52,6 +53,8 @@ export const deleteLink = asyncHandler(async (req, res, next) => {
     if(link.user.toString() !== req.user.id && req.user.role !== 'admin') {
         return next(new ErrorResponse(`User ${req.user.id} is not authorized to Delete this link`,401 ))
     }
+
+    await LinkVisits.deleteMany({link: link._id})
 
     await link.deleteOne()
     
@@ -118,6 +121,17 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
     if(link.user.toString() !== user.id && user.role !== 'admin') {
         return next(new ErrorResponse(`No authorized to update review`,401))
     }
+
+    // check if user want to change the Alias (token)
+    if (updateData.token) {
+       const checkTokenAvailable = await LinkUrl.find({token: updateData.token})
+
+       // if this alias already exist 
+        if (checkTokenAvailable.length > 0) {
+            return next(new ErrorResponse(`This alias ${updateData.token} is not available.`))
+    }
+    }
+
 
     link = await LinkUrl.findOneAndUpdate(
         {token},
