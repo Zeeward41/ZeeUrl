@@ -50,6 +50,7 @@ export default function Stats() {
         const fullEndpoint = `${endpointStats}?alias=${alias}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
         
         try { 
+            // setStatState('loading')
         const response = await fetch(fullEndpoint, {
             method: "GET",
             credentials: "include",
@@ -68,9 +69,6 @@ export default function Stats() {
         }
 
         if (!response.ok) {
-            console.log(json)
-            console.log("une erreur")
-            // je recupère ici une erreur de non authorize, il faudra en cas de ce type d'erreur de retourner vers la page acceuil
             switch (response.status) {
                 case 404:
                     toast.error('URL not found')
@@ -84,13 +82,16 @@ export default function Stats() {
                     toast.error('Something went wrong!')
                     navigate('/')
             }
+            // setStatState('error')
         }
 
     } catch (error) {
         toast.error('Something went wrong! try again')
-                    navigate('/')
+        navigate('/')
+        // setStatState('error')
+        }
     } 
-    }
+    
 
 
     useEffect(() => {
@@ -134,11 +135,11 @@ export default function Stats() {
                 </div>
                 <div className='stats-link'>
                     <div className='stats-link-box token'>
-                        <span>{`${WEB_SITE_URL}/${linkInfo.token}`}</span>
+                        <a href={`${WEB_SITE_URL}/${linkInfo.token}`} target={'_blank'}>{`${WEB_SITE_URL}/${linkInfo.token}`}</a>
                         <button className='stats-copy token' onClick={() => handleCopy(`${WEB_SITE_URL}/${linkInfo.token}`)}>Copy</button>
                     </div>
                     <div className='stats-link-box original'>
-                        <span>{linkInfo.link_original}</span>
+                        <a href={linkInfo.link_original} target={'_blank'}>{linkInfo.link_original}</a>
                         <button className='stats-copy original' onClick={() => handleCopy(linkInfo.link_original)}>Copy</button>
                     </div>
                     <span className='stats-date-creation'>Created : {new Date(linkInfo.createdAt).toLocaleString('en-GB', {
