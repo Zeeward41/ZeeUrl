@@ -1,11 +1,12 @@
 .stats-container {
-    max-width: 1286px;
-    margin: 0 auto;
-    padding: 0 3rem;
     display: flex;
     flex-direction: column;
-    flex: 0 1 1286px;
-    margin-top: 2rem;
+    flex: 0 1 auto;
+    /* margin-top: 2rem; */
+    max-width: 1286px;
+    margin: 3rem auto;
+    width: 100%;
+    padding: 0 3rem;
 
 }
 

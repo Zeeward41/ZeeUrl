@@ -1,4 +1,4 @@
-import Home from './pages/Home.jsx'
+import Home from './pages/Home/Home.jsx'
 import Signup from './pages/signUp/signUP.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/Login/Login.jsx'

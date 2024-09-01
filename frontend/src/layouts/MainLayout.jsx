@@ -6,6 +6,8 @@ import { useAuthContext } from '../context/AuthContext.jsx'
 import ModalMessageContextProvider from '../context/ModalMessageContext.jsx'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Footer from '../components/Footer/Footer.jsx'
+import './MainLayout.css'
 
 const MainLayout = () => {
 
@@ -49,13 +51,17 @@ const MainLayout = () => {
     }, [])
 
     return (
-        <>
+        <div className='jojo'>
             <ModalMessageContextProvider>
-                <Navbar />
+                <div className="page-content">
+                    <Navbar />
+                    <Outlet />
+                </div>
+                <Footer />
             </ModalMessageContextProvider>
-            <Outlet />
             <ToastContainer />
-        </>
+
+        </div>
     )
 }
 
