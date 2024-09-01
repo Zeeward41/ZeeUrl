@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { ENDPOINTS } from '../../../config';
 import { useNavigate } from 'react-router-dom'
+import './RedirectAlias.css'
 
 function RedirectAlias() {
   const { alias } = useParams();
@@ -21,7 +22,7 @@ function RedirectAlias() {
         if (!response.ok) {
           if (response.status === 404) {
             toast.error('URL not found')
-            navigate('/')
+            navigate('/notfound')
           } else {
             toast.error('Something went wrong!')
           }
@@ -43,7 +44,7 @@ function RedirectAlias() {
   }, []);
 
   return (
-    <div>
+    <div className='redirecting'>
       <p>Redirecting...</p>
     </div>
   );
