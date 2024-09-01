@@ -1,6 +1,6 @@
 import Home from './pages/Home/Home.jsx'
 import Signup from './pages/signUp/signUP.jsx'
-import NotFound from './pages/NotFound.jsx'
+import NotFound from './pages/NotFound/NotFound.jsx'
 import Login from './pages/Login/Login.jsx'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import Stats from './pages/Stats/Stats.jsx'
@@ -20,7 +20,7 @@ const router = createBrowserRouter(
       <Route path='/dashboard' element={<Dashboard />}/>
       <Route path='/stats' element={<Stats />} />
       <Route path='/:alias' element={<RedirectAlias />} />
-      <Route path='*' element={<NotFound />}/>
+      <Route path='/notfound' element={<NotFound />}/>
     </Route>
 
   </>
