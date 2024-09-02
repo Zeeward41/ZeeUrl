@@ -113,8 +113,14 @@ export default function Stats() {
             endDate = new Date()
         }
         
-        // 86400000 ms (24 hours) added to endDate to capture the full day, ensuring the same date range includes the entire day
+        try {
         fetchStats(startDate.getTime()/1000, (endDate.getTime() + 86400000 - 1)/1000) // format to timestamp /1000
+        } catch (error) {
+            if (error instanceof TypeError ) {
+            fetchStats(new Date(startDate).getTime()/1000, (new Date(endDate).getTime())/1000) // format to timestamp /1000
+
+            }
+        }
         
         
     }
