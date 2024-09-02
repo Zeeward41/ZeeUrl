@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ENDPOINTS } from '../../../config';
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +9,7 @@ function RedirectAlias() {
   const { alias } = useParams();
   const endpointRedirect = ENDPOINTS.REDIRECTURL
   const navigate = useNavigate()
+  const [ redirect, setRedirect] = useState(false)
 
     const redirectToOriginalUrl = async () => {
       try {
@@ -20,6 +21,7 @@ function RedirectAlias() {
         const json = await response.json();
 
         if (!response.ok) {
+          setRedirect(false)
           if (response.status === 404) {
             toast.error('URL not found')
             navigate('/notfound')
@@ -29,6 +31,7 @@ function RedirectAlias() {
         }
 
         if (json.success) {
+            setRedirect(true)
             window.location.href = json.data
         }
         
@@ -44,9 +47,10 @@ function RedirectAlias() {
   }, []);
 
   return (
+    redirect ? (
     <div className='redirecting'>
       <p>Redirecting...</p>
-    </div>
+    </div>) : ''
   );
 }
 
