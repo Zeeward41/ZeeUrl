@@ -23,7 +23,7 @@ export const stats = asyncHandler(async (req, res, next) => {
     }
 
     if (user._id.toString() !== link.user.toString() && user.role.toString() !== 'admin' ) {
-        return next(new ErrorResponse('Not authorized to acces this route', 401))
+        return next(new ErrorResponse('Not authorized to acces this route', 403))
     }
 
     // Check Date

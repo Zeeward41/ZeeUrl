@@ -51,7 +51,7 @@ export const deleteLink = asyncHandler(async (req, res, next) => {
     }
    
     if(link.user.toString() !== req.user.id && req.user.role !== 'admin') {
-        return next(new ErrorResponse(`User ${req.user.id} is not authorized to Delete this link`,401 ))
+        return next(new ErrorResponse(`User ${req.user.id} is not authorized to Delete this link`,403 ))
     }
 
     await LinkVisits.deleteMany({link: link._id})
@@ -119,7 +119,7 @@ export const updateUrl = asyncHandler(async (req, res, next) => {
     }
 
     if(link.user.toString() !== user.id && user.role !== 'admin') {
-        return next(new ErrorResponse(`No authorized to update review`,401))
+        return next(new ErrorResponse(`No authorized to update review`,403))
     }
 
     // check if user want to change the Alias (token)
