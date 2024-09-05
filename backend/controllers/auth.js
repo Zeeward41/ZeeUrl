@@ -68,13 +68,19 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     if(!user) {
         return res.status(200).json({
             success: false,
-            data: {}
+            data: {
+                user: null,
+                isAuthenticated: false
+            }
         })
     }
 
     res.status(200).json({
         success: true,
-        data: user
+        data: {
+            user: user,
+            isAuthenticated: true
+        }
     })
     
 })
