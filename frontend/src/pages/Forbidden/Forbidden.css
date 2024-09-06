@@ -1,0 +1,9 @@
+.forbidden {
+    display: flex;
+    flex-direction: column;
+    margin: auto auto;
+    align-items: center;
+    color: var(--main-color);
+    font-weight: bold;
+    font-size: 6rem;
+}
