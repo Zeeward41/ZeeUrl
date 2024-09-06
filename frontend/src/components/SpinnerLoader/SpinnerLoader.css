@@ -1,0 +1,14 @@
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.spinner > p {
+    font-size: 2rem;
+    color: var(--main-color);
+    /* font-weight: bold; */
+}
