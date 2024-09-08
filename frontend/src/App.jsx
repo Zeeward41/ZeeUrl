@@ -11,6 +11,9 @@ import MainLayout from './layouts/MainLayout.jsx'
 
 import NotFound from './pages/NotFound/NotFound.jsx'
 import Unauthorized from './pages/Unauthorized/Unauthorized.jsx'
+import Forbidden from './pages/Forbidden/Forbidden.jsx'
+
+import PrivateRoute from './components/PrivateRoute/PrivateRoute.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,13 +22,16 @@ const router = createBrowserRouter(
       <Route index element={<Home />}/>
       <Route path='/signup' element={<Signup />}/>
       <Route path='/login' element={<Login />}/>
-      <Route path='/dashboard' element={<Dashboard />}/>
-      <Route path='/stats' element={<Stats />} />
       <Route path='/:alias' element={<RedirectAlias />} />
       <Route path='/notfound' element={<NotFound />}/>
       <Route path='/unauthorized'element={<Unauthorized />}/>
-    </Route>
+      <Route path='/forbidden'element={<Forbidden />}/>
 
+      {/* Privates Routes */}
+      <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>}/>
+      <Route path='/stats' element={<PrivateRoute><Stats /></PrivateRoute>} />
+
+    </Route>
   </>
   ))
 

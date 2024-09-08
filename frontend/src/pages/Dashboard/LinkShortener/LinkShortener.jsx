@@ -63,7 +63,7 @@ export default function LinkShortener() {
                 message: 'URL minified successfully!'
             })
             setTimeout(() => {
-                navigate(0)
+                navigate(0) //refresh page 
             }, 1000)
         } else if (json.error === 'Duplicate field value entered') {
             setFormState({

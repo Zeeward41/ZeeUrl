@@ -7,11 +7,14 @@ import { ENDPOINTS } from '../../../config'
 import { useSearchParams } from 'react-router-dom'
 import { WEB_SITE_URL } from '../../../config'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+
+import SpinnerLoader from '../../components/SpinnerLoader/SpinnerLoader.jsx'
 
 export default function Stats() {
     // router
     const navigate = useNavigate()
+    const location = useLocation()
     // switch totalVisit and uniqueVisit
     const [active, setActive] = useState('all')
     // message
@@ -39,6 +42,8 @@ export default function Stats() {
     const [dateRange, setDateRange] = useState([])
     let [startDate, endDate] = dateRange
 
+    const [loading, setLoading] = useState(true)
+
 
     function handleChoice(option) {
         setActive(option)
@@ -50,7 +55,7 @@ export default function Stats() {
         const fullEndpoint = `${endpointStats}?alias=${alias}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`
         
         try { 
-            // setStatState('loading')
+            setLoading(true)
         const response = await fetch(fullEndpoint, {
             method: "GET",
             credentials: "include",
@@ -59,36 +64,34 @@ export default function Stats() {
         const json = await response.json()
 
         if(json.success) {
-            // setStatState('success')
             const newDict = json.data.stats
             setDataStats(newDict)
 
             setLinkInfo(json.data.link)
             setDateRange([json.data.date.startDate.toString(), json.data.date.endDate.toString()]) // update calendar date and change to adequat format
-        
+            setLoading(false)
         }
 
         if (!response.ok) {
             switch (response.status) {
                 case 404:
-                    toast.error('URL not found')
-                    navigate('/')
+                    navigate('/notfound', { state: { from: location}, replace: true})
                     break
                 case 401:
-                    toast.error('Not authorized')
-                    navigate('/')
+                    window.location.href = '/login'
+                    break
+                case 403:
+                    navigate('/forbidden', { state: { from: location}, replace: true})
                     break
                 default:
-                    toast.error('Something went wrong!')
-                    navigate('/')
+                    window.location.href = '/'
+
             }
-            // setStatState('error')
         }
 
     } catch (error) {
         toast.error('Something went wrong! try again')
-        navigate('/')
-        // setStatState('error')
+        navigate('/', { state: { from: location}, replace: true})
         }
     } 
     
@@ -98,9 +101,6 @@ export default function Stats() {
 
         fetchStats(startDateParam, endDateParam)
 
-        return () => {
-            fetchStats(startDateParam, endDateParam)
-        }
     }, [])
 
     function handleCalendarClose(startDate, endDate) {
@@ -131,6 +131,9 @@ export default function Stats() {
             .catch(() => toast.error('Failed to copy'))
     }
 
+    if(loading) {
+        return <SpinnerLoader />
+    }
 
     return (
         <div className='stats-container'>

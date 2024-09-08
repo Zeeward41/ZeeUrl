@@ -7,12 +7,19 @@ import ModalMessage from '../ModalMessage/ModalMessage.jsx'
 import { useModalMessageContext } from '../../context/ModalMessageContext.jsx'
 
 function Navbar() {
-    const {authState} = useAuthContext()
+    const {authState, setAuthState, checkAuthStatus} = useAuthContext()
     const {showLogoutMessage, typeModal, messageModal} = useModalMessageContext()
+    function handleClick() {
+        setAuthState((prev) => ({
+            ...prev,
+            isLoading: true
+        }))
+        window.location.href = '/'
+    }
     return (
         <div className="nav-container">
             <nav className="nav">
-                <Link to="/" className="site-title">ZeeURL</Link>
+                <Link onClick={handleClick} className="site-title">ZeeURL</Link>
             {authState.isAuthenticated ? <ProfileButton />:
                 <ul>
                     <li>

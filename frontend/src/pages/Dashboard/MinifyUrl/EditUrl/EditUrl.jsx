@@ -40,8 +40,10 @@ export default function EditUrl({token, linkOriginal, onClose}) {
                         toast.error('URL not Found')
                         break
                     case 401:
-                        toast.error('Not Authorized to edit this URL')
+                        window.location.href = '/login'
                         break
+                    case 403:
+                        toast.error('You are not authorized to modify this URL.')
                     case 409:
                         toast.error('This alias is not available')
                         break

@@ -1,9 +1,24 @@
 import './Home.css'
+import { useAuthContext } from '../../context/AuthContext'
 
 export default function Home() {
+
+    const {authState} = useAuthContext()
+
     return (
        <div className='home-container'>
-            <h1>Welcome on ZeeURL</h1>
+             <h1>
+                {`Welcome `}
+                    {
+                        authState.isAuthenticated ? (
+                        <>
+                            back <span className='user-name'>{authState.userInfo.name}</span>
+                        </>
+                        ) : (
+                        'to ZeeUrl'
+                        )
+                    }
+            </h1>
             <div className='home-text'>
                 <h2>Quick and easy minify URL</h2>
                 <p>Create short, <strong>easy-to-share</strong> URLs in seconds! <strong>ZeeUrl</strong> lets you quickly minify lengthy links from Instagram, Facebook, YouTube, Twitter, LinkedIn, WhatsApp, TikTok, blogs, and more. <strong>Simply</strong> paste your long URL, hit the "<strong>Minify URL</strong>" button, and you'll get a minify link ready to be shared across websites, chats, and emails. Track the number of clicks your link receives after it's minified!</p>

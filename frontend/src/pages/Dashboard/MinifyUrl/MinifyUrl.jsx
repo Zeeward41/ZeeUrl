@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal.jsx'
 import { ENDPOINTS } from '../../../../config.js'
 import { WEB_SITE_URL } from '../../../../config.js'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getOptions } from './optionsConfig.js'
 import EditUrl from './EditUrl/EditUrl.jsx'
@@ -20,6 +20,7 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const endpointUpdateUrl = ENDPOINTS.UPDATEURLS
     const endpointStatsUrl = WEB_SITE_URL 
     const navigate = useNavigate()
+    const location = useLocation()
     const [showEditUrl, setShowEditUrl] = useState(false)
 
     
@@ -103,10 +104,14 @@ export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
         if (!response.ok) {
             switch (response.status) {
                 case 404:
-                    toast.error('URL not found')
+                    toast.error('URL not found.')
                     break
                 case 401:
-                    toast.error(task === 'Delete Link' ? 'Not Authorized to delete this URL' : 'Not Authorized to update this URL')
+                    // toast.error(task === 'Delete Link' ? 'Not Authorized to delete this URL' : 'Not Authorized to update this URL')
+                    window.location.href = 'login'
+                    break
+                case 403:
+                    toast.error('You do not have permission to perform this action.')
                     break
                 default:
                     toast.error('Something went wrong!')

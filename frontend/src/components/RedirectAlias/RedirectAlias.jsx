@@ -2,13 +2,14 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ENDPOINTS } from '../../../config';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './RedirectAlias.css'
 
 function RedirectAlias() {
   const { alias } = useParams();
   const endpointRedirect = ENDPOINTS.REDIRECTURL
   const navigate = useNavigate()
+  const location = useLocation()
   const [ redirect, setRedirect] = useState(false)
 
     const redirectToOriginalUrl = async () => {
@@ -23,8 +24,7 @@ function RedirectAlias() {
         if (!response.ok) {
           setRedirect(false)
           if (response.status === 404) {
-            toast.error('URL not found')
-            navigate('/notfound')
+            navigate('/notfound', { state: { from: location}, replace: true})
           } else {
             toast.error('Something went wrong!')
           }

@@ -30,7 +30,6 @@ export default function Login() {
             status: 'loading',
             message: ''
         })
-
         const response = await fetch(endpointLogin, {
             method: "POST",
             credentials: "include",
