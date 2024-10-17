@@ -11,10 +11,8 @@ COPY package*.json ./
 RUN npm install
 
 # Copier les fichiers et dossiers du projet dans le répertoire de travail
-COPY config ./config
 COPY controllers ./controllers
 COPY routes ./routes
-COPY utils ./utils
 COPY server.js ./
 
 # Exposer le port sur lequel le serveur s'exécute
