@@ -11,3 +11,5 @@ range-server/config/.env
 infrastructure/terraform/.terraform
 infrastructure/terraform/*.tfstate
 infrastructure/terraform/*.tfstate.backup
+infrastructure/terraform/la_clef_private.pem
+infrastructure/terraform/dns_instance.txt
