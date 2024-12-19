@@ -31,7 +31,7 @@ resource "aws_instance" "jenkins_public_server" {
   associate_public_ip_address = true
 
   #ssh
-  # key_name = aws_key_pair.key_test.key_name
+  key_name = aws_key_pair.key_ci_Zeeurl.key_name
 
   # Attach the security group
   vpc_security_group_ids = [aws_security_group.jenkins.id]
