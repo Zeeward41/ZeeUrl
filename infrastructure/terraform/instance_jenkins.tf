@@ -11,11 +11,26 @@ resource "aws_vpc_security_group_ingress_rule" "allow_github_ssh" {
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  # cidr_ipv4 = "86.248.17.40/32"
   cidr_ipv4 = "0.0.0.0/0"
-  # cidr_ipv4 = jsondecode(data.http.github_actions_ip.response_body).actions
 }
 
+# Ingress rule
+resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh" {
+  security_group_id = aws_security_group.jenkins.id
+  from_port         = 22
+  to_port           = 22
+  ip_protocol       = "tcp"
+  cidr_ipv4 = "86.248.17.40/32"
+}
+
+# Ingress rule
+resource "aws_vpc_security_group_ingress_rule" "allow_me_jenkins" {
+  security_group_id = aws_security_group.jenkins.id
+  from_port         = 8080
+  to_port           = 8080
+  ip_protocol       = "tcp"
+  cidr_ipv4 = "86.248.17.40/32"
+}
 # Egress rule
 resource "aws_vpc_security_group_egress_rule" "allow_all_outbound" {
   security_group_id = aws_security_group.jenkins.id
