@@ -82,7 +82,7 @@ jobs:
         
       - name: Setup SSH key
         env:
-          INSTANCE_DNS: ${{ steps.recup_dns.outputs.file_dns}}
+          INSTANCE_DNS: ${{ steps.get_dns.outputs.file_dns}}
         run: |
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
@@ -100,7 +100,7 @@ jobs:
       
       - name: Run Ansible Playbook
         env:
-          INSTANCE_DNS: ${{ steps.recup_dns.outputs.file_dns}}
+          INSTANCE_DNS: ${{ steps.get_dns.outputs.file_dns}}
           SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           # chmod 400 infrastructure/terraform/la_clef_private.pem
