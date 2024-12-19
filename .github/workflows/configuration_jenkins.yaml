@@ -72,7 +72,6 @@ jobs:
         run: |
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
           gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
-          gh variable set SSH_PRIVATE_KEY --body "$SSH_KEY"
       
       - name: install Ansible and Dependencies
         run: |
@@ -107,13 +106,6 @@ jobs:
           # chmod 400 infrastructure/terraform/la_clef_private.pem
           echo "$SSH_KKEY" > /home/runner/my_key.pem
           chmod 400 /home/runner/my_key.pem
-
-          # test affichage clef
-          echo "Affichage clef"
-          head -n 5 /home/runner/my_key.pem | tail -n 4
-
-          echo "test instance_DNS"
-          echo "Instance DNS: $INSTANCE_DNS"
           
           # Creation config SSH
           echo "Config SSH"
@@ -127,5 +119,5 @@ jobs:
 
           # let's ansible
           echo "lets ansible"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_jenkins.yaml
         
