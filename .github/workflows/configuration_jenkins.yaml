@@ -126,5 +126,5 @@ jobs:
 
           # let's ansible
           echo "lets ansible"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/playbook.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder.yaml
         
