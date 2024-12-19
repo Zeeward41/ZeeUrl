@@ -1,0 +1,130 @@
+name: Configuration Jenkins Server 
+on: workflow_dispatch
+jobs:
+  config Server:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VERSION: '1.10.1'
+      AWS_REGION: 'eu-north-1'
+    steps:
+      - name: get github code
+        uses: actions/checkout@v4
+
+      - name: Config AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION}}
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: infrastructure/terraform
+
+      - name: Terraform Format
+        run: terraform fmt
+        working-directory: infrastructure/terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: infrastructure/terraform
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="env.tfvars" -out=tfplan
+        working-directory: infrastructure/terraform
+
+      - name: Terraform apply
+        if: github.ref == 'refs/heads/master'
+        run: terraform apply -var-file="env.tfvars" -auto-approve tfplan
+        working-directory: infrastructure/terraform
+
+      - name: Get Private Key
+        id: read_file
+        run: |
+          if [ -f infrastructure/terraform/la_clef_private.pem ]; then
+            FILE_CONTENT=$(base64 -w 0 infrastructure/terraform/la_clef_private.pem)
+
+            # store data as Output
+            echo "$FILE_CONTENT"
+            echo file_content=$FILE_CONTENT >> $GITHUB_OUTPUT
+          else
+            echo "File not Found"
+            exit 0
+          fi
+      
+      - name: Get DNS instance
+        id: get_dns
+        run: |
+          FILE_DNS=$(cat infrastructure/terraform/dns_instance.txt)
+          # Store data as Output
+          echo file_dns=$FILE_DNS >> $GITHUB_OUTPUT
+
+      - name: Add SSH Key to Github Secrets
+        env:
+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          SSH_KEY: ${{ steps.read_file.outputs.file_content }}
+        run: |
+          SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
+          gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
+      
+      - name: install Ansible and Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible python3-pip
+          pip3 install boto3 botocore
+
+        
+      - name: Setup SSH key
+        env:
+          INSTANCE_DNS: ${{ steps.recup_dns.outputs.file_dns}}
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p /home/runner/.ssh/
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/key_ssh
+          chmod 700 /home/runner/.ssh/key_ssh
+          
+          # Verify key format
+          ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
+
+          # add key to SSH agent
+          ssh-add /home/runner/.ssh/key_ssh
+
+          # Add host key
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS >> /home/runner/.ssh/known_hosts
+      
+      - name: Run Ansible Playbook
+        env:
+          INSTANCE_DNS: ${{ steps.recup_dns.outputs.file_dns}}
+          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          # chmod 400 infrastructure/terraform/la_clef_private.pem
+          echo "$SSH_KKEY" > /home/runner/my_key.pem
+          chmod 400 /home/runner/my_key.pem
+
+          # test affichage clef
+          echo "Affichage clef"
+          head -n 5 /home/runner/my_key.pem | tail -n 4
+
+          echo "test instance_DNS"
+          echo "Instance DNS: $INSTANCE_DNS"
+          
+          # Creation config SSH
+          echo "Config SSH"
+          echo -e "Host mon_host\n\t Hostname $INSTANCE_DNS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem" > /home/runner/.ssh/config
+          cat /home/runner/.ssh/config
+
+          # Creation inventory
+          echo "Creation inventory"
+          echo -e "[aws_instances]\nmon_host" > infrastructure/ansible/inventory
+          cat infrastructure/ansible/inventory
+
+          # let's ansible
+          echo "lets ansible"
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/playbook.yaml
+        
