@@ -1,7 +1,7 @@
 name: Configuration Jenkins Server 
 on: workflow_dispatch
 jobs:
-  config Server:
+  config_Server:
     runs-on: ubuntu-latest
 
     env:
