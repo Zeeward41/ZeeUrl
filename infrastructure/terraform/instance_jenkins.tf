@@ -20,7 +20,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh" {
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  cidr_ipv4 = "86.248.17.40/32"
+  cidr_ipv4 = var.mon_ip
 }
 
 # Ingress rule
@@ -29,8 +29,9 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_jenkins" {
   from_port         = 8080
   to_port           = 8080
   ip_protocol       = "tcp"
-  cidr_ipv4 = "86.248.17.40/32"
+  cidr_ipv4 = var.mon_ip
 }
+
 # Egress rule
 resource "aws_vpc_security_group_egress_rule" "allow_all_outbound" {
   security_group_id = aws_security_group.jenkins.id

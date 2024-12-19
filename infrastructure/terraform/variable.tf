@@ -16,3 +16,7 @@ variable "ami_instance" {
 variable "instance_type" {
 
 }
+
+variable "mon_ip" {
+
+}
