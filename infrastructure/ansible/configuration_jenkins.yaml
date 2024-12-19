@@ -1,0 +1,52 @@
+---
+- hosts: aws_instances
+  become: true
+  tasks:
+    - name: Update and Upgrade
+      apt:
+        update_cache: yes
+        name: '*'
+        state: latest
+
+    - name: Installing Java
+      apt:
+        name: 'openjdk-17-jdk'
+        update-cache: yes
+        state: latest
+
+# Installation des prérequis
+    - name: Installation des dépendances
+      apt:
+        name:
+          - curl
+          - gnupg
+          - ca-certificates
+          - gpg
+        state: present
+        update_cache: yes
+
+    - name: Ajouter la clé GPG de Jenkins
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+        mode: '0644'
+
+    - name: Ajouter le dépot Jenkins 
+      ansible.builtin.apt_repository:
+        repo:  "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
+        state: present
+
+    - name: Update Repo
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Installing Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Enable Jenkins
+      systemd:
+        name: jenkins
+        enabled: yes
+        state: started
