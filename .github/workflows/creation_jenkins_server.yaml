@@ -1,4 +1,4 @@
-name: Configuration Jenkins Server 
+name: Creation Jenkins Server 
 on: workflow_dispatch
 jobs:
   config_Server:
