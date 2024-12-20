@@ -6,7 +6,7 @@ resource "aws_security_group" "jenkins" {
 }
 
 # Ingress rule
-resource "aws_vpc_security_group_ingress_rule" "allow_github_ssh" {
+resource "aws_vpc_security_group_ingress_rule" "allow_github_ssh_jenkins" {
   security_group_id = aws_security_group.jenkins.id
   from_port         = 22
   to_port           = 22
@@ -15,7 +15,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_github_ssh" {
 }
 
 # Ingress rule
-resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh" {
+resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh_jenkins" {
   security_group_id = aws_security_group.jenkins.id
   from_port         = 22
   to_port           = 22
@@ -33,7 +33,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_jenkins" {
 }
 
 # Egress rule
-resource "aws_vpc_security_group_egress_rule" "allow_all_outbound" {
+resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_jenkins" {
   security_group_id = aws_security_group.jenkins.id
   #   from_port         = 0
   #   to_port           = 0
