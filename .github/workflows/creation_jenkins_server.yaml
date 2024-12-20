@@ -58,12 +58,14 @@ jobs:
             exit 0
           fi
       
-      - name: Get DNS instance
+      - name: Get DNS instance Jenkins and SonarQube
         id: get_dns
         run: |
-          FILE_DNS=$(cat infrastructure/terraform/dns_instance.txt)
+          FILE_DNS_JENKINS=$(cat infrastructure/terraform/dns_instance_jenkins.txt)
+          FILE_DNS_SONARQUBE=$(cat infrastructure/terraform/dns_instance_sonarqube.txt)
           # Store data as Output
-          echo file_dns=$FILE_DNS >> $GITHUB_OUTPUT
+          echo file_dns_jenkins=$FILE_DNS_JENKINS >> $GITHUB_OUTPUT
+          echo file_dns_sonarqube=$FILE_DNS_SONARQUBE >> $GITHUB_OUTPUT
 
       - name: Add SSH Key to Github Secrets
         env:
@@ -80,9 +82,10 @@ jobs:
           pip3 install boto3 botocore
 
         
-      - name: Setup SSH key
+      - name: Setup SSH key Jenkins and SonarQube
         env:
-          INSTANCE_DNS: ${{ steps.get_dns.outputs.file_dns}}
+          INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
+          INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
         run: |
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
@@ -96,11 +99,13 @@ jobs:
           ssh-add /home/runner/.ssh/key_ssh
 
           # Add host key
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_JENKINS >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
       
       - name: Run Ansible Playbook
         env:
-          INSTANCE_DNS: ${{ steps.get_dns.outputs.file_dns}}
+          INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
+          INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
           SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           # chmod 400 infrastructure/terraform/la_clef_private.pem
@@ -109,15 +114,16 @@ jobs:
           
           # Creation config SSH
           echo "Config SSH"
-          echo -e "Host mon_host\n\t Hostname $INSTANCE_DNS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem" > /home/runner/.ssh/config
+          echo -e "Host jenkins\n\t Hostname $INSTANCE_DNS_JENKINS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+          echo -e "Host sonarqube\n\t Hostname $INSTANCE_DNS_SONARQUBE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
           cat /home/runner/.ssh/config
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[aws_instances]\nmon_host" > infrastructure/ansible/inventory
+          echo -e "[aws_instances]\njenkins\nsonarqube" > infrastructure/ansible/inventory
           cat infrastructure/ansible/inventory
 
           # let's ansible
           echo "lets ansible"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_jenkins.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder.yaml
         
