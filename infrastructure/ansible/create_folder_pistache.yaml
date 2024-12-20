@@ -1,11 +1,11 @@
-- hosts: aws_instances
+- hosts: sonarqube
   become: yes
   gather_facts: no
 
   tasks:
-    - name: Créer le répertoire /vanille
+    - name: Créer le répertoire /pistache
       ansible.builtin.file:
-        path: /vanille
+        path: /pistache
         state: directory
         mode: '0755'
         owner: ubuntu

@@ -1,5 +1,5 @@
 ---
-- hosts: jenkins
+- hosts: sonarqube
   become: true
   tasks:
     - name: Update and Upgrade

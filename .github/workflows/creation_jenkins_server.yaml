@@ -1,4 +1,4 @@
-name: Creation Jenkins Server 
+name: Creation and Configuration Jenkins and SonarQube Servers 
 on: workflow_dispatch
 jobs:
   config_Server:
@@ -120,10 +120,12 @@ jobs:
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[aws_instances]\njenkins\nsonarqube" > infrastructure/ansible/inventory
+          echo -e "[jenkins]\njenkins\n" > infrastructure/ansible/inventory
+          echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/ansible/inventory
           cat infrastructure/ansible/inventory
 
-          # let's ansible
-          echo "lets ansible"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder.yaml
+          #Run ansible
+          echo "Run ansible"
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder_fraise.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder_pistache.yaml
         
