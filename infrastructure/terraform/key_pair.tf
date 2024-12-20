@@ -16,7 +16,7 @@ resource "local_file" "dns_instance_Jenkins" {
 }
 
 resource "local_file" "dns_instance_SonarQube" {
-    content= aws_instance.jenkins_public_server.public_dns
+    content= aws_instance.sonarQube_public_server.public_dns
     filename = "dns_instance_sonarqube.txt"
 }
 
