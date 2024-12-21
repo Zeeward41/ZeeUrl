@@ -1,30 +1,30 @@
 ---
 - hosts: jenkins
- become: true
- tasks:
-   - name: Install prerequisites
-     apt:
-       name:
-         - wget
-         - apt-transport-https 
-         - gnupg
-       state: present
-       update_cache: yes
+  become: true
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - wget
+          - apt-transport-https 
+          - gnupg
+        state: present
+        update_cache: yes
 
-   - name: Download and install Trivy GPG key
-     shell: |
-       wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-     args:
-       creates: /usr/share/keyrings/trivy.gpg
+    - name: Download and install Trivy GPG key
+      shell: |
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+      args:
+        creates: /usr/share/keyrings/trivy.gpg
 
-   - name: Add Trivy repository
-     shell: |
-       echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-     args:
-       creates: /etc/apt/sources.list.d/trivy.list
+    - name: Add Trivy repository
+      shell: |
+        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+      args:
+        creates: /etc/apt/sources.list.d/trivy.list
 
-   - name: Install Trivy
-     apt:
-       name: trivy
-       state: present
-       update_cache: yes
+    - name: Install Trivy
+      apt:
+        name: trivy
+        state: present
+        update_cache: yes
