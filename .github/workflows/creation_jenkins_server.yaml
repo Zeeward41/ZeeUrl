@@ -126,6 +126,6 @@ jobs:
 
           #Run ansible
           echo "Run ansible"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder_fraise.yaml
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/create_folder_pistache.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_jenkins.yaml
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_sonarqube.yaml
         

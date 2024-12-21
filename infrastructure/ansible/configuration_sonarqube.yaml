@@ -8,11 +8,6 @@
         name: '*'
         state: latest
 
-    - name: Installing Java
-      apt:
-        name: 'openjdk-17-jdk'
-        update-cache: yes
-        state: latest
 
 # Installation des prérequis
     - name: Installation des dépendances
@@ -25,28 +20,28 @@
         state: present
         update_cache: yes
 
-    - name: Ajouter la clé GPG de Jenkins
-      ansible.builtin.get_url:
-        url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
-        dest: /usr/share/keyrings/jenkins-keyring.asc
-        mode: '0644'
-
-    - name: Ajouter le dépot Jenkins 
-      ansible.builtin.apt_repository:
-        repo:  "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
-    - name: Update Repo
-      ansible.builtin.apt:
-        update_cache: yes
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
 
-    - name: Installing Jenkins
+    - name: Update apt and install docker-ce
       apt:
-        name: jenkins
-        state: present
-
-    - name: Enable Jenkins
-      systemd:
-        name: jenkins
-        enabled: yes
+        name: docker-ce
+        state: latest
+        update_cache: true
+        
+    - name: Make sure Docker is started
+      service:
+        name: docker
         state: started
+        enabled: yes
+    
+    - name: Start SonarQube container
+      shell: |
+        docker run -d -p 9000:9000 sonarqube:lts-community
