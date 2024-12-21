@@ -52,6 +52,28 @@
         enabled: yes
         state: started
 
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+        
+    - name: Make sure Docker is started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
     - name: Grant permissions to Docker socket
       shell: |
         chmod 666 /var/run/docker.sock
