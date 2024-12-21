@@ -127,5 +127,8 @@ jobs:
           #Run ansible
           echo "Run ansible"
           ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_jenkins.yaml
+
+          echo "Install Trivy on Jenkins Server"
+          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/install_trivy.yaml
           ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_sonarqube.yaml
         
