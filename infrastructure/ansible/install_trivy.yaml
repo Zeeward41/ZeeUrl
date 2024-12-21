@@ -1,0 +1,40 @@
+---
+- hosts: jenkins
+  become: true
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - wget
+          - apt-transport-https
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Download Trivy GPG key
+      get_url:
+        url: https://aquasecurity.github.io/trivy-repo/deb/public.key
+        dest: /usr/share/keyrings/trivy.key
+        mode: '0644'
+
+    - name: Add Trivy repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/trivy.key] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main"
+        state: present
+        filename: trivy
+
+    - name: Install Trivy
+      apt:
+        name: trivy
+        state: present
+        update_cache: yes
+
+    - name: Verify Trivy installation
+      command: trivy --version
+      register: trivy_version
+      changed_when: false
+
+    - name: Display Trivy version
+      debug:
+        var: trivy_version.stdout
