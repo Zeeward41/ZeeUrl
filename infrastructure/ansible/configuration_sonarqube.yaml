@@ -42,6 +42,13 @@
         state: started
         enabled: yes
     
-    - name: Start SonarQube container
+    - name: Check if SonarQube container is running
+      shell: |
+        docker ps -q --filter "ancestor=sonarqube:lts-community"
+      register: sonarqube_container_running
+      changed_when: false
+
+    - name: Start SonarQube container if not running
       shell: |
         docker run -d -p 9000:9000 sonarqube:lts-community
+      when: sonarqube_container_running.stdout == ""
