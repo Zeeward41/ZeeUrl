@@ -51,3 +51,7 @@
         name: jenkins
         enabled: yes
         state: started
+
+    - name: Grant permissions to Docker socket
+      shell: |
+        chmod 666 /var/run/docker.sock
