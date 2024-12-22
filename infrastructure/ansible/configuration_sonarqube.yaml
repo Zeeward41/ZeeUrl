@@ -56,7 +56,7 @@
     - name: check if container are "exited"
       shell: |
         docker ps -a -q --filter "ancestor=sonarqube:lts-community" --filter "status=exited"
-        register: exited_containers
+      register: exited_containers
       when: sonarqube_container_running.stdout == ""
 
     - name: remove exited SonarQube containers
