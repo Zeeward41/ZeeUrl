@@ -68,4 +68,4 @@
     - name: Start SonarQube container if not running
       shell: |
         docker run -d --name sonarqube -p 9000:9000 -v sonarqube_data:/opt/sonarqube/data sonarqube:lts-community
-      when: sonarqube_container_running.stdout == "
+      when: sonarqube_container_running.stdout == ""
