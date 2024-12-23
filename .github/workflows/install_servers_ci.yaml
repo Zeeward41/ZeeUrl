@@ -25,30 +25,30 @@ jobs:
 
       - name: Terraform init
         run: terraform init
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform Format
         run: terraform fmt
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform Plan
         run: terraform plan -var-file="env.tfvars" -out=tfplan
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform apply
         if: github.ref == 'refs/heads/master'
         run: terraform apply -var-file="env.tfvars" -auto-approve tfplan
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Get Private Key
         id: read_file
         run: |
-          if [ -f infrastructure/terraform/la_clef_private.pem ]; then
-            FILE_CONTENT=$(base64 -w 0 infrastructure/terraform/la_clef_private.pem)
+          if [ -f infrastructure/CI/terraform/la_clef_private.pem ]; then
+            FILE_CONTENT=$(base64 -w 0 infrastructure/CI/terraform/la_clef_private.pem)
 
             # store data as Output
             echo "$FILE_CONTENT"
@@ -61,8 +61,8 @@ jobs:
       - name: Get DNS instance Jenkins and SonarQube
         id: get_dns
         run: |
-          FILE_DNS_JENKINS=$(cat infrastructure/terraform/dns_instance_jenkins.txt)
-          FILE_DNS_SONARQUBE=$(cat infrastructure/terraform/dns_instance_sonarqube.txt)
+          FILE_DNS_JENKINS=$(cat infrastructure/CI/terraform/dns_instance_jenkins.txt)
+          FILE_DNS_SONARQUBE=$(cat infrastructure/CI/terraform/dns_instance_sonarqube.txt)
           # Store data as Output
           echo file_dns_jenkins=$FILE_DNS_JENKINS >> $GITHUB_OUTPUT
           echo file_dns_sonarqube=$FILE_DNS_SONARQUBE >> $GITHUB_OUTPUT
@@ -108,7 +108,7 @@ jobs:
           INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
           SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # chmod 400 infrastructure/terraform/la_clef_private.pem
+          # chmod 400 infrastructure/CI/terraform/la_clef_private.pem
           echo "$SSH_KKEY" > /home/runner/my_key.pem
           chmod 400 /home/runner/my_key.pem
           
@@ -120,18 +120,18 @@ jobs:
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[jenkins]\njenkins\n" > infrastructure/ansible/inventory
-          echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/ansible/inventory
-          cat infrastructure/ansible/inventory
+          echo -e "[jenkins]\njenkins\n" > infrastructure/CI/ansible/inventory
+          echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/CI/ansible/inventory
+          cat infrastructure/CI/ansible/inventory
 
           #Run ansible
           echo "Run ansible"
           echo "Install and Configure Jenkins"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_jenkins.yaml
+          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
 
           echo "Install Trivy on Jenkins Server"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/install_trivy.yaml
+          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/install_trivy.yaml
 
           echo "Install and Configure SonarQube"
-          ansible-playbook -i infrastructure/ansible/inventory infrastructure/ansible/configuration_sonarqube.yaml
+          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
         
