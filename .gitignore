@@ -8,9 +8,9 @@ backend/config/.env
 range-server/node_modules
 range-server/config/.env
 
-infrastructure/terraform/.terraform
-infrastructure/terraform/*.tfstate
-infrastructure/terraform/*.tfstate.backup
-infrastructure/terraform/la_clef_private.pem
-infrastructure/terraform/dns_instance_jenkins.txt
-infrastructure/terraform/dns_instance_sonarqube.txt
+infrastructure/CI/terraform/.terraform
+infrastructure/CI/terraform/*.tfstate
+infrastructure/CI/terraform/*.tfstate.backup
+infrastructure/CI/terraform/la_clef_private.pem
+infrastructure/CI/terraform/dns_instance_jenkins.txt
+infrastructure/CI/terraform/dns_instance_sonarqube.txt
