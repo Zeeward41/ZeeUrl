@@ -25,19 +25,19 @@ jobs:
 
       - name: Terraform init
         run: terraform init
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform Format
         run: terraform fmt
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform Plan Destroy
         run: terraform plan -destroy -var-file="env.tfvars" -out=tfplan-destroy
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Terraform destroy
         run: terraform apply -var-file="env.tfvars" -auto-approve tfplan-destroy
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/CI/terraform
 
       - name: Delete Secret Github SSH_PRIVATE_KEY
         env:
