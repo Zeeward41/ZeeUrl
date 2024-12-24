@@ -79,11 +79,11 @@ jobs:
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
           gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
       
-      - name: install Ansible and Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible python3-pip
-          pip3 install boto3 botocore
+      # - name: install Ansible and Dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y ansible python3-pip
+      #     pip3 install boto3 botocore
 
         
       - name: Setup SSH key Jenkins and SonarQube
@@ -106,7 +106,6 @@ jobs:
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_JENKINS >> /home/runner/.ssh/known_hosts
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
 
-          # t
       
       # - name: Run Ansible Playbook
       #   env:
@@ -139,4 +138,11 @@ jobs:
 
       #     echo "Install and Configure SonarQube"
       #     ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
+
+      - name: Get Runner IP
+        id: get_ip
+        run: |
+          RUNNER_IP=$(curl -s https://api.ipify.org)
+          echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
+          echo "Runner IP is: $RUNNER_IP"
         
