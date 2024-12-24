@@ -63,8 +63,6 @@ jobs:
           # Store data as Output
           echo file_ip_jenkins=$FILE_IP_JENKINS >> GITHUB_OUTPUT
           echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> GITHUB_OUTPUT
-          echo "IP Jenkins =" $FILE_IP_JENKINS
-          echo "IP sonarQube =" $FILE_IP_SONARQUBE
       
       - name: Add Github Runner IP to SG servers (sonarQube and Jenkins)
         run: |
@@ -73,7 +71,7 @@ jobs:
 
       - name: Add IP SonarQube to SG Jenkins servers (TCP - port 8080)
         run: |
-          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 8080 --cidr ${{steps.get_ip_runner.outputs.file_ip_sonarQube}}/32
+          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 8080 --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
 
 
       - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )
