@@ -129,7 +129,6 @@ jobs:
           cat infrastructure/CI/ansible/inventory
 
           #Run ansible
-          echo "Run ansible"
           echo "Install and Configure Jenkins"
           ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
 
