@@ -105,6 +105,8 @@ jobs:
           # Add host key
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_JENKINS >> /home/runner/.ssh/known_hosts
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
+
+          # t
       
       # - name: Run Ansible Playbook
       #   env:
