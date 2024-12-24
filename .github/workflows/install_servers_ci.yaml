@@ -141,7 +141,7 @@ jobs:
           else
             echo "Rule already exists - skipping"
           fi
-      # - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )
+      # - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )c
       #   run: |
       #     aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_sonarQube}} --protocol tcp --port 9000 --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
 
