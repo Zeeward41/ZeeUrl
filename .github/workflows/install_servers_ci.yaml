@@ -63,20 +63,30 @@ jobs:
           # Store data as Output
           echo file_ip_jenkins=$FILE_IP_JENKINS >> $GITHUB_OUTPUT
           echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> $GITHUB_OUTPUT
+
+      - name: Get group name SG servers Jenkins and SonarQube
+        id: get_group_name
+        run: |
+          GROUP_NAME_JENKINS=$(cat infrastructure/CI/terraform/group_name_jenkins_SG.txt)
+          GROUP_NAME_SONARQUBE=$(cat infrastructure/CI/terraform/group_name_sonarQube_SG.txt)
+          # Store data as Output
+          echo "file_group_name_jenkins=$GROUP_NAME_JENKINS" >> $GITHUB_OUTPUT
+          echo "file_group_name_sonarQube=$GROUP_NAME_SONARQUBE" >> $GITHUB_OUTPUT
       
       - name: Add Github Runner IP to SG servers (sonarQube and Jenkins)
         run: |
-          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
-          aws ec2 authorize-security-group-ingress --group-name sonarQube-SG --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_sonarQube}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
 
+          
       - name: Add IP SonarQube to SG Jenkins servers (TCP - port 8080)
         run: |
-          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 8080 --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} --protocol tcp --port 8080 --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
 
 
       - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )
         run: |
-          aws ec2 authorize-security-group-ingress --group-name sonarQube-SG --protocol tcp --port 9000 --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
+          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_sonarQube}} --protocol tcp --port 9000 --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
 
       - name: Get Private Key
         id: read_file
