@@ -151,7 +151,7 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32
 
 
-      # - name: Delete Github Actions IP to SG
-      #   run: |
-      #     aws ec2 revoke-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32
-      #   if: always()
+      - name: Delete Github Actions IP to SG
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32
+        if: always()
