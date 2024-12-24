@@ -84,40 +84,62 @@ jobs:
       #     aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} --protocol tcp --port 8080 --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
       - name: Add IP SonarQube to SG Jenkins servers (TCP - port 8080)
         run: |
-          # Check if the rule already exists
-          RULE_EXISTS=$(aws ec2 describe-security-groups \
+          # Récupérer d'abord le group-id à partir du nom
+          SG_ID=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
-            --query "SecurityGroups[0].IpPermissions[?FromPort==`8080` && ToPort==`8080` && IpProtocol=='tcp'].IpRanges[?CidrIp=='${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32']" \
+            --query 'SecurityGroups[0].GroupId' \
             --output text)
           
-          if [ -z "$RULE_EXISTS" ]; then
-            echo "The rule does not exist yet. Adding it..."
+          # Vérifier si la règle existe
+          RULE_EXISTS=$(aws ec2 describe-security-groups \
+            --group-ids $SG_ID \
+            --filters "Name=ip-permission.from-port,Values=8080" \
+                "Name=ip-permission.to-port,Values=8080" \
+                "Name=ip-permission.protocol,Values=tcp" \
+                "Name=ip-permission.cidr,Values=${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32" \
+            --query 'length(SecurityGroups[0].IpPermissions)' \
+            --output text)
+          
+          if [ "$RULE_EXISTS" = "0" ]; then
+            echo "Adding new security group rule..."
             aws ec2 authorize-security-group-ingress \
-              --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
+              --group-id $SG_ID \
               --protocol tcp \
               --port 8080 \
               --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
+            echo "Rule added successfully"
           else
-            echo "The rule already exists. No action needed."
+            echo "Rule already exists - skipping"
           fi
 
       - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000)
         run: |
-          # Check if the rule already exists
-          RULE_EXISTS=$(aws ec2 describe-security-groups \
+          # Récupérer d'abord le group-id à partir du nom
+          SG_ID=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
-            --query "SecurityGroups[0].IpPermissions[?FromPort==`9000` && ToPort==`9000` && IpProtocol=='tcp'].IpRanges[?CidrIp=='${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32']" \
+            --query 'SecurityGroups[0].GroupId' \
             --output text)
           
-          if [ -z "$RULE_EXISTS" ]; then
-            echo "The rule does not exist yet. Adding it..."
+          # Vérifier si la règle existe
+          RULE_EXISTS=$(aws ec2 describe-security-groups \
+            --group-ids $SG_ID \
+            --filters "Name=ip-permission.from-port,Values=9000" \
+                "Name=ip-permission.to-port,Values=9000" \
+                "Name=ip-permission.protocol,Values=tcp" \
+                "Name=ip-permission.cidr,Values=${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32" \
+            --query 'length(SecurityGroups[0].IpPermissions)' \
+            --output text)
+          
+          if [ "$RULE_EXISTS" = "0" ]; then
+            echo "Adding new security group rule..."
             aws ec2 authorize-security-group-ingress \
-              --group-name ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
+              --group-id $SG_ID \
               --protocol tcp \
               --port 9000 \
               --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
+            echo "Rule added successfully"
           else
-            echo "The rule already exists. No action needed."
+            echo "Rule already exists - skipping"
           fi
       # - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )
       #   run: |
