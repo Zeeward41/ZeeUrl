@@ -148,8 +148,8 @@ jobs:
 
       - name: Add Github Runner IP to SG servers (sonarQube and Jenkins)
         run: |
-          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32 --tag-specifications ResourceType=security-group-rule,Tags=[{Key=Description,Value="Allow Github Runner SSH access"}]'
-          aws ec2 authorize-security-group-ingress --group-name sonarQube-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32 --tag-specifications ResourceType=security-group-rule,Tags=[{Key=Description,Value="Allow Github Runner SSH access"}]'
+          aws ec2 authorize-security-group-ingress --group-name jenkins-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32 --tag-specifications 'ResourceType=security-group-rule,Tags=[{Key=Description,Value="Allow Github Runner SSH access"}]'
+          aws ec2 authorize-security-group-ingress --group-name sonarQube-SG --protocol tcp --port 22 --cidr ${{steps.get_ip.outputs.runner_ip}}/32 --tag-specifications 'ResourceType=security-group-rule,Tags=[{Key=Description,Value="Allow Github Runner SSH access"}]'
 
 
       # - name: Delete Github Actions IP to SG
