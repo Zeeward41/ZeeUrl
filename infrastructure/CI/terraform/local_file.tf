@@ -13,3 +13,12 @@ resource "local_file" "private_key" {
     filename = "la_clef_private.pem"
 }
 
+resource "local_file" "ip_jenkins_server" {
+    content =   aws_instance.jenkins_public_server.public_ip
+    filename = "ip_jenkins_server.txt"
+}
+
+resource "local_file" "ip_sonarQube_server" {
+    content =   aws_instance.sonarQube_public_server.public_ip
+    filename = "ip_sonarQube_server.txt"
+}
