@@ -22,3 +22,13 @@ resource "local_file" "ip_sonarQube_server" {
     content =   aws_instance.sonarQube_public_server.public_ip
     filename = "ip_sonarQube_server.txt"
 }
+
+resource "local_file" "group_name_jenkins_SG" {
+    content = aws_security_group.jenkins.name 
+    filename = "group_name_jenkins_SG.txt"
+}
+
+resource "local_file" "group_name_sonarQube_SG" {
+    content = aws_security_group.sonarQube.name
+    filename = "group_name_sonarQube_SG.txt"
+}
