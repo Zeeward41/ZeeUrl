@@ -61,8 +61,8 @@ jobs:
           FILE_IP_JENKINS=$(cat infrastructure/CI/terraform/ip_jenkins_server.txt)
           FILE_IP_SONARQUBE=$(cat infrastructure/CI/terraform/ip_sonarQube_server.txt)
           # Store data as Output
-          echo file_ip_jenkins=$FILE_IP_JENKINS >> GITHUB_OUTPUT
-          echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> GITHUB_OUTPUT
+          echo file_ip_jenkins=$FILE_IP_JENKINS >> $GITHUB_OUTPUT
+          echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> $GITHUB_OUTPUT
       
       - name: Add Github Runner IP to SG servers (sonarQube and Jenkins)
         run: |
