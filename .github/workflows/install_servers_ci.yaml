@@ -76,7 +76,7 @@ jobs:
 
       - name: Add IP Jenkins to SG SonarQube servers (TCP - port 9000 )
         run: |
-          aws ec2 authorize-security-group-ingress --group-name sonarQube_SG --protocol tcp --port 9000 --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
+          aws ec2 authorize-security-group-ingress --group-name sonarQube-SG --protocol tcp --port 9000 --cidr ${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32
 
       - name: Get Private Key
         id: read_file
