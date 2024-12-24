@@ -63,6 +63,8 @@ jobs:
           # Store data as Output
           echo file_ip_jenkins=$FILE_IP_JENKINS >> GITHUB_OUTPUT
           echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> GITHUB_OUTPUT
+          echo "IP Jenkins =" $FILE_IP_JENKINS
+          echo "IP sonarQube =" $FILE_IP_SONARQUBE
       
       - name: Add Github Runner IP to SG servers (sonarQube and Jenkins)
         run: |
