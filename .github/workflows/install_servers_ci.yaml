@@ -88,6 +88,10 @@ jobs:
             --group-names ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
             --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[*].CidrIp' \
             --output text)
+          
+          echo "liste : $RULE_EXISTS"
+
+          echo "ZZZZZZZ: $RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32" 
 
           # if rule exists then check if the rule target ip is sonarQube server.
           if echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"; then
