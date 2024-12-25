@@ -93,6 +93,13 @@ jobs:
             --output text)
 
           echo "liste SSSSSSSSS = $RULE_EXISTSXX"
+
+          RULE=$(aws ec2 describe-security-groups \
+            --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
+            --query 'SecurityGroups[0]' \
+            --output text)
+
+          echo "TTTTTTTTTTTTT = $RULE"
           
           # Vérifier si la règle existe
           # RULE_EXISTS=$(aws ec2 describe-security-groups \
