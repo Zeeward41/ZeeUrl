@@ -91,6 +91,13 @@ jobs:
             --output text)
 
           echo "liste SG : $SG_ID"
+
+          RULE_EXISTSXX=$(aws ec2 describe-security-groups \
+            --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
+            --query "SecurityGroups[0].IpPermissions[?FromPort==\`9000\` && ToPort==\`9000\` && IpProtocol=='tcp'].IpRanges[?CidrIp==\`${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32\`']" \
+            --output text)
+
+          echo "liste SSSSSSSSS : $RULE_EXISTSXX"
           
           # Vérifier si la règle existe
           # RULE_EXISTS=$(aws ec2 describe-security-groups \
