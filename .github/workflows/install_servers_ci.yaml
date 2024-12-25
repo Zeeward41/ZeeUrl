@@ -86,17 +86,10 @@ jobs:
       #     aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} --protocol tcp --port 8080 --cidr ${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32
       - name: Add IP SonarQube to SG Jenkins servers (TCP - port 8080)
         run: |
-          # Récupérer d'abord le group-id à partir du nom
-          SG_ID=$(aws ec2 describe-security-groups \
-            --group-names ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
-            --query 'SecurityGroups[0].GroupId' \
-            --output text)
-
-          echo "liste SG : $SG_ID"
 
           RULE_EXISTSXX=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
-            --query 'SecurityGroups[0].IpPermissions[?FromPort==`9000` && ToPort==`9000` && IpProtocol==`tcp`].IpRanges[?CidrIp==`'"${{steps.get_ip_servers.outputs.file_ip_jenkins}}/32"'`]' \
+            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22` && ToPort==`22` && IpProtocol==`tcp`].IpRanges[?CidrIp==`'"${{steps.get_ip_runner.outputs.runner_ip}}/32"'`]' \
             --output text)
 
           echo "liste SSSSSSSSS : $RULE_EXISTSXX"
