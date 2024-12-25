@@ -96,10 +96,17 @@ jobs:
 
           RULE=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
-            --query 'SecurityGroups[0]' \
+            --query 'SecurityGroups[0].IPPERMISSIONS[?FromPort==`22` && ToPort==`22`]' \
             --output text)
 
           echo "TTTTTTTTTTTTT = $RULE"
+
+          RULEA=$(aws ec2 describe-security-groups \
+            --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
+            --query 'SecurityGroups[0].IPPERMISSIONS[?FromPort==`22` && ToPort==`22` && IpProtocol==`tcp`]' \
+            --output text)
+
+          echo "TTTTTTTTTTTTT = $RULEA"
           
           # Vérifier si la règle existe
           # RULE_EXISTS=$(aws ec2 describe-security-groups \
