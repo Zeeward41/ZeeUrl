@@ -86,13 +86,9 @@ jobs:
           # check if rule with 8080 port exists
           RULE_EXISTS=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
-            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[*].CidrIp' \
+            --query 'SecurityGroups[0].IpPermissions[?FromPort==`8080`].IpRanges[*].CidrIp' \
             --output text)
           
-          echo "liste : $RULE_EXISTS"
-
-          echo "ZZZZZZZ: $RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32" 
-
           # if rule exists then check if the rule target ip is sonarQube server.
           if echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"; then
             echo "The rule already exists - skipping"
@@ -112,7 +108,7 @@ jobs:
           # check if rule with 9000 port exists
           RULE_EXISTS=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
-            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[*].CidrIp' \
+            --query 'SecurityGroups[0].IpPermissions[?FromPort==`9000`].IpRanges[*].CidrIp' \
             --output text)
 
           # if rule exists then check if the rule target ip is Jenkins server.
