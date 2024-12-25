@@ -92,7 +92,7 @@ jobs:
             --query 'SecurityGroups[0].IpPermissions[?FromPort==`22` && ToPort==`22` && IpProtocol==`tcp`].IpRanges[?CidrIp==`'"${{steps.get_ip_runner.outputs.runner_ip}}/32"'`]' \
             --output text)
 
-          echo "liste SSSSSSSSS : $RULE_EXISTSXX"
+          echo "liste SSSSSSSSS = $RULE_EXISTSXX"
           
           # Vérifier si la règle existe
           # RULE_EXISTS=$(aws ec2 describe-security-groups \
