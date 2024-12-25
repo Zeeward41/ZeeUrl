@@ -103,10 +103,17 @@ jobs:
 
           RULEA=$(aws ec2 describe-security-groups \
             --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
-            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[*].CidrIp' \
+            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[${{steps.get_ip_runner.outputs.runner_ip}}/32].CidrIp' \
             --output text)
 
-          echo "TTTTTTTTTTTTT = $RULEA"
+          echo "ZZZZZZZ = $RULEA"
+
+          RULEB=$(aws ec2 describe-security-groups \
+            --group-names ${{steps.get_group_name.outputs.file_group_name_sonarQube}} \
+            --query 'SecurityGroups[0].IpPermissions[?FromPort==`22`].IpRanges[${{steps.get_ip_runner.outputs.runner_ip}}/32]' \
+            --output text)
+
+          echo "AAAAA = $RULEB"
           
           # Vérifier si la règle existe
           # RULE_EXISTS=$(aws ec2 describe-security-groups \
