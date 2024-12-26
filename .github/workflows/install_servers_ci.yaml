@@ -158,7 +158,7 @@ jobs:
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
           gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
       
-      # - name: install Ansible and Dependencies 
+      # - name: install Ansible and Dependencies
       #   run: |
       #     sudo apt-get update
       #     sudo apt-get install -y ansible python3-pip
