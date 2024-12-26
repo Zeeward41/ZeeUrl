@@ -90,8 +90,6 @@ jobs:
             --output text)
 
           echo "all ip : $RULE_EXISTS"
-          echo "grep : "
-          echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"
          
           # if rule exists then check if the rule target ip is sonarQube server.
           if echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"; then
