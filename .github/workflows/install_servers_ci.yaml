@@ -88,7 +88,11 @@ jobs:
             --group-names ${{steps.get_group_name.outputs.file_group_name_jenkins}} \
             --query 'SecurityGroups[0].IpPermissions[?FromPort==`8080`].IpRanges[*].CidrIp' \
             --output text)
-          
+
+          echo "all ip : $RULE_EXISTS"
+          echo "grep : "
+          echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"
+         
           # if rule exists then check if the rule target ip is sonarQube server.
           if echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"; then
             echo "The rule already exists - skipping"
@@ -156,11 +160,11 @@ jobs:
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
           gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
       
-      - name: install Ansible and Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible python3-pip
-          pip3 install boto3 botocore
+      # - name: install Ansible and Dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y ansible python3-pip
+      #     pip3 install boto3 botocore
 
         
       - name: Setup SSH key Jenkins and SonarQube
@@ -184,37 +188,37 @@ jobs:
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
           #
       
-      - name: Run Ansible Playbook
-        env:
-          INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
-          INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
-          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          # chmod 400 infrastructure/CI/terraform/la_clef_private.pem
-          echo "$SSH_KKEY" > /home/runner/my_key.pem
-          chmod 400 /home/runner/my_key.pem
+      # - name: Run Ansible Playbook
+      #   env:
+      #     INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
+      #     INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
+      #     SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #   run: |
+      #     # chmod 400 infrastructure/CI/terraform/la_clef_private.pem
+      #     echo "$SSH_KKEY" > /home/runner/my_key.pem
+      #     chmod 400 /home/runner/my_key.pem
           
-          # Creation config SSH
-          echo "Config SSH"
-          echo -e "Host jenkins\n\t Hostname $INSTANCE_DNS_JENKINS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
-          echo -e "Host sonarqube\n\t Hostname $INSTANCE_DNS_SONARQUBE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
-          cat /home/runner/.ssh/config
+      #     # Creation config SSH
+      #     echo "Config SSH"
+      #     echo -e "Host jenkins\n\t Hostname $INSTANCE_DNS_JENKINS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+      #     echo -e "Host sonarqube\n\t Hostname $INSTANCE_DNS_SONARQUBE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+      #     cat /home/runner/.ssh/config
 
-          # Creation inventory
-          echo "Creation inventory"
-          echo -e "[jenkins]\njenkins\n" > infrastructure/CI/ansible/inventory
-          echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/CI/ansible/inventory
-          cat infrastructure/CI/ansible/inventory
+      #     # Creation inventory
+      #     echo "Creation inventory"
+      #     echo -e "[jenkins]\njenkins\n" > infrastructure/CI/ansible/inventory
+      #     echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/CI/ansible/inventory
+      #     cat infrastructure/CI/ansible/inventory
 
-          #Run ansible
-          echo "Install and Configure Jenkins"
-          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
+      #     #Run ansible
+      #     echo "Install and Configure Jenkins"
+      #     ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
 
-          echo "Install Trivy on Jenkins Server"
-          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/install_trivy.yaml
+      #     echo "Install Trivy on Jenkins Server"
+      #     ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/install_trivy.yaml
 
-          echo "Install and Configure SonarQube"
-          ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
+      #     echo "Install and Configure SonarQube"
+      #     ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
 
       
 
