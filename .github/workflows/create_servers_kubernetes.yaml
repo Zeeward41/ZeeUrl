@@ -1,0 +1,180 @@
+name: Create Servers for Kubernetes
+on: workflow_dispatch
+jobs:
+  le_cleanup:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VERSION: '1.10.1'
+      AWS_REGION: 'eu-north-1'
+    steps:
+      - name: get github code
+        uses: actions/checkout@v4
+      
+      - name: Add my IP to env.tfvars
+        env: 
+          MY_IP: ${{ secrets.MY_IP }}
+        run: |
+          # delete last line (mon_ip = 0.0.0.0/0 (default))
+          sed -i '$ d' infrastructure/CD/terraform/env.tfvars
+
+          # add my ip to env.tfvars
+          echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
+
+      - name: Get Runner IP
+        id: get_ip_runner
+        run: |
+          RUNNER_IP=$(curl -s https://api.ipify.org)
+          echo "runner_ip=$RUNNER_IP" >> $GITHUB_OUTPUT
+          echo "Runner IP is: $RUNNER_IP"
+
+      - name: Config AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION}}
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform Format
+        run: terraform fmt
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="env.tfvars" -out=tfplan
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform apply
+        if: github.ref == 'refs/heads/master'
+        run: terraform apply -var-file="env.tfvars" -auto-approve tfplan
+        working-directory: infrastructure/CD/terraform
+
+      # - name: get IP servers jenkins and sonarQube
+      #   id: get_ip_servers
+      #   run: |
+      #     FILE_IP_JENKINS=$(cat infrastructure/CI/terraform/ip_jenkins_server.txt)
+      #     FILE_IP_SONARQUBE=$(cat infrastructure/CI/terraform/ip_sonarQube_server.txt)
+      #     # Store data as Output
+      #     echo file_ip_jenkins=$FILE_IP_JENKINS >> $GITHUB_OUTPUT
+      #     echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> $GITHUB_OUTPUT
+
+      - name: Get group name SG Kubernetes Servers
+        id: get_group_name
+        run: |
+          GROUP_NAME_KUBERNETES=$(cat infrastructure/CD/terraform/sg_kubernetes-group_name.txt)
+          # Store data as Output
+          echo "file_group_name_kubernetes=$GROUP_NAME_KUBERNETES" >> $GITHUB_OUTPUT
+      
+      - name: Add Github Runner IP to SG Kubernetes servers 
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+          
+
+
+
+      
+         
+
+      - name: Get Private Key
+        id: read_file
+        run: |
+          if [ -f infrastructure/CD/terraform/private_key.pem ]; then
+            FILE_CONTENT=$(base64 -w 0 infrastructure/CD/terraform/private_key.pem)
+
+            # store data as Output
+            echo "$FILE_CONTENT"
+            echo file_content=$FILE_CONTENT >> $GITHUB_OUTPUT
+          else
+            echo "File not Found"
+            exit 0
+          fi
+      
+      - name: Get DNS Kubernetes Servers
+        id: get_dns
+        run: |
+          FILE_DNS_MASTER=$(cat infrastructure/CD/terraform/dns_master.txt)
+          # Store data as Output
+          echo file_dns_master=$FILE_DNS_MASTER >> $GITHUB_OUTPUT
+
+      - name: Add SSH Key to Github Secrets
+        env:
+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          SSH_KEY: ${{ steps.read_file.outputs.file_content }}
+        run: |
+          SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
+          gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
+      
+      # - name: install Ansible and Dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y ansible python3-pip
+      #     pip3 install boto3 botocore
+
+        
+      - name: Setup SSH key Kubernetes Server
+        env:
+          INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p /home/runner/.ssh/
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/key_ssh
+          chmod 700 /home/runner/.ssh/key_ssh
+          
+          # Verify key format
+          ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
+
+          # add key to SSH agent
+          ssh-add /home/runner/.ssh/key_ssh
+
+          # Add host key
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
+          # ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
+      
+      - name: Run Ansible Playbook
+        env:
+          INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          # chmod 400 infrastructure/CD/terraform/private_key.pem
+          echo "$SSH_KKEY" > /home/runner/my_key.pem
+          chmod 400 /home/runner/my_key.pem
+          
+          # Creation config SSH
+          echo "Config SSH"
+          echo -e "Host master_node\n\t Hostname $INSTANCE_DNS_MASTER\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+          cat /home/runner/.ssh/config
+
+          # Creation inventory
+          echo "Creation inventory"
+          echo -e "[kubernetes_nodes]\nmaster_node\n" > infrastructure/CD/ansible/inventory
+          cat infrastructure/CD/ansible/inventory
+
+          #Run ansible
+          # echo "Install and Configure Jenkins"
+          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
+
+          # echo "Install Trivy on Jenkins Server"
+          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/install_trivy.yaml
+
+          # echo "Install and Configure SonarQube"
+          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
+
+      
+
+      
+      - name: Delete Github Actions IP to SG kubernetes Servers
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+        if: always()
