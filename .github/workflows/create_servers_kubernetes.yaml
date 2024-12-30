@@ -15,11 +15,20 @@ jobs:
         env: 
           MY_IP: ${{ secrets.MY_IP }}
         run: |
+
+          echo "before"
+          cat infrastructure/CD/terraform/env.tfvars
           # delete last line (mon_ip = 0.0.0.0/0 (default))
           sed -i '$ d' infrastructure/CD/terraform/env.tfvars
 
+          echo "between"
+          cat infrastructure/CD/terraform/env.tfvars
+
           # add my ip to env.tfvars
           echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
+
+          echo "after"
+          cat infrastructure/CD/terraform/env.tfvars
 
       - name: Get Runner IP
         id: get_ip_runner
