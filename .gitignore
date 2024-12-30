@@ -14,3 +14,8 @@ infrastructure/CI/terraform/*.tfstate.backup
 infrastructure/CI/terraform/la_clef_private.pem
 infrastructure/CI/terraform/dns_instance_jenkins.txt
 infrastructure/CI/terraform/dns_instance_sonarqube.txt
+
+
+infrastructure/CD/terraform/.terraform
+infrastructure/CD/terraform/*.tfstate
+infrastructure/CD/terraform/*.tfstate.backup

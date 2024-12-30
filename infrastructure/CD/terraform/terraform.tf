@@ -21,14 +21,14 @@ terraform {
       version = "2.5.2"
     }
 
-    http = {
-      source  = "hashicorp/http"
-      version = "3.4.5"
-    }
+    # http = {
+    #   source  = "hashicorp/http"
+    #   version = "3.4.5"
+    # }
 
-    github = {
-      source = "integrations/github"
-      version = "6.4.0"
-    }
+    # github = {
+    #   source = "integrations/github"
+    #   version = "6.4.0"
+    # }
   }
 }

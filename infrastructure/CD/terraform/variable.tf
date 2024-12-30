@@ -17,6 +17,6 @@ variable "instance_type" {
 
 }
 
-variable "mon_ip" {
+# variable "mon_ip" {
 
-}
+# }
