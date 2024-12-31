@@ -5,7 +5,7 @@ resource "tls_private_key" "ssh_key" {
 }
 
 # Créer une ressource de clé AWS
-resource "aws_key_pair" "key_ci_Zeeurl" {
+resource "aws_key_pair" "key_cd_kubernetes" {
   key_name   = "key_cd_kubernetes"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }

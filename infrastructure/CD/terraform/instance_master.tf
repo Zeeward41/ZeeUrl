@@ -19,7 +19,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_traffic_in_cluster" {
 #   from_port         = 0
 #   to_port           =  0
   ip_protocol       = "-1"
-  self = true
+  referenced_security_group_id = aws_security_group.kubernetes_servers.id
 }
 
 # # Ingress rule
@@ -66,7 +66,7 @@ resource "aws_instance" "master_kubernetes" {
   key_name = aws_key_pair.key_cd_kubernetes.key_name
 
   # Attach the security group
-  vpc_security_group_ids = [aws_security_group.kubernetes-servers.id]
+  vpc_security_group_ids = [aws_security_group.kubernetes_servers.id]
 
   tags = {
     Name = "Kubernetes Master"

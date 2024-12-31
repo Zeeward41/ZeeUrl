@@ -19,3 +19,5 @@ infrastructure/CI/terraform/dns_instance_sonarqube.txt
 infrastructure/CD/terraform/.terraform
 infrastructure/CD/terraform/*.tfstate
 infrastructure/CD/terraform/*.tfstate.backup
+infrastructure/CI/terraform/private_key.pem
+infrastructure/CI/terraform/dns_master.txt
