@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "zeeurl-backend-41"
+    bucket = "zeeurl-backend-41/CD"
     region = "eu-north-1"
     key    = "terraform.tfstate"
   }
