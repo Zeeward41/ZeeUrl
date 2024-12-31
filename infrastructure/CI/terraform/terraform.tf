@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "zeeurl-backend-41/CI"
+    bucket = "zeeurl-backend-41"
     region = "eu-north-1"
-    key    = "terraform.tfstate"
+    key    = "CI/terraform.tfstate"
   }
 
   required_providers {
