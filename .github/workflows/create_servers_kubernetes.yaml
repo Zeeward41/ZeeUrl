@@ -181,7 +181,7 @@ jobs:
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[kubernetes_nodes]\nmaster_node\nnode1\nnode2" > infrastructure/CD/ansible/inventory
+          echo -e "[kubernetes_all_nodes]\nmaster_node\nnode1\nnode2\n\n[kubernetes_nodes]\nnode1\nnode2" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
 
           #Run ansible
