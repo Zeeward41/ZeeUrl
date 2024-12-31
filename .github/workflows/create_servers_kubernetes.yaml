@@ -114,8 +114,12 @@ jobs:
         id: get_dns
         run: |
           FILE_DNS_MASTER=$(cat infrastructure/CD/terraform/dns_master.txt)
+          FILE_DNS_NODE1=$(cat infrastructure/CD/terraform/dns_node1.txt)
+          FILE_DNS_NODE2=$(cat infrastructure/CD/terraform/dns_node2.txt)
           # Store data as Output
           echo file_dns_master=$FILE_DNS_MASTER >> $GITHUB_OUTPUT
+          echo file_dns_node1=$FILE_DNS_NODE1 >> $GITHUB_OUTPUT
+          echo file_dns_node2=$FILE_DNS_NODE2 >> $GITHUB_OUTPUT
 
       - name: Add SSH Key to Github Secrets
         env:
@@ -135,6 +139,8 @@ jobs:
       - name: Setup SSH key Kubernetes Server
         env:
           INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+          INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
+          INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
         run: |
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
@@ -149,11 +155,14 @@ jobs:
 
           # Add host key
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
-          # ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_SONARQUBE >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
       
       - name: Run Ansible Playbook
         env:
           INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+          INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
+          INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
           SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY_KUBERNETES }}
         run: |
           # chmod 400 infrastructure/CD/terraform/private_key.pem
@@ -163,11 +172,16 @@ jobs:
           # Creation config SSH
           echo "Config SSH"
           echo -e "Host master_node\n\t Hostname $INSTANCE_DNS_MASTER\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+
+          echo -e "Host node1\n\t Hostname $INSTANCE_DNS_NODE_ONE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+
+          echo -e "Host node2\n\t Hostname $INSTANCE_DNS_NODE_TWO\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+
           cat /home/runner/.ssh/config
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[kubernetes_nodes]\nmaster_node\n" > infrastructure/CD/ansible/inventory
+          echo -e "[kubernetes_nodes]\nmaster_node\nnode1\nnode2" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
 
           #Run ansible
