@@ -123,7 +123,7 @@ jobs:
           SSH_KEY: ${{ steps.read_file.outputs.file_content }}
         run: |
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
-          gh secret set SSH_PRIVATE_KEY --body "$SSH_KEY"
+          gh secret set SSH_PRIVATE_KEY_KUBERNETES --body "$SSH_KEY"
       
       # - name: install Ansible and Dependencies
       #   run: |
@@ -138,7 +138,7 @@ jobs:
         run: |
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
-          echo "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/key_ssh
+          echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
           chmod 700 /home/runner/.ssh/key_ssh
           
           # Verify key format
@@ -154,7 +154,7 @@ jobs:
       - name: Run Ansible Playbook
         env:
           INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
-          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY_KUBERNETES }}
         run: |
           # chmod 400 infrastructure/CD/terraform/private_key.pem
           echo "$SSH_KKEY" > /home/runner/my_key.pem

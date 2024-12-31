@@ -1,0 +1,46 @@
+name: Delete Kubernetes
+on: workflow_dispatch
+jobs:
+  le_cleanup:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VERSION: '1.10.1'
+      AWS_REGION: 'eu-north-1'
+    steps:
+      - name: obtenir le code github
+        uses: actions/checkout@v4
+
+      - name: Configurer AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION}}
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform Format
+        run: terraform fmt
+        working-directory: infrastructure/CD/terraform
+
+      - name: Terraform Plan Destroy
+        run: terraform plan -destroy -var-file="env.tfvars" -out=tfplan-destroy
+        working-directory: infrastructure/CD'/terraform
+
+      - name: Terraform destroy
+        run: terraform apply -var-file="env.tfvars" -auto-approve tfplan-destroy
+        working-directory: infrastructure/CD/terraform
+
+      - name: Delete Secret Github SSH_PRIVATE_KEY
+        env:
+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+        run: 
+          gh secret delete SSH_PRIVATE_KEY
