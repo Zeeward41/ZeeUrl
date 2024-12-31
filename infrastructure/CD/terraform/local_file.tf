@@ -12,7 +12,7 @@ resource "local_file" "dns_master" {
     filename = "dns_master.txt"
 }
 
-resource "local_file" "sg_kubernetes_group_name" {
-    content = aws_security_group.kubernetes_servers.group_name
-    filename = "sg_kubernetes-group_name.txt"
+resource "local_file" "sg_kubernetes_name" {
+    content = aws_security_group.kubernetes_servers.name
+    filename = "sg_kubernetes_name.txt"
 }

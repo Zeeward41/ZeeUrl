@@ -82,7 +82,7 @@ jobs:
       - name: Get group name SG Kubernetes Servers
         id: get_group_name
         run: |
-          GROUP_NAME_KUBERNETES=$(cat infrastructure/CD/terraform/sg_kubernetes-group_name.txt)
+          GROUP_NAME_KUBERNETES=$(cat infrastructure/CD/terraform/sg_kubernetes_name.txt)
           # Store data as Output
           echo "file_group_name_kubernetes=$GROUP_NAME_KUBERNETES" >> $GITHUB_OUTPUT
       
