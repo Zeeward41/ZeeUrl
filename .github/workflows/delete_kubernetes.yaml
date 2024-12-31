@@ -39,8 +39,8 @@ jobs:
         run: terraform apply -var-file="env.tfvars" -auto-approve tfplan-destroy
         working-directory: infrastructure/CD/terraform
 
-      - name: Delete Secret Github SSH_PRIVATE_KEY
+      - name: Delete Secret Github SSH_PRIVATE_KEY_KUBERNETES
         env:
           GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
         run: 
-          gh secret delete SSH_PRIVATE_KEY
+          gh secret delete SSH_PRIVATE_KEY_KUBERNETES
