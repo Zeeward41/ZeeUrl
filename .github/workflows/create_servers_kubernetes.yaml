@@ -16,19 +16,11 @@ jobs:
           MY_IP: ${{ secrets.MY_IP }}
         run: |
 
-          echo "before"
-          cat infrastructure/CD/terraform/env.tfvars
           # delete last line (mon_ip = 0.0.0.0/0 (default))
           sed -i '$ d' infrastructure/CD/terraform/env.tfvars
 
-          echo "between"
-          cat infrastructure/CD/terraform/env.tfvars
-
           # add my ip to env.tfvars
           echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
-
-          echo "after"
-          cat infrastructure/CD/terraform/env.tfvars
 
       - name: Get Runner IP
         id: get_ip_runner
@@ -70,15 +62,6 @@ jobs:
         run: terraform apply -var-file=env.tfvars -auto-approve tfplan
         working-directory: infrastructure/CD/terraform
 
-      # - name: get IP servers jenkins and sonarQube
-      #   id: get_ip_servers
-      #   run: |
-      #     FILE_IP_JENKINS=$(cat infrastructure/CI/terraform/ip_jenkins_server.txt)
-      #     FILE_IP_SONARQUBE=$(cat infrastructure/CI/terraform/ip_sonarQube_server.txt)
-      #     # Store data as Output
-      #     echo file_ip_jenkins=$FILE_IP_JENKINS >> $GITHUB_OUTPUT
-      #     echo file_ip_sonarQube=$FILE_IP_SONARQUBE >> $GITHUB_OUTPUT
-
       - name: Get group name SG Kubernetes Servers
         id: get_group_name
         run: |
@@ -90,12 +73,6 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
           
-
-
-
-      
-         
-
       - name: Get Private Key
         id: read_file
         run: |
@@ -181,7 +158,7 @@ jobs:
 
           # Creation inventory
           echo "Creation inventory"
-          echo -e "[kubernetes_all_nodes]\nmaster_node\nnode1\nnode2\n\n[kubernetes_nodes]\nnode1\nnode2" > infrastructure/CD/ansible/inventory
+          echo -e "[workers]\nnode1\nnode2\n\n[control_plane]\nmaster_node" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
 
       
