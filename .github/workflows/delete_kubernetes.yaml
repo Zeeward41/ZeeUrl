@@ -1,7 +1,7 @@
 name: Delete Kubernetes
 on: workflow_dispatch
 jobs:
-  le_cleanup:
+  CleanupKubernetes:
     runs-on: ubuntu-latest
 
     env:
