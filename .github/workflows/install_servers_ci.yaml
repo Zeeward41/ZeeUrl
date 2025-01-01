@@ -47,12 +47,12 @@ jobs:
         working-directory: infrastructure/CI/terraform
 
       - name: Terraform Plan
-        run: terraform plan -var-file="env.tfvars" -out=tfplan
+        run: terraform plan -var-file=env.tfvars -out=tfplan
         working-directory: infrastructure/CI/terraform
 
       - name: Terraform apply
         if: github.ref == 'refs/heads/master'
-        run: terraform apply -var-file="env.tfvars" -auto-approve tfplan
+        run: terraform apply -var-file=env.tfvars -auto-approve tfplan
         working-directory: infrastructure/CI/terraform
 
       - name: get IP servers jenkins and sonarQube
