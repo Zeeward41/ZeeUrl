@@ -1,7 +1,7 @@
-name: Cleanup
+name: Cleanup CI
 on: workflow_dispatch
 jobs:
-  le_cleanup:
+  CleanupCI:
     runs-on: ubuntu-latest
 
     env:

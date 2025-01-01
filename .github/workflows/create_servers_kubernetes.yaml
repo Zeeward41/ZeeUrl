@@ -1,7 +1,7 @@
 name: Create Servers for Kubernetes
 on: workflow_dispatch
 jobs:
-  le_cleanup:
+  CreateServers:
     runs-on: ubuntu-latest
 
     env:
@@ -183,18 +183,6 @@ jobs:
           echo "Creation inventory"
           echo -e "[kubernetes_all_nodes]\nmaster_node\nnode1\nnode2\n\n[kubernetes_nodes]\nnode1\nnode2" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
-
-          #Run ansible
-          # echo "Install and Configure Jenkins"
-          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
-
-          # echo "Install Trivy on Jenkins Server"
-          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/install_trivy.yaml
-
-          # echo "Install and Configure SonarQube"
-          # ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_sonarqube.yaml
-
-      
 
       
       - name: Delete Github Actions IP to SG kubernetes Servers
