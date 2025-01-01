@@ -1,0 +1,33 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: create the 'k8sadmin' user
+      user:
+        name: k8sadmin
+        append: yes
+        state: present
+        createhome: yes
+        shell: /bin/bash
+
+    - name: allow 'k8sadmin' sudo permission
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'k8sadmin ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Create .ssh directory for k8sadmin
+      file:
+        path: /home/k8sadmin/.ssh
+        state: directory
+        mode: '0700'
+        owner: k8sadmin
+        group: k8sadmin
+
+    - name: Copy authorized_keys from ubuntu user
+      copy:
+        remote_src: yes
+        src: /home/ubuntu/.ssh/authorized_keys
+        dest: /home/k8sadmin/.ssh/authorized_keys
+        mode: '0600'
+        owner: k8sadmin
+        group: k8sadmin

@@ -106,11 +106,11 @@ jobs:
           SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
           gh secret set SSH_PRIVATE_KEY_KUBERNETES --body "$SSH_KEY"
       
-      # - name: install Ansible and Dependencies
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y ansible python3-pip
-      #     pip3 install boto3 botocore
+      - name: install Ansible and Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible python3-pip
+          pip3 install boto3 botocore
 
         
       - name: Setup SSH key Kubernetes Server
@@ -135,7 +135,7 @@ jobs:
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
       
-      - name: Run Ansible Playbook
+      - name: Configure Ansible
         env:
           INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
           INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
@@ -161,6 +161,12 @@ jobs:
           echo -e "[workers]\nnode1\nnode2\n\n[control_plane]\nmaster_node" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
 
+      - name: Run Ansible Playbook
+        run: |
+          #Run ansible
+          echo "Setup User k8sadmin"
+          ansible-playbook -i inventory setup_user.yaml
+        working-directory: infrastructure/CD/ansible
       
       - name: Delete Github Actions IP to SG kubernetes Servers
         run: |
