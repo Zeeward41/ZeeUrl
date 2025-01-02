@@ -84,21 +84,21 @@
         - /tmp/runc
         - /tmp/cni-plugins.tgz
     
-    # Générer le fichier de configuration par défaut
-    - name: Générer config.toml par défaut
-      shell: containerd config default > /etc/containerd/config.toml
-      args:
-        creates: /etc/containerd/config.toml
-
-    - name: Ensure SystemdCgroup = true is present in config.toml
-      blockinfile:
+    - name: Supprimer /etc/containerd/config.toml s'il existe
+      file:
         path: /etc/containerd/config.toml
-        marker: "# {mark}"  # This prevents adding unnecessary markers to TOML files
-        block: |
-          SystemdCgroup = true
-        insertafter: '^\[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]'
-      when: >
-        "'SystemdCgroup = true' not in lookup('file', '/etc/containerd/config.toml')"
+        state: absent
+
+    - name: Créer /etc/containerd/config.toml avec le contenu requis
+      copy:
+        dest: /etc/containerd/config.toml
+        content: |
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+              SystemdCgroup = true
+        owner: root
+        group: root
+        mode: '0644'
     
     # Redémarrer containerd pour appliquer les changements
     - name: Redémarrer containerd
