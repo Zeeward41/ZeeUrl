@@ -166,6 +166,14 @@ jobs:
           #Run ansible
           echo "Setup User k8sadmin"
           ansible-playbook -i inventory setup_user.yaml
+
+          echo "Ensure IPv4 packet forwarding"
+          ansible-playbook -i inventory ensure_IPv4_forwarding.yaml
+
+          echo "Install containerD"
+          ansible-playbook -i inventory install_containerd.yaml
+
+
         working-directory: infrastructure/CD/ansible
       
       - name: Delete Github Actions IP to SG kubernetes Servers
