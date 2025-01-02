@@ -17,6 +17,7 @@
       loop:
         - /opt/cni/bin
         - /usr/local/lib/systemd/system
+        - /etc/containerd
 
     # Installation de containerd
     - name: Download containerd
@@ -82,3 +83,25 @@
         - /tmp/containerd.tar.gz
         - /tmp/runc
         - /tmp/cni-plugins.tgz
+    
+    # Générer le fichier de configuration par défaut
+    - name: Générer config.toml par défaut
+      shell: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml
+
+    - name: Ensure SystemdCgroup = true is present in config.toml
+      blockinfile:
+        path: /etc/containerd/config.toml
+        marker: "# {mark}"  # This prevents adding unnecessary markers to TOML files
+        block: |
+          SystemdCgroup = true
+        insertafter: '^\[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]'
+      when: >
+        "'SystemdCgroup = true' not in lookup('file', '/etc/containerd/config.toml')"
+    
+    # Redémarrer containerd pour appliquer les changements
+    - name: Redémarrer containerd
+      systemd:
+        name: containerd
+        state: restarted
