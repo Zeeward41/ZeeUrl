@@ -13,10 +13,12 @@
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
+    - name: cat cluster_initialized
+      shell: |
+        cat cluster_initialized.txt
 
     - name: create .kube directory
       become: yes
-      become_user: k8sadmin
       file:
         path: /home/k8sadmin/.kube
         state: directory
