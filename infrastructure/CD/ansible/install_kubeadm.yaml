@@ -54,8 +54,6 @@
 
     - name: Pin kubelet, kubeadm, and kubectl versions
       shell: apt-mark hold kubelet kubeadm kubectl
-      args:
-        warn: false
 
     - name: Ensure kubelet service is enabled and running
       service:
