@@ -1,21 +1,30 @@
 - hosts: control_plane
   become: yes
-  vars_files:
+  vars_file:
     - vars/common_vars.yaml
   tasks:
 
-    - name: Gather private IP address of EC2 instance
-      command: curl -s http://169.254.169.254/latest/meta-data/local-ipv4
+    - name: Get IMDSv2 token
+      shell: 'curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"'
+      register: token
+    
+    - name: Get private IP address of EC2 instance
+      shell: 'curl -H "X-aws-ec2-metadata-token: {{ token.stdout }}" http://169.254.169.254/latest/meta-data/local-ipv4'
       register: private_ip
+      
+    # - name: Gather private IP address of EC2 instance
+    #   command: curl -s http://169.254.169.254/latest/meta-data/local-ipv4
+    #   register: private_ip
 
     - name: initialize the cluster
-      shell: sudo kubeadm init --ignore-preflight-errors=Mem --apiserver-advertise-address={{ private_ip.stdout }}>> cluster_initialized.txt
+      shell: sudo kubeadm init --apiserver-advertise-address={{ private_ip.stdout }}>> cluster_initialized.txt
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
-    
+
     - name: create .kube directory
       become: yes
+      become_user: k8sadmin
       file:
         path: /home/k8sadmin/.kube
         state: directory
@@ -33,14 +42,15 @@
     - name: Install Weave Pod network
       become: yes
       become_user: k8sadmin
-      shell:  kubectl apply -f https://reweave.azurewebsites.net/k8s/{{ kubernetes_version }}/net.yaml
+      shell:  kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml
       args:
         chdir: $HOME
+
 
     - name: Get join token
       become: yes
       become_user: k8sadmin
-      shell: sudo kubeadm token create --print-join-command
+      shell: sudo kubeadm token create  --print-join-command
       register: kubernetes_join_command
 
     - name: Copy join command to local file.
