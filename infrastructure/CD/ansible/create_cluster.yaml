@@ -13,10 +13,7 @@
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
-    - name: cat cluster_initialized
-      shell: |
-        cat cluster_initialized.txt
-
+    
     - name: create .kube directory
       become: yes
       file:
