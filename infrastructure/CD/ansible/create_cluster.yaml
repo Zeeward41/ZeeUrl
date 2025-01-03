@@ -1,6 +1,6 @@
 - hosts: control_plane
   become: yes
-  vars_file:
+  vars_files:
     - vars/common_vars.yaml
   tasks:
 
