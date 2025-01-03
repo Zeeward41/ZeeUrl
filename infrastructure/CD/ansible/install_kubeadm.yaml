@@ -1,0 +1,64 @@
+- hosts: all
+  become: yes
+  become_user: root
+  vars_files:
+    - vars/common_vars.yaml
+  # vars:
+  #   version: "v1.32"
+
+  tasks:
+    - name: Update apt-get cache
+      apt:
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+
+    - name: Ensure /etc/apt/keyrings directory exists
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download and store Kubernetes GPG key
+      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    
+    - name: Add Kubernetes apt repository
+      copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: |
+          deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/ /
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Update apt-get cache
+      apt:
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Pin kubelet, kubeadm, and kubectl versions
+      shell: apt-mark hold kubelet kubeadm kubectl
+      args:
+        warn: false
+
+    - name: Ensure kubelet service is enabled and running
+      service:
+        name: kubelet
+        enabled: yes
+        state: started

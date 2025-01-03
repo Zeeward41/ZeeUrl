@@ -173,6 +173,15 @@ jobs:
           echo "Install containerD"
           ansible-playbook -i inventory install_containerd.yaml
 
+          echo "install kubeadm"
+          ansible-playbook -i inventory install_kubeadm.yaml
+
+          echo "create cluster"
+          ansible-playbook -i inventory create_cluster.yaml
+
+          echo "setup Workers nodes"
+          ansible-playbook -i inventory setup_workers.yaml
+
 
         working-directory: infrastructure/CD/ansible
       
