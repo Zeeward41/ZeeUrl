@@ -11,6 +11,8 @@
       apt:
         update_cache: yes
 
+    # acl coz error with chmod when installing weave
+    # The error suggests that the 'chmod' command doesn't support the 'A+user:k8sadmin:rx:allow' syntax, which is used for setting ACLs
     - name: Install necessary packages
       apt:
         name:
@@ -18,6 +20,7 @@
           - ca-certificates
           - curl
           - gpg
+          - acl
         state: present
 
     - name: Ensure /etc/apt/keyrings directory exists
