@@ -42,16 +42,15 @@
 
     - name: Install Weave Pod network
       become: yes
-      become_user: k8sadmin
       shell:  kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml
       args:
-        chdir: /home/k8sadmin
+        chdir: $HOME
 
 
     - name: Get join token
       become: yes
       become_user: k8sadmin
-      become_method: sudo
+      become_method: su
       shell: sudo kubeadm token create  --print-join-command
       register: kubernetes_join_command
 
