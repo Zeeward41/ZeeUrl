@@ -43,7 +43,7 @@
 
     - name: Install Weave Pod network
       become: yes
-      shell:  kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml --validate=false
+      shell:  sudo kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml --validate=false
 
     - name: Get join token
       become: yes
