@@ -17,7 +17,7 @@
     #   register: private_ip
 
     - name: initialize the cluster
-      shell: sudo kubeadm init --apiserver-advertise-address={{ private_ip.stdout }}>> cluster_initialized.txt
+      shell: sudo kubeadm init --apiserver-advertise-address={{ private_ip.stdout }} --ignore-preflight-errors=Mem >> cluster_initialized.txt
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
