@@ -37,6 +37,7 @@
         src: /etc/kubernetes/admin.conf
         dest: /home/k8sadmin/.kube/config
         owner: k8sadmin
+        group: k8sadmin
 
 
 
