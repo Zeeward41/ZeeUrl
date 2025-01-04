@@ -55,7 +55,6 @@
     - name: Get join token
       become: yes
       become_user: k8sadmin
-      become_method: su
       shell: sudo kubeadm token create  --print-join-command
       register: kubernetes_join_command
 
