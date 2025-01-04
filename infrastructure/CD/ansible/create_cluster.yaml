@@ -24,12 +24,12 @@
 
     - name: create .kube directory
       become: yes
-      become_user: k8sadmin
-      become_method: sudo
       file:
         path: /home/k8sadmin/.kube
         state: directory
         mode: 0755
+        owner: k8sadmin
+        group: k8sadmin
 
     - name: copy admin.conf
       copy:
@@ -43,10 +43,9 @@
     - name: Install Weave Pod network
       become: yes
       become_user: k8sadmin
-      become_method: sudo
       shell:  kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml
       args:
-        chdir: $HOME
+        chdir: /home/k8sadmin
 
 
     - name: Get join token
