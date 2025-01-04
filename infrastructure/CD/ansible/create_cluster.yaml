@@ -24,7 +24,6 @@
 
     - name: create .kube directory
       become: yes
-      become_user: k8sadmin
       file:
         path: /home/k8sadmin/.kube
         state: directory
