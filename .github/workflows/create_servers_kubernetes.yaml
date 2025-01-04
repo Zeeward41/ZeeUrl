@@ -122,7 +122,8 @@ jobs:
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
           echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
-          chmod 700 /home/runner/.ssh/key_ssh
+          sleep 1
+          chmod 600 /home/runner/.ssh/key_ssh
           
           # Verify key format
           ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
