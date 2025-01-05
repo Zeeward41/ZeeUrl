@@ -3,10 +3,6 @@ resource "local_file" "private_key" {
     filename = "private_key.pem"
 }
 
-# resource "local_file" "master_ip" {
-#     content =   aws_instance.master_kubernetes.public_ip 
-#     filename = "master_ip.txt"
-# }
 resource "local_file" "dns_master" {
     content =   aws_instance.master_kubernetes.public_dns 
     filename = "dns_master.txt"
