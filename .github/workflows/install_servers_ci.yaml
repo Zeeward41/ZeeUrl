@@ -1,9 +1,10 @@
 name: Install Servers CI - Jenkins and SonarQube
-on:
-  push:
-    paths:
-      - 'infrastructure/CI/**'
-      - '.github/workflows/install_servers_ci.yaml'
+# on:
+  # push:
+  #   paths:
+  #     - 'infrastructure/CI/**'
+  #     - '.github/workflows/install_servers_ci.yaml'
+on: workflow_dispatch
 jobs:
   config_Server:
     runs-on: ubuntu-latest
