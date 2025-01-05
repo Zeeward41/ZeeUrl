@@ -4,6 +4,7 @@
     - vars/common_vars.yaml
   tasks:
 
+      # need IMDSv2 token to curl mata-data ec2 instance
     - name: Get IMDSv2 token
       shell: 'curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"'
       register: token
@@ -12,10 +13,6 @@
       shell: 'curl -H "X-aws-ec2-metadata-token: {{ token.stdout }}" http://169.254.169.254/latest/meta-data/local-ipv4'
       register: private_ip
       
-    # - name: Gather private IP address of EC2 instance
-    #   command: curl -s http://169.254.169.254/latest/meta-data/local-ipv4
-    #   register: private_ip
-
     - name: initialize the cluster
       shell: sudo kubeadm init --apiserver-advertise-address={{ private_ip.stdout }} --ignore-preflight-errors=Mem >> cluster_initialized.txt
       args:
@@ -38,12 +35,6 @@
         dest: /home/k8sadmin/.kube/config
         owner: k8sadmin
         group: k8sadmin
-
-
-
-    # - name: Install Weave Pod network
-    #   become: yes
-    #   shell:  sudo kubectl apply -f https://reweave.azurewebsites.net/k8s/v{{ kubernetes_version}}/net.yaml --validate=false
 
     - name: Install Weave Pod network
       become: yes

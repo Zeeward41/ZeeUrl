@@ -20,7 +20,6 @@ jobs:
         run: |
           RUNNER_IP=$(curl -s https://api.ipify.org)
           echo "runner_ip=$RUNNER_IP" >> $GITHUB_OUTPUT
-          echo "Runner IP is: $RUNNER_IP"
 
       - name: Config AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -89,8 +88,6 @@ jobs:
             --query 'SecurityGroups[0].IpPermissions[?FromPort==`8080`].IpRanges[*].CidrIp' \
             --output text)
 
-          echo "all ip : $RULE_EXISTS"
-         
           # if rule exists then check if the rule target ip is sonarQube server.
           if echo "$RULE_EXISTS" | grep -q "${{steps.get_ip_servers.outputs.file_ip_sonarQube}}/32"; then
             echo "The rule already exists - skipping"

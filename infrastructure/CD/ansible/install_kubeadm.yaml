@@ -3,8 +3,6 @@
   become_user: root
   vars_files:
     - vars/common_vars.yaml
-  # vars:
-  #   version: "v1.32"
 
   tasks:
     - name: Update apt-get cache

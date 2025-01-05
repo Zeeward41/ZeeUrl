@@ -5,7 +5,6 @@
     - vars/common_vars.yaml
 
   tasks:
-    # Création des répertoires nécessaires
     - name: Create required directories
       file:
         path: "{{ item }}"
@@ -16,7 +15,6 @@
         - /usr/local/lib/systemd/system
         - /etc/containerd
 
-    # Installation de containerd
     - name: Download containerd
       get_url:
         url: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ arch }}.tar.gz"
@@ -29,7 +27,6 @@
         dest: /usr/local
         remote_src: yes
 
-    # Installation de runc
     - name: Download runc
       get_url:
         url: "https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.{{ arch }}"
@@ -43,7 +40,6 @@
         mode: '0755'
         remote_src: yes
 
-    # Installation des plugins CNI
     - name: Download CNI plugins
       get_url:
         url: "https://github.com/containernetworking/plugins/releases/download/{{ cni_version }}/cni-plugins-linux-{{ arch }}-{{ cni_version }}.tgz"
@@ -56,14 +52,12 @@
         dest: /opt/cni/bin
         remote_src: yes
 
-    # Configuration du service systemd
     - name: Download containerd service file
       get_url:
         url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
         dest: /usr/local/lib/systemd/system/containerd.service
         mode: '0644'
 
-    # Activation du service
     - name: Start and enable containerd service
       systemd:
         name: containerd
@@ -71,7 +65,6 @@
         enabled: yes
         daemon_reload: yes
 
-    # Nettoyage
     - name: Clean temporary files
       file:
         path: "{{ item }}"
@@ -97,7 +90,7 @@
         group: root
         mode: '0644'
     
-    # Redémarrer containerd pour appliquer les changements
+    # restart containerd
     - name: Redémarrer containerd
       systemd:
         name: containerd
