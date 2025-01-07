@@ -23,4 +23,4 @@ COPY server.js ./server.js
 EXPOSE 5000
 
 # Commande pour démarrer l'application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
