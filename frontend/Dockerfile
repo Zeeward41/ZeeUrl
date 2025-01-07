@@ -15,4 +15,4 @@ RUN npm install --production
 EXPOSE 3000
 
 # fichiers statiques compilés
-CMD ["npm", "run", "preview"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
