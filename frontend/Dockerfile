@@ -1,25 +1,18 @@
-# Utiliser une image Node.js officielle comme base
-FROM node:20-alpine
-
-# Définir le répertoire de travail dans le conteneur
+# Étape de build
+FROM node:20-alpine as builder
 WORKDIR /app
-
-# Copier les fichiers package.json et package-lock.json
 COPY package*.json ./
-
-# Installer les dépendances du projet
 RUN npm install
+COPY . .
+RUN npm run build
 
-# Copier les fichiers et dossiers du projet dans le répertoire de travail
-COPY public ./public
-COPY src ./src
-COPY .env ./.env
-COPY config.js ./config.js
-COPY index.html ./index.html
-COPY README.md ./README.md
-COPY vite.config.js ./vite.config.js
-
+# Étape de prod
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+RUN npm install --production
 EXPOSE 3000
 
-# Commande pour démarrer l'application
-CMD ["npm", "run", "dev"]
+# fichiers statiques compilés
+CMD ["npm", "run", "preview"]
