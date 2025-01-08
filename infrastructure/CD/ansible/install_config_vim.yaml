@@ -1,6 +1,5 @@
 - hosts: all
   become: yes
-
   tasks:
     - name: Update apt-get cache
       apt:
@@ -8,15 +7,17 @@
 
     - name: Install vim
       apt:
-        name:
-          - vim
+        name: vim
         state: present
     
-    - name: Create or modify ~/.vimrc file
-  copy:
-    dest: "~/.vimrc"
-    content: |
-      set expandtab
-      set tabstop=2
-      set shiftwidth=2
-    force: yes
+    - name: Create or modify ~/.vimrc file for the user
+      copy:
+        dest: "/home/{{ ansible_user }}/.vimrc"
+        content: |
+          set expandtab
+          set tabstop=2
+          set shiftwidth=2
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+        force: yes
