@@ -1,0 +1,22 @@
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt-get cache
+      apt:
+        update_cache: yes
+
+    - name: Install vim
+      apt:
+        name:
+          - vim
+        state: present
+    
+    - name: Create or modify ~/.vimrc file
+  copy:
+    dest: "~/.vimrc"
+    content: |
+      set expandtab
+      set tabstop=2
+      set shiftwidth=2
+    force: yes
