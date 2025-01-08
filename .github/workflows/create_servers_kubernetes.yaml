@@ -183,6 +183,9 @@ jobs:
           echo "setup Workers nodes"
           ansible-playbook -i inventory setup_workers.yaml
 
+          echo "Install and config Vim"
+          ansible-playbook -i inventory install_config_vim.yaml
+
 
         working-directory: infrastructure/CD/ansible
       
