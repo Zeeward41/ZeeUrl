@@ -4,6 +4,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Inject var
+ARG VITE_BACKEND_API_URL
+ENV VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
 RUN npm run build
 
 # Étape de prod
