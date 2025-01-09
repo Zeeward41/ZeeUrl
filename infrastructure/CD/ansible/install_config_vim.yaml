@@ -12,12 +12,12 @@
     
     - name: Create or modify ~/.vimrc file for the user
       copy:
-        dest: "/home/{{ ansible_user }}/.vimrc"
+        dest: "/home/k8sadmin/.vimrc"
         content: |
           set expandtab
           set tabstop=2
           set shiftwidth=2
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: k8sadmin
+        group: k8sadmin
         mode: '0644'
         force: yes
