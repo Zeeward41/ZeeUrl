@@ -4,18 +4,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-
-# Inject var
-ARG VITE_BACKEND_API_URL
-ENV VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
 RUN npm run build
 
 # Étape de prod
 FROM node:20-alpine
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 RUN npm install -g serve
 EXPOSE 3000
 
-# Servir les fichiers statiques
-CMD ["serve", "-s", "dist"]
+ENTRYPOINT ["./entrypoint.sh"]
