@@ -1,5 +1,5 @@
 export const API_BASE_URL = import.meta.env.DEV ? import.meta.env.VITE_BACKEND_API_URL : window._env_.VITE_BACKEND_API_URL
-export const WEB_SITE_URL = window._env_.DEV ? import.meta.env.VITE_FRONTEND_URL : window._env_.VITE_FRONTEND_URL
+export const WEB_SITE_URL = import.meta.env.DEV ? import.meta.env.VITE_FRONTEND_URL : window._env_.VITE_FRONTEND_URL
 export const ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/v1/auth/register`,
   LOGIN: `${API_BASE_URL}/v1/auth/login`,
