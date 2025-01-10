@@ -8,7 +8,7 @@ export default function SpinnerLoader() {
                 {
                     showSpinner ? ( 
                     <>
-                        <img src="../../../public/Spinner_green.svg" />
+                        <img src="../../../Spinner_green.svg" />
                         <p>Loading...</p>
                     </>
                     ) : ''
