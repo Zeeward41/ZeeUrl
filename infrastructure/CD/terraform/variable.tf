@@ -13,7 +13,11 @@ variable "region" {
 variable "ami_instance" {
 }
 
-variable "instance_type" {
+variable "instance_type_workers" {
+
+}
+
+variable "instance_type_master" {
 
 }
 

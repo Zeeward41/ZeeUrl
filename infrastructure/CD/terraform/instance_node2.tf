@@ -1,7 +1,7 @@
 ## Public Instance
 resource "aws_instance" "node_two_kubernetes" {
   ami                         = var.ami_instance
-  instance_type               = var.instance_type
+  instance_type               = var.instance_type_workers
   associate_public_ip_address = true
 
   root_block_device {

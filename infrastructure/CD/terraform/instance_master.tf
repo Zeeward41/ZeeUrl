@@ -35,7 +35,7 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_Kubernetes" {
 ## Public Instance
 resource "aws_instance" "master_kubernetes" {
   ami                         = var.ami_instance
-  instance_type               = var.instance_type
+  instance_type               = var.instance_type_master
   associate_public_ip_address = true
 
   root_block_device {
