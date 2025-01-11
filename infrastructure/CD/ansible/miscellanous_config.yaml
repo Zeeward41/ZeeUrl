@@ -24,4 +24,4 @@
         force: yes
 
     - name: Allow auto-completion kubernetes
-      shell: echo "source <(kubectl completion bash)" >> ~/.bashrc
+      shell: echo "source <(kubectl completion bash)" >> ~/.bashr
