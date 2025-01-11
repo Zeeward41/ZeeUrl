@@ -14,9 +14,12 @@ RUN npm install
 COPY controllers ./controllers
 COPY routes ./routes
 COPY server.js ./
+COPY test ./test
+COPY utils ./utils
+COPY config ./config
 
 # Exposer le port sur lequel le serveur s'exécute
 EXPOSE 8000
 
 # Commande pour démarrer l'application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
