@@ -28,7 +28,7 @@ connectDB()
 
 const app = express()
 export const rangeManager = new RangeManager()
-console.log(`origin : ${process.env.FRONTEND_SERVER}`)
+console.log(`origino : ${process.env.FRONTEND_SERVER}`)
 // Cors
 app.use(cors({
     origin: process.env.FRONTEND_SERVER ,
