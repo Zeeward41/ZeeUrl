@@ -28,10 +28,10 @@ connectDB()
 
 const app = express()
 export const rangeManager = new RangeManager()
-
+console.log(`origin : ${process.env.FRONTEND_SERVER}`)
 // Cors
 app.use(cors({
-    origin: process.env.FRONTEND_SERVER || 'http://localhost:3000',
+    origin: process.env.FRONTEND_SERVER ,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
