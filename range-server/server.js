@@ -10,7 +10,7 @@ dotenv.config({path: './config/.env'})
 import range from './routes/range.js'
 
 const app = express()
-console.log(`origin : ${process.env.FRONTEND_BACKEND}`)
+console.log(`origin : ${process.env.SERVER_BACKEND}`)
 // Cors
 app.use(cors({
     origin: process.env.SERVER_BACKEND,
