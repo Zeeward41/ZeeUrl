@@ -13,7 +13,7 @@ import EditUrl from './EditUrl/EditUrl.jsx'
 
 export default function MinifyUrl({linkOriginal, token, numVisit, createdAt}) {
     const [showPanel, setShowPanel] = useState(false)
-    const shortUrl = `https://www.zeeurl.com/${token}`
+    const shortUrl = `${WEB_SITE_URL}/${token}`
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     const [task, setTask] = useState('')
     const endpointDeleteUrl = ENDPOINTS.DELETEURLS
