@@ -19,7 +19,7 @@ export default function AuthContextProvider({children}) {
 
     const checkAuthStatus = async () => {
         // Simuler un délai de reponse backend
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        // await new Promise(resolve => setTimeout(resolve, 1500))
 
         try {
             const response = await fetch(ENDPOINTS.CHECK_AUTH, {
