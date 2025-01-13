@@ -34,7 +34,8 @@ app.use(cors({
     origin: process.env.FRONTEND_SERVER ,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization',],
+    exposedHeaders: ['set-cookie']
 }))
 
 // Body Parser
