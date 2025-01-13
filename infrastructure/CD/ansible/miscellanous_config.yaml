@@ -24,4 +24,7 @@
         force: yes
 
     - name: Allow auto-completion kubernetes
-      shell: echo "source <(kubectl completion bash)" >> ~/.bashr
+      shell: grep -qxF "source <(kubectl completion bash)" ~/.bashrc || echo "source <(kubectl completion bash)" >> ~/.bashrc
+        #-q: quiet mode (produces no output)
+        #-x: matches the entire line
+        #-F: interprets the pattern as a fixed string, not a regular expression
