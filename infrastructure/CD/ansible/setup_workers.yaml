@@ -10,6 +10,7 @@
         mode: 0777
 
     - name: Check if the join_cluster.txt file exists
+      user: k8sadmin
       stat:
         path: ~/join_cluster.txt
       register: join_file_status
@@ -19,6 +20,7 @@
         msg: "Join file exists: {{ join_file_status.stat.exists }}"
 
     - name: Join the Worker nodes to the cluster
+      user: k8sadmin
       command: sh /tmp/kubernetes_join_command
       when: not join_file_status.stat.exists
       register: join_result
@@ -30,6 +32,7 @@
       when: not join_file_status.stat.exists
 
     - name: Create the join_cluster.txt file
+      user: k8sadmin
       file:
         path: ~/join_cluster.txt
         state: touch
