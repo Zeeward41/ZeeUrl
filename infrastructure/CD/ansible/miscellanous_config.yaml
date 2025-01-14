@@ -24,6 +24,8 @@
         force: yes
 
     - name: Allow auto-completion kubernetes
+      become: yes
+      become_user: k8sadmin
       shell: grep -qxF "source <(kubectl completion bash)" ~/.bashrc || echo "source <(kubectl completion bash)" >> ~/.bashrc
         #-q: quiet mode (produces no output)
         #-x: matches the entire line
