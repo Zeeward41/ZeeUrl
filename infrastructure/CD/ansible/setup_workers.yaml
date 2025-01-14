@@ -14,11 +14,20 @@
         path: ~/join_cluster.txt
       register: join_file_status
 
+    - name: Debug - Show join file status
+      debug:
+        msg: "Join file exists: {{ join_file_status.stat.exists }}"
+
     - name: Join the Worker nodes to the cluster
       command: sh /tmp/kubernetes_join_command
       when: not join_file_status.stat.exists
       register: join_result
       changed_when: join_result.rc == 0
+
+    - name: Debug - Show join command result
+      debug:
+        var: join_result
+      when: not join_file_status.stat.exists
 
     - name: Create the join_cluster.txt file
       file:
