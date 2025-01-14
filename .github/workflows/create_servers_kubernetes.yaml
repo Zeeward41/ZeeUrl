@@ -181,7 +181,7 @@ jobs:
           ansible-playbook -i inventory create_cluster.yaml
 
           echo "setup Workers nodes"
-          ansible-playbook -i inventory setup_workers.yaml
+          #ansible-playbook -i inventory setup_workers.yaml
 
           echo "Install and config Vim"
           ansible-playbook -i inventory miscellanous_config.yaml
