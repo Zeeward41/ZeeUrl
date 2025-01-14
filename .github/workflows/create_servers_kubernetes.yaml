@@ -166,16 +166,16 @@ jobs:
         run: |
           #Run ansible
           echo "Setup User k8sadmin"
-          #ansible-playbook -i inventory setup_user.yaml
+          ansible-playbook -i inventory setup_user.yaml
 
           echo "Ensure IPv4 packet forwarding"
-          #ansible-playbook -i inventory ensure_IPv4_forwarding.yaml
+          ansible-playbook -i inventory ensure_IPv4_forwarding.yaml
 
           echo "Install containerD"
-          #ansible-playbook -i inventory install_containerd.yaml
+          ansible-playbook -i inventory install_containerd.yaml
 
           echo "install kubeadm"
-          #ansible-playbook -i inventory install_kubeadm.yaml
+          ansible-playbook -i inventory install_kubeadm.yaml
 
           echo "create cluster"
           ansible-playbook -i inventory create_cluster.yaml
@@ -184,7 +184,7 @@ jobs:
           ansible-playbook -i inventory setup_workers.yaml
 
           echo "Install and config Vim"
-          #ansible-playbook -i inventory miscellanous_config.yaml
+          ansible-playbook -i inventory miscellanous_config.yaml
 
 
         working-directory: infrastructure/CD/ansible
