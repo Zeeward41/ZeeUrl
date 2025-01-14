@@ -2,16 +2,23 @@
   become: yes
 
   tasks:
-    - name: Copy join command from Ansiblehost to the worker nodes.
+    - name: Copy join command from Ansible host to the worker nodes
       become: yes
       copy:
         src: /tmp/kubernetes_join_command
         dest: /tmp/kubernetes_join_command
         mode: 0777
 
-    - name: Join the Worker nodes to the cluster.
+    - name: Check if the node has already joined the cluster
+      command: kubectl get nodes
+      register: node_status
+      ignore_errors: yes
+
+    - name: Join the Worker nodes to the cluster
       become: yes
       command: sh /tmp/kubernetes_join_command
+      when: node_status.rc != 0
+      register: join_result
 
     - name: Remove the join command file
       file:
