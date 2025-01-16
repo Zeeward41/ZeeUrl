@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: range-service
+spec:
+  type: ClusterIP
+  selector:
+    app: range
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000

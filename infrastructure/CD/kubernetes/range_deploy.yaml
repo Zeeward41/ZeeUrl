@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: range
+  name: range-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: range
+  template:
+    metadata:
+      labels:
+        app: range
+    spec:
+      containers:
+      - image: docker.io/zeeward41/test:range_v1
+        name: range
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: range-config
+      imagePullSecrets:
+      - name: dockerhub-secret
