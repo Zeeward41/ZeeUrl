@@ -24,3 +24,7 @@ variable "instance_type_master" {
 variable "mon_ip" {
 
 }
+
+variable "ingress_port" {
+    
+}
