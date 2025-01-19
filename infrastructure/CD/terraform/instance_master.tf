@@ -11,14 +11,14 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh_kubernetes" {
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  cidr_ipv4 = var.mon_ip
+  cidr_ipv4         = var.mon_ip
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_traffic_in_cluster" {
   security_group_id = aws_security_group.kubernetes_servers.id
-#   from_port         = 0
-#   to_port           =  0
-  ip_protocol       = "-1"
+  #   from_port         = 0
+  #   to_port           =  0
+  ip_protocol                  = "-1"
   referenced_security_group_id = aws_security_group.kubernetes_servers.id
 }
 
@@ -39,10 +39,10 @@ resource "aws_instance" "master_kubernetes" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 15
-    volume_type = "gp3"
+    volume_size           = 15
+    volume_type           = "gp3"
     delete_on_termination = true
-    encrypted = true
+    encrypted             = true
   }
 
   #ssh

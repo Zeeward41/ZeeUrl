@@ -5,10 +5,10 @@ resource "aws_instance" "node_one_kubernetes" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 15
-    volume_type = "gp3"
+    volume_size           = 15
+    volume_type           = "gp3"
     delete_on_termination = true
-    encrypted = true
+    encrypted             = true
   }
 
   #ssh
