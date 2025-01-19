@@ -122,14 +122,14 @@ jobs:
           eval `ssh-agent -s`
           mkdir -p /home/runner/.ssh/
           echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
-          sleep 1
+          sleep 5
           chmod 600 /home/runner/.ssh/key_ssh
           
           # Verify key format
           ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
 
           # add key to SSH agent
-          ssh-add /home/runner/.ssh/key_ssh
+          ssh-add -E md5 /home/runner/.ssh/key_ssh
 
           # Add host key
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
