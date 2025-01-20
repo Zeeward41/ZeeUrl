@@ -199,6 +199,9 @@ jobs:
           echo "Install and config Vim"
           ansible-playbook -i inventory miscellanous_config.yaml
 
+          #install kubernetes.core
+          ansible-galaxy collection install kubernetes.core
+
           echo "Install and config ArgoCD"
           ansible-playbook -i inventory install_argocd.yaml
 
