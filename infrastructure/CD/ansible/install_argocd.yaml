@@ -146,11 +146,7 @@
     
     - name: Login to ArgoCD
       become_user: k8sadmin
-      expect:
-        command: argocd login {{ argocd_clusterip }} --plaintext
-        responses:
-          'Username:': "admin"
-          'Password:': "{{ argocd_password }}"
+      command: argocd login {{ argocd_clusterip }} --plaintext --insecure --username admin --password "{{ argocd_password }}"
       register: login_result
 
     - name: Display login result # DELETE##################################
