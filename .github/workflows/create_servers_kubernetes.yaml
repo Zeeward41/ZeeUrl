@@ -17,7 +17,10 @@ jobs:
         run: |
 
           # delete last line (mon_ip = 0.0.0.0/0 (default))
-          sed -i '$ d' infrastructure/CD/terraform/env.tfvars
+          #sed -i '$ d' infrastructure/CD/terraform/env.tfvars
+
+          # delete line who starts with mon_ip
+          sed -i '/^mon_ip/d' infrastructure/CD/terraform/env.tfvars
 
           # add my ip to env.tfvars
           echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
