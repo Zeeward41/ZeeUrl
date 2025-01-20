@@ -116,9 +116,18 @@
             url: https://github.com/argoproj/argo-cd/releases/download/{{ argocd }}/argocd-linux-amd64
             dest: /tmp/argocd-linux-amd64
             mode: '0755'
-            
-        - name: Rename and move ArgoCD
-          command: mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
+
+        # - name: Rename and move ArgoCD
+        #   command: sudo mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
+        #   become: yes
+        - name: Move ArgoCD to /usr/local/bin
+          copy:
+            src: /tmp/argocd-linux-amd64
+            dest: /usr/local/bin/argocd
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
           become: yes
 
         - name: Remove temporary file
