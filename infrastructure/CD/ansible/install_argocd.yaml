@@ -1,6 +1,8 @@
-- name: Install ArgoCD on Kubernetes
-  hosts: constrol_plane
+---
+- hosts: control_plane
   become: yes
+  vars_files:
+    - vars/common_vars.yaml
   
   tasks:
     - name: Check if argocd namespace exists
