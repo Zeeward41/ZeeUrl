@@ -143,10 +143,13 @@
     - name: Display ClusterIP service IP (for demonstration) # DELETE##########################
       debug:
         var: argocd_clusterip
+
+    - name: test value
+      shell: |
+        echo "la clusterip : {{ argocd_clusterip }} et le password = {{ argocd_password }}"
     
     - name: Login to ArgoCD
       become_user: k8sadmin
-      become: yes
       command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password }}"
       register: login_result
 
