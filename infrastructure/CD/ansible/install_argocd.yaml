@@ -4,7 +4,7 @@
   vars_files:
     - vars/common_vars.yaml
   
-   tasks:
+  tasks:
     - name: Install required system packages
       apt:
         name:
@@ -30,7 +30,6 @@
         link: /usr/bin/python
         path: /usr/bin/python3
   
-  tasks:
     - name: Check if argocd namespace exists
       kubernetes.core.k8s_info:
         api_version: v1
