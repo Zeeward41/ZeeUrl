@@ -102,11 +102,13 @@
       when: argocd_password.stdout is defined
 
     - name: Check if ArgoCD is already installed
+      become: k8sadmin
       stat:
         path: /usr/local/bin/argocd
       register: argocd_check
     
     - name: Download and install ArgoCD
+      become: k8sadmin
       block:
         - name: Download ArgoCD
           get_url:
