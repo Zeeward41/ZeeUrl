@@ -147,6 +147,11 @@
     - name: test value
       shell: |
         echo "la clusterip : {{ argocd_clusterip }} et le password = {{ argocd_password }}"
+      register: test_value
+    
+    - name: display test_value
+      debug:
+        var: test_value.stdout_lines
     
     - name: Login to ArgoCD
       become_user: k8sadmin
