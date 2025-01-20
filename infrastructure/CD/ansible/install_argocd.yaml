@@ -155,7 +155,7 @@
     
     - name: Login to ArgoCD
       become_user: k8sadmin
-      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password }}"
+      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password.stdout }}"
       register: login_result
 
     - name: Display login result # DELETE##################################
