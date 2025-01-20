@@ -110,7 +110,6 @@
     
     - name: Download and install ArgoCD
       become_user: k8sadmin
-      become: yes
       block:
         - name: Download ArgoCD
           get_url:
@@ -118,6 +117,7 @@
             dest: /tmp/argocd-linux-amd64
             mode: '0755'
         - name: Rename and move ArgoCD
+          become: yes
           copy:
             src: /tmp/argocd-linux-amd64
             dest: /usr/local/bin/argocd
@@ -126,6 +126,7 @@
             owner: k8sadmin
             group: k8sadmin
         - name: Remove temporary file
+          become: yes
           file:
             path: /tmp/argocd-linux-amd64
             state: absent
