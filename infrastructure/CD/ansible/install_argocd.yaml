@@ -1,0 +1,145 @@
+- name: Install ArgoCD on Kubernetes
+  hosts: constrol_plane
+  become: yes
+  
+  tasks:
+    - name: Check if argocd namespace exists
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: argocd
+      register: namespace_status
+      ignore_errors: true
+
+    - name: Create argocd namespace (if it does not exist)
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: argocd
+        state: present
+      when: namespace_status.failed or namespace_status.resources | length == 0
+
+    - name: Download ArgoCD manifests
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd }}/manifests/install.yaml
+        dest: /tmp/argocd-install.yaml
+        force: true
+        mode: '0644'
+
+    - name: Apply argoCD manifests
+      kubernetes.core.k8s:
+        state: present
+        src: /tmp/argocd-install.yaml
+        namespace: argocd
+        apply: yes
+
+    - name: Change Service argocd-server to NodePort
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Service
+        namespace: argocd
+        name: argocd-server
+        definition:
+          spec:
+            type: NodePort
+            ports:
+            - name: http
+              port: 80
+              protocol: TCP
+              targetPort: 8080
+              nodePort: 30080
+            - name: https
+              port: 443
+              protocol: TCP
+              targetPort: 8080
+              nodePort: 30443
+        state: patched
+
+      - name: Clean up temporary files
+        ansible.builtin.file:
+          path: /tmp/argocd-install.yaml
+          state: absent
+
+        #### Password
+
+      - name: Check if argocd-initial-admin-secret exists
+        kubernetes.core.k8s_info:
+          api_version: v1
+          kind: Secret
+          name: argocd-initial-admin-secret
+          namespace: argocd
+        register: secret_check
+        ignore_errors: true
+
+      - name: Get initial password if secret_check exists
+        shell: |
+          kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
+        register: argocd_password
+        when: secret_check.resources is defined and secret_check.resources | length > 0
+        changed_when: false
+        no_log: true
+
+      - name: Set ArgoCD password
+        set_fact:
+          argocd_password: "{{ lookup('env', 'ANSIBLE_MY_SECRET') }}"
+        when: secret_check.resources | length == 0
+        no_log:true
+
+      - name: Display password (for demonstration) # DELETE##########################
+        debug:
+          var: argocd_password.stdout
+        when: argocd_password.stdout is defined
+
+      - name: Check if ArgoCD is already installed
+        stat:
+          path: /usr/local/bin/argocd
+        register: argocd_check
+      
+      - name: Download and install ArgoCD
+        block:
+          - name: Download ArgoCD
+            get_url:
+              url: https://github.com/argoproj/argo-cd/releases/download/{{ argocd }}/argocd-linux-amd64
+              dest: /tmp/argocd-linux-amd64
+              mode: '0755'
+          - name: Rename and move ArgoCD
+            copy:
+              src: /tmp/argocd-linux-amd64
+              dest: /usr/local/bin/argocd
+              mode: '0755'
+              remote_src: yes
+
+          - name: Remove temporary file
+            file:
+              path: /tmp/argocd-linux-amd64
+              state: absent
+        when: not argocd_check.stat.exists
+      
+
+      - name: Get IP of argocd-server ClusterIP service
+        kubernetes.core.k8s_info:
+          api_version: v1
+          kind: Service
+          name: argocd-server
+          namespace: argocd
+        register: argocd_service
+
+      - name: Extract ClusterIP service IP
+        set_fact:
+          argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
+
+      - name: Display ClusterIP service IP (for demonstration) # DELETE##########################
+        debug:
+          var: argocd_clusterip
+      
+      - name: Login to ArgoCD
+        expect:
+          command: argocd login {{ argocd_clusterip }} --plaintext
+          responses:
+            'Username:': "admin"
+            'Password:': "{{ argocd_password }}"
+        register: login_result
+
+      - name: Display login result # DELETE##################################
+        debug:
+          var: login_result.stdout_lines
