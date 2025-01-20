@@ -203,7 +203,7 @@ jobs:
           ansible-galaxy collection install kubernetes.core
 
           echo "Install and config ArgoCD"
-          ansible-playbook -vvv -i inventory install_argocd.yaml
+          ansible-playbook -i inventory install_argocd.yaml
 
 
         working-directory: infrastructure/CD/ansible
