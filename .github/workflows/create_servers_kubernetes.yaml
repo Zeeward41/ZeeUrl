@@ -163,7 +163,12 @@ jobs:
           cat infrastructure/CD/ansible/inventory
 
       - name: Run Ansible Playbook
+        env:
+          MY_SECRET: ${{ secrets.MY_SECRET }}
         run: |
+          # Exporter le secret comme variable d'environnement pour Ansible
+          export ANSIBLE_MY_SECRET="${MY_SECRET}"
+
           #Run ansible
           echo "Setup User k8sadmin"
           ansible-playbook -i inventory setup_user.yaml
@@ -185,6 +190,9 @@ jobs:
 
           echo "Install and config Vim"
           ansible-playbook -i inventory miscellanous_config.yaml
+
+          echo "Install and config ArgoCD"
+          ansible-playbook -i inventory install_argocd.yaml
 
 
         working-directory: infrastructure/CD/ansible
