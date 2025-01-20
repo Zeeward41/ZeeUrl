@@ -119,7 +119,6 @@
         - name: Rename and move ArgoCD
           command: sudo mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
           become: yes
-        
 
         - name: Remove temporary file
           become: yes
@@ -139,25 +138,12 @@
     - name: Extract ClusterIP service IP
       set_fact:
         argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
-
-    - name: Display ClusterIP service IP (for demonstration) # DELETE##########################
-      debug:
-        var: argocd_clusterip
-
-    - name: test value
-      shell: |
-        echo "la clusterip : {{ argocd_clusterip }} et le password = {{ argocd_password }}"
-      register: test_value
-    
-    - name: display test_value
-      debug:
-        var: test_value.stdout_lines
     
     - name: Login to ArgoCD
       become_user: k8sadmin
       command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password.stdout }}"
       register: login_result
 
-    - name: Display login result # DELETE##################################
+    - name: Display login result
       debug:
         var: login_result.stdout_lines
