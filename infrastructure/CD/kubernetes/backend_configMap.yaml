@@ -4,4 +4,5 @@ metadata:
   name: backend-config
 data:
   RANGE_SERVER: "http://range-service.default.svc.cluster.local:8000"
-  FRONTEND_SERVER: "http://13.60.23.37:31423/"
+  #FRONTEND_SERVER: "http://13.60.23.37:31423/"
+  FRONTEND_SERVER: "k8s-ingress-alb-28463104.eu-north-1.elb.amazonaws.com/"
