@@ -1,19 +1,20 @@
 ---
 - hosts: control_plane
   become: yes
+  become_user: k8sadmin
   vars_files:
     - vars/common_vars.yaml
   
   tasks:
-    - name: Install required system packages
-      apt:
-        update_cache: yes
-        name:
-          - python3-kubernetes
-          - python3-yaml
-          - python3-jsonpatch
-          - python3-openshift
-        state: present
+    # - name: Install required system packages
+    #   apt:
+    #     update_cache: yes
+    #     name:
+    #       - python3-kubernetes
+    #       - python3-yaml
+    #       - python3-jsonpatch
+    #       - python3-openshift
+    #     state: present
   
     - name: Check if argocd namespace exists
       kubernetes.core.k8s_info:
