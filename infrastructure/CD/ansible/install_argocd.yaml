@@ -110,6 +110,7 @@
     
     - name: Download and install ArgoCD
       become_user: k8sadmin
+      become: yes
       block:
         - name: Download ArgoCD
           get_url:
