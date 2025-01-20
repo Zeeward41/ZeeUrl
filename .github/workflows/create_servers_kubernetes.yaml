@@ -22,6 +22,11 @@ jobs:
           # delete line who starts with mon_ip
           sed -i '/^mon_ip/d' infrastructure/CD/terraform/env.tfvars
 
+          # Add saut de ligne a la fin du fichier si besoin
+          if [ "$(tail -c1 infrastructure/CD/terraform/env.tfvars)" != "" ]; then
+            echo "" >> infrastructure/CD/terraform/env.tfvars
+          fi
+
           # add my ip to env.tfvars
           echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
 
