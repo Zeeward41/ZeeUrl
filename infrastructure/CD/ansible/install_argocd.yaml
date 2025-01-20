@@ -103,6 +103,7 @@
 
     - name: Check if ArgoCD is already installed
       become_user: k8sadmin
+      become: yes
       stat:
         path: /usr/local/bin/argocd
       register: argocd_check
@@ -121,6 +122,8 @@
             dest: /usr/local/bin/argocd
             mode: '0755'
             remote_src: yes
+            owner: k8sadmin
+            group: k8sadmin
         - name: Remove temporary file
           file:
             path: /tmp/argocd-linux-amd64
