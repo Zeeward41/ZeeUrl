@@ -136,21 +136,18 @@
         namespace: argocd
       register: argocd_service
 
-    # - name: Extract ClusterIP service IP
-    #   set_fact:
-    #     argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
+    - name: Extract ClusterIP service IP
+      set_fact:
+        argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
 
-    # - name: Display ClusterIP service IP (for demonstration) # DELETE##########################
-    #   debug:
-    #     var: argocd_clusterip
-    - name: Afficher l'adresse IP du serveur cible
+    - name: Display ClusterIP service IP (for demonstration) # DELETE##########################
       debug:
-        msg: "L'adresse IP du serveur est {{ ansible_default_ipv4.address }}"
+        var: argocd_clusterip
     
     - name: Login to ArgoCD
       become_user: k8sadmin
-      command: argocd login {{ ansible_default_ipv4.address }}:30080 --plaintext --insecure --username admin --password "{{ argocd_password }}"
-      # we r trying to access for outside the cluster... so need to put the port and server ip not clusterip ip.
+      become: yes
+      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password }}"
       register: login_result
 
     - name: Display login result # DELETE##################################
