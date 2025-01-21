@@ -175,13 +175,13 @@
           when: password_change is success
   
     - name: Add repo in ArgoCD
-    set_fact: 
-      GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
-    command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password GH_access_token
-    register: repo_add
-    changed_when: repo_add.rc == 0
-    failed_when: repo_add.rc != 0
-    #no_log: true
+      set_fact: 
+        GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
+      command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password GH_access_token
+      register: repo_add
+      changed_when: repo_add.rc == 0
+      failed_when: repo_add.rc != 0
+      #no_log: true
 
     - name: Create application
       become_user: k8sadmin
