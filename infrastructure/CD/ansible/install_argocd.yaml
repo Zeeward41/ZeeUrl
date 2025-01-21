@@ -6,19 +6,16 @@
     - vars/common_vars.yaml
   
   tasks:
-
-    - name: Install pip
-      shell: ansible-galaxy collection install kubernetes.core
-    #   become_user: root
-    #   apt:
-    #     name: python3-pip
-    #     state: present
-
-    # - name: Install required system packages
-    #   become_user: root
-    #   pip:
-    #     name: ["kubernetes"]
-    #     extra_args: "--user" 
+    - name: Install required system packages
+      become_user: root
+      apt:
+        update_cache: yes
+        name:
+          - python3-kubernetes
+          - python3-yaml
+          - python3-jsonpatch
+          - python3-openshift
+        state: present
   
     - name: Check if argocd namespace exists
       kubernetes.core.k8s_info:
