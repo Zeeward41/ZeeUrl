@@ -172,10 +172,13 @@ jobs:
 
       - name: Run Ansible Playbook
         env:
-          MY_SECRET: ${{ secrets.MY_SECRET }}
+          MY_SECRET: ${{ secrets.ARGOCD_SECRET}}
+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
         run: |
           # Exporter le secret comme variable d'environnement pour Ansible
-          export ANSIBLE_MY_SECRET="${MY_SECRET}"
+          export ANSIBLE_MY_SECRET="${ARGOCD_SECRET}"
+          export ANSIBLE_GH_TOKEN="${GH_TOKEN}"
 
           #Run ansible
           echo "Setup User k8sadmin"

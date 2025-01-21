@@ -143,7 +143,60 @@
       become_user: k8sadmin
       command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password.stdout }}"
       register: login_result
+      changed_when: false
+      failed_when: login_result.rc != 0
 
     - name: Display login result
       debug:
         var: login_result.stdout_lines
+
+    - name: Change initial ArgoCD admin password
+      become_user: k8sadmin
+      when: secret_check.resources is defined and secret_check.resources | length > 0
+      block:
+        - name: Set new password fact
+          set_fact:
+            new_password: "{{ lookup('env', 'ANSIBLE_MY_SECRET') }}"
+          #no_log: true
+
+        - name: Update ArgoCD admin password
+          command: argocd account update-password --current-password argocd_password.stdout --new-password {{ new_password }}
+          register: password_change
+          changed_when: password_change.rc == 0
+          failed_when: password_change.rc != 0
+
+        - name: Delete initial admin secret
+          kubernetes.core.k8s:
+            api_version: v1
+            kind: Secret
+            name: argocd-initial-admin-secret
+            namespace: argocd
+            state: absent
+          when: password_change is success
+  
+    - name: Add repo in ArgoCD
+    set_fact: 
+      GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
+    command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password GH_access_token
+    register: repo_add
+    changed_when: repo_add.rc == 0
+    failed_when: repo_add.rc != 0
+    #no_log: true
+
+    - name: Create application
+      become_user: k8sadmin
+      command: argocd app create zeeurl \
+        --repo https://github.com/Zeeward41/ZeeUrl.git \
+        --path infrastructure/CD/kubernetes \
+        --dest-namespace default \
+        --dest-server https://kubernetes.default.svc
+      register: app_create
+      changed_when: app_create.rc == 0
+      failed_when: app_create.rc != 0
+
+    - name: Sync app
+      become_user: k8sadmin
+      command: argocd app sync zeeurl
+      register: app_sync
+      changed_when: app_sync.rc == 0
+      failed_when: app_sync.rc != 0
