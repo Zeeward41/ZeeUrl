@@ -174,11 +174,17 @@ jobs:
         env:
           ARGOCD_SECRET: ${{ secrets.ARGOCD_SECRET}}
           GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
+          DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL}}
 
         run: |
           # Exporter le secret comme variable d'environnement pour Ansible
           export ANSIBLE_ARGOCD_SECRET="${ARGOCD_SECRET}"
           export ANSIBLE_GH_TOKEN="${GH_TOKEN}"
+          export ANSIBLE_DOCKER_USER="${DOCKER_USER}"
+          export ANSIBLE_DOCKER_PASSWORD="${DOCKER_PASSWORD}"
+          export ANSIBLE_DOCKER_EMAIL="${DOCKER_EMAIL}"
 
           #Run ansible
           echo "Setup User k8sadmin"
