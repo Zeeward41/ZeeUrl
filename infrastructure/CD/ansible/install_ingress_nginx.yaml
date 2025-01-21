@@ -1,0 +1,30 @@
+- hosts: control_plane
+  become: yes
+  vars_files:
+    - vars/common_vars.yaml
+    
+  tasks:
+    - name: Deploy NGINX Ingress Controller
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('url', 'https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ nginx_ingress }}/deploy/static/provider/baremetal/deploy.yaml') }}"
+    
+    - name: Get DOCKER info
+      set_fact:
+        docker_user: "{{ lookup('env', 'ANSIBLE_DOCKER_USER') }}"
+        docker_password: "{{ lookup('env', 'ANSIBLE_DOCKER_PASSWORD') }}"
+        docker_email: "{{ lookup('env', 'ANSIBLE_DOCKER_EMAIL') }}"
+      no_log: true
+    
+    - name: Add Docker secrets to pull image
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: dockerhub-secret
+            namespace: default
+          type: kubernetes.io/dockerconfigjson
+          data:
+            .dockerconfigjson: "{{ {'auths
