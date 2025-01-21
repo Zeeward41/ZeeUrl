@@ -213,7 +213,7 @@ jobs:
           # sudo apt-get install python3-kubernetes
 
           #install nginx_ingress
-          ansible_playbook -i inventory install_ingress_nginx.yaml
+          ansible-playbook -i inventory install_ingress_nginx.yaml
 
           echo "Install and config ArgoCD"
           ansible-playbook -i inventory install_argocd.yaml
