@@ -166,14 +166,7 @@ jobs:
           cat /home/runner/.ssh/config
 
           # Creation inventory
-          cat <<EOF > infrastructure/CD/ansible/inventory
-          [workers]
-          node1 ansible_python_interpreter=/usr/bin/python3.12
-          node2 ansible_python_interpreter=/usr/bin/python3.12
-
-          [control_plane]
-          master_node ansible_python_interpreter=/usr/bin/python3.12
-EOF
+          echo -e "[workers]\nnode1 ansible_python_interpreter=/usr/bin/python3.12\nnode2 ansible_python_interpreter=/usr/bin/python3.12\n\n[control_plane]\nmaster_node ansible_python_interpreter=/usr/bin/python3.12" > infrastructure/CD/ansible/inventory
           cat infrastructure/CD/ansible/inventory
 
       - name: Run Ansible Playbook
