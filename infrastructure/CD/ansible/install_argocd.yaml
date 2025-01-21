@@ -8,6 +8,7 @@
   tasks:
     - name: Install required system packages
       become_user: root
+      become: yes
       apt:
         update_cache: yes
         name:
@@ -100,7 +101,7 @@
     - name: Display password (for demonstration) # DELETE##########################
       debug:
         var: argocd_password.stdout
-      when: argocd_password.stdout is defined
+      when: argocd_password is defined
 
     - name: Check if ArgoCD is already installed
       become_user: k8sadmin
@@ -161,7 +162,7 @@
           #no_log: true
 
         - name: Update ArgoCD admin password
-          command: argocd account update-password --current-password argocd_password.stdout --new-password {{ new_password }}
+          command: argocd account update-password --current-password {{ argocd_password.stdout }} --new-password {{ new_password }}
           register: password_change
           changed_when: password_change.rc == 0
           failed_when: password_change.rc != 0
@@ -180,7 +181,7 @@
         GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
 
     - name: Add repo in ArgoCD
-      command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password GH_access_token
+      command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password {{ GH_access_token }}
       register: repo_add
       changed_when: repo_add.rc == 0
       failed_when: repo_add.rc != 0
