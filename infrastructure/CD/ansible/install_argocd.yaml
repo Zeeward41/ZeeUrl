@@ -174,9 +174,11 @@
             state: absent
           when: password_change is success
   
-    - name: Add repo in ArgoCD
+    - name: Set Github access Token
       set_fact: 
         GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
+
+    - name: Add repo in ArgoCD
       command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password GH_access_token
       register: repo_add
       changed_when: repo_add.rc == 0
