@@ -8,16 +8,17 @@
   tasks:
 
     - name: Install pip
-      become_user: root
-      apt:
-        name: python3-pip
-        state: present
+      shell: ansible-galaxy collection install kubernetes.core
+    #   become_user: root
+    #   apt:
+    #     name: python3-pip
+    #     state: present
 
-    - name: Install required system packages
-      become_user: root
-      pip:
-        name: ["kubernetes"]
-        extra_args: "--user" 
+    # - name: Install required system packages
+    #   become_user: root
+    #   pip:
+    #     name: ["kubernetes"]
+    #     extra_args: "--user" 
   
     - name: Check if argocd namespace exists
       kubernetes.core.k8s_info:
