@@ -160,6 +160,10 @@
           set_fact:
             new_password: "{{ lookup('env', 'ANSIBLE_MY_SECRET') }}"
           #no_log: true
+        
+        - name: Debug new password
+          debug:
+            msg: "New password value: {{ new_password }}"
 
         - name: Update ArgoCD admin password
           command: argocd account update-password --current-password {{ argocd_password.stdout }} --new-password {{ new_password }}
