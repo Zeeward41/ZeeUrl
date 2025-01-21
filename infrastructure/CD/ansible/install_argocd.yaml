@@ -7,7 +7,6 @@
   
   tasks:
     - name: Install required system packages
-      become_user: k8sadmin
       become: yes
       apt:
         update_cache: yes
