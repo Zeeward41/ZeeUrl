@@ -204,6 +204,7 @@ jobs:
 
           #install kubernetes.core
           ansible-galaxy collection install kubernetes.core
+          sudo apt-get install python3-kubernetes
 
           echo "Install and config ArgoCD"
           ansible-playbook -i inventory install_argocd.yaml
