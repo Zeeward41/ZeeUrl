@@ -5,5 +5,5 @@ metadata:
 data:
   #VITE_BACKEND_API_URL: "http://13.60.23.37:31423/api"
   #VITE_FRONTEND_URL: "http://13.60.23.37:31423/"
-  VITE_BACKEND_API_URL: "k8s-ingress-alb-28463104.eu-north-1.elb.amazonaws.com/api"
-  VITE_FRONTEND_URL: "k8s-ingress-alb-28463104.eu-north-1.elb.amazonaws.com/"
+  VITE_BACKEND_API_URL: "k8s-ingress-alb-187735866.eu-north-1.elb.amazonaws.com/api"
+  VITE_FRONTEND_URL: "k8s-ingress-alb-187735866.eu-north-1.elb.amazonaws.com/"
