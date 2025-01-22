@@ -87,25 +87,25 @@
     - name: Get initial password if secret_check exists
       shell: |
         kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
-      register: argocd_password
+      register: argocd_password_init
       when: secret_check.resources | length > 0
       changed_when: false
       no_log: true
 
-    - name: Define ArgoCD password
+    - name: Set ArgoCD password
       set_fact:
-        argocd_password: >-
-          {% if secret_check.resources | length > 0 %}
-          {{ lookup('pipe', "kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d") }}
-          {% else %}
-          {{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}
-          {% endif %}
+        argocd_password_env: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
+      when: secret_check.resources | length == 0
+      no_log: true
+    
+    - name: Consolidate ArgoCD password
+      set_fact:
+        argocd_password: "{{ argocd_password_init.stdout if secret_check.resources | length > 0 else argocd_password_env }}"
       no_log: true
 
     - name: Display password (for demonstration) # DELETE##########################
       debug:
-        var: argocd_password.stdout
-      when: argocd_password is defined
+        var: argocd_password
 
     - name: Check if ArgoCD is already installed
       become_user: k8sadmin
