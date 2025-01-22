@@ -91,6 +91,16 @@
       when: secret_check.resources | length > 0
       changed_when: false
       no_log: true
+    
+    - name: Display password_init normal(for demonstration) # DELETE##########################
+      debug:
+        var: argocd_password_init
+      no_log: false
+      
+    - name: Display password_init stdout(for demonstration) # DELETE##########################
+      debug:
+        var: argocd_password_init.stdout
+      no_log: false
 
     - name: Set ArgoCD password
       set_fact:
