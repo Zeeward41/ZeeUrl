@@ -143,7 +143,7 @@
     
     - name: Login to ArgoCD
       become_user: k8sadmin
-      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password "{{ argocd_password.stdout }}"
+      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password {{ argocd_password.stdout }}
       register: login_result
       changed_when: false
       failed_when: login_result.rc != 0
