@@ -88,7 +88,7 @@
       shell: |
         kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
       register: argocd_password
-      when: secret_check.resources is defined and secret_check.resources | length > 0
+      when: secret_check.resources is defined
       changed_when: false
       no_log: true
 
