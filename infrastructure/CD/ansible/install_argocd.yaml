@@ -146,9 +146,16 @@
       set_fact:
         argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
     
+    - name: Wait for ArgoCD to be ready
+      command: nc -z {{ argocd_clusterip}} 443
+      register: result
+      until: result.rc == 0
+      retries: 30
+      delay: 10
+    
     - name: Login to ArgoCD
       become_user: k8sadmin
-      command: argocd login {{ argocd_clusterip }}:30080 --insecure --username admin --password {{ argocd_password }}
+      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password {{ argocd_password }}
       register: login_result
       changed_when: false
       failed_when: login_result.rc != 0
@@ -159,7 +166,7 @@
 
     - name: Change initial ArgoCD admin password
       become_user: k8sadmin
-      when: secret_check.resources is defined and secret_check.resources | length > 0
+      when: secret_check.resources | length > 0
       block:
         - name: Set new password fact
           set_fact:
@@ -171,7 +178,7 @@
             msg: "New password value: {{ new_password }}"
 
         - name: Update ArgoCD admin password
-          command: argocd account update-password --current-password {{ argocd_password.stdout }} --new-password {{ new_password }}
+          command: argocd account update-password --current-password {{ argocd_password }} --new-password {{ new_password }}
           register: password_change
           changed_when: password_change.rc == 0
           failed_when: password_change.rc != 0
