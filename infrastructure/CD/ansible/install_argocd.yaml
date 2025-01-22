@@ -88,14 +88,18 @@
       shell: |
         kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
       register: argocd_password
-      when: secret_check.resources is defined
+      when: secret_check.resources | length > 0
       changed_when: false
       no_log: true
 
-    - name: Set ArgoCD password
+    - name: Define ArgoCD password
       set_fact:
-        argocd_password: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
-      when: secret_check.resources | length == 0
+        argocd_password: >-
+          {% if secret_check.resources | length > 0 %}
+          {{ lookup('pipe', "kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d") }}
+          {% else %}
+          {{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}
+          {% endif %}
       no_log: true
 
     - name: Display password (for demonstration) # DELETE##########################
