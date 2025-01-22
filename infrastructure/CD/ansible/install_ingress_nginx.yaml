@@ -22,8 +22,8 @@
     - name: Apply NGINX Ingress Controller manifest using kubectl
       become: yes
       become_user: k8sadmin
-      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ v1.12.0 }}/deploy/static/provider/baremetal/deploy.yaml
-      register: result
+      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/baremetal/deploy.yaml
+      
     
     - name: Get DOCKER info
       set_fact:
