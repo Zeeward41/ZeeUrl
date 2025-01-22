@@ -1,6 +1,6 @@
 - hosts: control_plane
   become: yes
-  become_use: k8sadmin
+  become_user: k8sadmin
   vars:
     ansible_python_interpreter: /usr/bin/python3
   vars_files:
