@@ -106,6 +106,7 @@
     - name: Display password (for demonstration) # DELETE##########################
       debug:
         var: argocd_password
+      no_log: false
 
     - name: Check if ArgoCD is already installed
       become_user: k8sadmin
