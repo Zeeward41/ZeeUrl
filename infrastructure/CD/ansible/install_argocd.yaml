@@ -74,25 +74,21 @@
       ansible.builtin.file:
         path: /tmp/argocd-install.yaml
         state: absent
-    
-    - name: Check if argocd-initial-admin-secret exists
-      kubernetes.core.k8s_info:
-        kind: Secret
-        name: argocd-initial-admin-secret
-        namespace: argocd
+
+    - name: Short pause for secret initialization
+      ansible.builtin.wait_for:
+        timeout: 60
+
+    - name: Check if argocd-initial-admin-secret exists using kubectl
+      shell: |
+        kubectl get secret argocd-initial-admin-secret -n argocd --no-headers
       register: secret_check
+      failed_when: false
+      changed_when: false
 
     - name: Debug secret_check result  # DELETE ####################
       debug:
         var: secret_check
-
-    - name: Debug environment variables # DELETE ##################
-      become: yes
-      become_user: k8sadmin
-      shell: env
-      register: debug_env
-    - debug:
-        var: debug_env.stdout_lines
 
     - name: Get initial password if secret exists
       become: yes
