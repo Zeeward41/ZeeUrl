@@ -84,13 +84,17 @@
       register: secret_check
       ignore_errors: true
 
+    - name: Test display ressoure
+      debug:
+        var: secret_check 
+
     - name: Get initial password if secret_check exists
       shell: |
         kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
       register: argocd_password_init
       when: secret_check.resources is defined and secret_check.resources | length > 0
       changed_when: false
-      no_log: true
+      #no_log: true
     
     - name: Display password_init normal(for demonstration) # DELETE##########################
       debug:
@@ -106,12 +110,12 @@
       set_fact:
         argocd_password_env: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
       when: not secret_check.resources is defined and secret_check.resources | length > 0
-      no_log: true
+      #no_log: true
     
     - name: Consolidate ArgoCD password
       set_fact:
         argocd_password: "{{ argocd_password_init.stdout if secret_check.resources is defined and secret_check.resources | length > 0 else argocd_password_env }}"
-      no_log: true
+      #no_log: true
 
     - name: Display password (for demonstration) # DELETE##########################
       debug:
