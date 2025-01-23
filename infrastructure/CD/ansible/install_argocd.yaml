@@ -76,51 +76,24 @@
         state: absent
 
         ##############################################
-    - name: Check1
+    - name: Check pod
       become: yes
       become_user: k8sadmin
-      command: sudo -u k8sadmin kubectl get secret argocd-initial-admin-secret -n argocd
-      register: check1
-      failed_when: false
-      changed_when: false
+      shell: |
+        kubectl get pod -A
+      register: check_pod
 
-    - name: display check1
+    - name: display check_pod
       debug:
-        var: check1
+        var: check_pod
     
-    - name: Check2
-      become: yes
-      become_user: k8sadmin
-      shell: |
-        kubectl get secret argocd-initial-admin-secret -n argocd --kubeconfig=~/.kube/config --no-headers
-      register: check2
-      failed_when: false
-      changed_when: false
-
-    - name: display check2
-      become: yes
-      become_user: k8sadmin
+    - name: check_user
+      shell: whoami
+      register: check_user
+    
+    - name: display check_user
       debug:
-        var: check2
-
-    - name: Check if user can access secrets in argocd namespace
-      become: yes
-      become_user: k8sadmin
-      shell: |
-        kubectl auth can-i get secret -n argocd --kubeconfig=/path/to/your/kubeconfig
-      register: auth_check
-    - debug:
-        var: auth_check.stdout
-    
-    - name: Debug kubeconfig context
-      become: yes
-      become_user: k8sadmin
-      shell: |
-        kubectl config current-context --kubeconfig=/path/to/your/kubeconfig
-      register: kubeconfig_debug
-      failed_when: false
-    - debug:
-        var: kubeconfig_debug.stdout
+        var: check_user
         ##############################################
 
     - name: Check if argocd-initial-admin-secret exists using kubectl
@@ -179,115 +152,115 @@
         var: argocd_password
       no_log: false
 
-    - name: Check if ArgoCD is already installed
-      become_user: k8sadmin
-      become: yes
-      stat:
-        path: /usr/local/bin/argocd
-      register: argocd_check
+    # - name: Check if ArgoCD is already installed
+    #   become_user: k8sadmin
+    #   become: yes
+    #   stat:
+    #     path: /usr/local/bin/argocd
+    #   register: argocd_check
     
-    - name: Download and install ArgoCD
-      block:
-        - name: Download ArgoCD
-          get_url:
-            url: https://github.com/argoproj/argo-cd/releases/download/{{ argocd }}/argocd-linux-amd64
-            dest: /tmp/argocd-linux-amd64
-            mode: '0755'
+    # - name: Download and install ArgoCD
+    #   block:
+    #     - name: Download ArgoCD
+    #       get_url:
+    #         url: https://github.com/argoproj/argo-cd/releases/download/{{ argocd }}/argocd-linux-amd64
+    #         dest: /tmp/argocd-linux-amd64
+    #         mode: '0755'
 
-        - name: Rename and move ArgoCD
-          command: sudo mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
-          become: yes
+    #     - name: Rename and move ArgoCD
+    #       command: sudo mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
+    #       become: yes
 
-        - name: Remove temporary file
-          become: yes
-          file:
-            path: /tmp/argocd-linux-amd64
-            state: absent
-      when: not argocd_check.stat.exists
+    #     - name: Remove temporary file
+    #       become: yes
+    #       file:
+    #         path: /tmp/argocd-linux-amd64
+    #         state: absent
+    #   when: not argocd_check.stat.exists
 
-    - name: Get IP of argocd-server ClusterIP service
-      kubernetes.core.k8s_info:
-        api_version: v1
-        kind: Service
-        name: argocd-server
-        namespace: argocd
-      register: argocd_service
+    # - name: Get IP of argocd-server ClusterIP service
+    #   kubernetes.core.k8s_info:
+    #     api_version: v1
+    #     kind: Service
+    #     name: argocd-server
+    #     namespace: argocd
+    #   register: argocd_service
 
-    - name: Extract ClusterIP service IP
-      set_fact:
-        argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
+    # - name: Extract ClusterIP service IP
+    #   set_fact:
+    #     argocd_clusterip: "{{ argocd_service.resources[0].spec.clusterIP }}"
     
-    - name: Wait for ArgoCD to be ready
-      command: nc -z {{ argocd_clusterip}} 443
-      register: result
-      until: result.rc == 0
-      retries: 30
-      delay: 10
+    # - name: Wait for ArgoCD to be ready
+    #   command: nc -z {{ argocd_clusterip}} 443
+    #   register: result
+    #   until: result.rc == 0
+    #   retries: 30
+    #   delay: 10
     
-    - name: Login to ArgoCD
-      become_user: k8sadmin
-      command: argocd login {{ argocd_clusterip }} --insecure --username admin --password {{ argocd_password }}
-      register: login_result
-      changed_when: false
-      failed_when: login_result.rc != 0
+    # - name: Login to ArgoCD
+    #   become_user: k8sadmin
+    #   command: argocd login {{ argocd_clusterip }} --insecure --username admin --password {{ argocd_password }}
+    #   register: login_result
+    #   changed_when: false
+    #   failed_when: login_result.rc != 0
 
-    - name: Display login result
-      debug:
-        var: login_result.stdout_lines
+    # - name: Display login result
+    #   debug:
+    #     var: login_result.stdout_lines
 
-    - name: Change initial ArgoCD admin password
-      become_user: k8sadmin
-      when: secret_check.rc == 0
-      block:
-        - name: Set new password fact
-          set_fact:
-            new_password: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
-          #no_log: true
+    # - name: Change initial ArgoCD admin password
+    #   become_user: k8sadmin
+    #   when: secret_check.rc == 0
+    #   block:
+    #     - name: Set new password fact
+    #       set_fact:
+    #         new_password: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
+    #       #no_log: true
         
-        - name: Debug new password
-          debug:
-            msg: "New password value: {{ new_password }}"
+    #     - name: Debug new password
+    #       debug:
+    #         msg: "New password value: {{ new_password }}"
 
-        - name: Update ArgoCD admin password
-          command: argocd account update-password --current-password {{ argocd_password }} --new-password {{ new_password }}
-          register: password_change
-          changed_when: password_change.rc == 0
-          failed_when: password_change.rc != 0
+    #     - name: Update ArgoCD admin password
+    #       command: argocd account update-password --current-password {{ argocd_password }} --new-password {{ new_password }}
+    #       register: password_change
+    #       changed_when: password_change.rc == 0
+    #       failed_when: password_change.rc != 0
 
-        - name: Delete initial admin secret
-          kubernetes.core.k8s:
-            api_version: v1
-            kind: Secret
-            name: argocd-initial-admin-secret
-            namespace: argocd
-            state: absent
-          when: password_change is success
+    #     - name: Delete initial admin secret
+    #       kubernetes.core.k8s:
+    #         api_version: v1
+    #         kind: Secret
+    #         name: argocd-initial-admin-secret
+    #         namespace: argocd
+    #         state: absent
+    #       when: password_change is success
   
-    - name: Set Github access Token
-      set_fact: 
-        GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
+    # - name: Set Github access Token
+    #   set_fact: 
+    #     GH_access_token: "{{ lookup('env', 'ANSIBLE_GH_TOKEN')}}"
 
-    - name: Add repo in ArgoCD
-      command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password {{ GH_access_token }}
-      register: repo_add
-      changed_when: repo_add.rc == 0
-      failed_when: repo_add.rc != 0
-      #no_log: true
+    # - name: Add repo in ArgoCD
+    #   command: argocd repo add {{ git_repo_https}} --username {{ git_user }} --password {{ GH_access_token }}
+    #   register: repo_add
+    #   changed_when: repo_add.rc == 0
+    #   failed_when: repo_add.rc != 0
+    #   #no_log: true
 
-    - name: Create application
-      become_user: k8sadmin
-      command: argocd app create zeeurl \
-        --repo https://github.com/Zeeward41/ZeeUrl.git \
-        --path infrastructure/CD/kubernetes \
-        --dest-namespace default \
-        --dest-server https://kubernetes.default.svc
-      register: app_create
-      changed_when: app_create.rc == 0
-      failed_when: app_create.rc != 0
+    # - name: Create application
+    #   become_user: k8sadmin
+    #   command: argocd app create zeeurl \
+    #     --repo https://github.com/Zeeward41/ZeeUrl.git \
+    #     --path infrastructure/CD/kubernetes \
+    #     --dest-namespace default \
+    #     --dest-server https://kubernetes.default.svc
+    #   register: app_create
+    #   changed_when: app_create.rc == 0
+    #   failed_when: app_create.rc != 0
 
-    - name: Sync app
-      become_user: k8sadmin
-      command: argocd app sync zeeurl
-      register: app_sync
-      changed_when: app_sync.rc == 0
-      failed_when: app_sync.rc != 0
+    # - name: Sync app
+    #   become_user: k8sadmin
+    #   command: argocd app sync zeeurl
+    #   register: app_sync
+    #   changed_when: app_sync.rc == 0
+    #   failed_when: app_sync.rc != 0
