@@ -76,6 +76,7 @@
         state: absent
 
     - name: Check if argocd-initial-admin-secret exists using kubectl
+      become_user: k8sadmin
       shell: |
         kubectl get secret argocd-initial-admin-secret -n argocd --no-headers
       register: secret_check
@@ -85,6 +86,12 @@
     - name: Debug secret_check result  # DELETE ####################
       debug:
         var: secret_check
+
+    - name: Debug environment variables # DELETE ##################
+      shell: env
+      register: debug_env
+    - debug:
+        var: debug_env.stdout_lines
 
     - name: Get initial password if secret exists
       shell: |
