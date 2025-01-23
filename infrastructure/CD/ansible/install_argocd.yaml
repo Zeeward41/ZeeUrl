@@ -78,6 +78,7 @@
         ##############################################
     - name: Check1
       become: yes
+      become_user: k8sadmin
       command: sudo -u k8sadmin kubectl get secret argocd-initial-admin-secret -n argocd
       register: check1
       failed_when: false
@@ -88,6 +89,7 @@
         var: check1
     
     - name: Check2
+      become: yes
       become_user: k8sadmin
       shell: |
         kubectl get secret argocd-initial-admin-secret -n argocd --kubeconfig=~/.kube/config --no-headers
@@ -96,10 +98,14 @@
       changed_when: false
 
     - name: display check2
+      become: yes
+      become_user: k8sadmin
       debug:
         var: check2
 
     - name: Check if user can access secrets in argocd namespace
+      become: yes
+      become_user: k8sadmin
       shell: |
         kubectl auth can-i get secret -n argocd --kubeconfig=/path/to/your/kubeconfig
       register: auth_check
@@ -107,6 +113,8 @@
         var: auth_check.stdout
     
     - name: Debug kubeconfig context
+      become: yes
+      become_user: k8sadmin
       shell: |
         kubectl config current-context --kubeconfig=/path/to/your/kubeconfig
       register: kubeconfig_debug
@@ -117,6 +125,7 @@
 
     - name: Check if argocd-initial-admin-secret exists using kubectl
       become: yes
+      become_user: k8sadmin
       shell: |
         kubectl get secret argocd-initial-admin-secret -n argocd --no-headers
       register: secret_check
@@ -128,12 +137,16 @@
         var: secret_check
 
     - name: Debug environment variables # DELETE ##################
+      become: yes
+      become_user: k8sadmin
       shell: env
       register: debug_env
     - debug:
         var: debug_env.stdout_lines
 
     - name: Get initial password if secret exists
+      become: yes
+      become_user: k8sadmin
       shell: |
         kubectl get -n argocd secret argocd-initial-admin-secret -o json | jq .data.password -r | base64 -d
       register: argocd_password_init
