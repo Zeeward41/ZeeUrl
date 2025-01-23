@@ -77,7 +77,7 @@
 
     - name: Short pause for secret initialization
       ansible.builtin.wait_for:
-        timeout: 60
+        timeout: 120
 
     - name: Check if argocd-initial-admin-secret exists using kubectl
       shell: |
