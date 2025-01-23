@@ -77,9 +77,8 @@
 
         ##############################################
     - name: Check1
-      
-      shell: |
-        sudo -u k8sadmin kubectl get secret argocd-initial-admin-secret -n argocd
+      become: yes
+      command: sudo -u k8sadmin kubectl get secret argocd-initial-admin-secret -n argocd
       register: check1
       failed_when: false
       changed_when: false
@@ -89,7 +88,7 @@
         var: check1
     
     - name: Check2
-      
+      become_user: k8sadmin
       shell: |
         kubectl get secret argocd-initial-admin-secret -n argocd --kubeconfig=~/.kube/config --no-headers
       register: check2
