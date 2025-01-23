@@ -75,8 +75,49 @@
         path: /tmp/argocd-install.yaml
         state: absent
 
+        ##############################################
+    - name: Check1
+      
+      shell: |
+        sudo -u k8sadmin kubectl get secret argocd-initial-admin-secret -n argocd
+      register: check1
+      failed_when: false
+      changed_when: false
+
+    - name: display check1
+      debug:
+        var: check1
+    
+    - name: Check2
+      
+      shell: |
+        kubectl get secret argocd-initial-admin-secret -n argocd --kubeconfig=~/.kube/config --no-headers
+      register: check2
+      failed_when: false
+      changed_when: false
+
+    - name: display check2
+      debug:
+        var: check2
+
+    - name: Check if user can access secrets in argocd namespace
+      shell: |
+        kubectl auth can-i get secret -n argocd --kubeconfig=/path/to/your/kubeconfig
+      register: auth_check
+    - debug:
+        var: auth_check.stdout
+    
+    - name: Debug kubeconfig context
+      shell: |
+        kubectl config current-context --kubeconfig=/path/to/your/kubeconfig
+      register: kubeconfig_debug
+      failed_when: false
+    - debug:
+        var: kubeconfig_debug.stdout
+        ##############################################
+
     - name: Check if argocd-initial-admin-secret exists using kubectl
-      become_user: k8sadmin
+      become: yes
       shell: |
         kubectl get secret argocd-initial-admin-secret -n argocd --no-headers
       register: secret_check
@@ -184,7 +225,7 @@
 
     - name: Change initial ArgoCD admin password
       become_user: k8sadmin
-      when: secret_check.resources is defined and secret_check.resources | length > 0
+      when: secret_check.rc == 0
       block:
         - name: Set new password fact
           set_fact:
