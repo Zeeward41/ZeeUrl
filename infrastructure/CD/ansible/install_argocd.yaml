@@ -74,36 +74,13 @@
       ansible.builtin.file:
         path: /tmp/argocd-install.yaml
         state: absent
-
-        ##############################################
-    - name: Check pod
-      become: yes
-      become_user: k8sadmin
-      shell: |
-        kubectl get pod -A
-      register: check_pod
-
-    - name: display check_pod
-      debug:
-        var: check_pod
     
-    - name: check_user
-      shell: whoami
-      register: check_user
-    
-    - name: display check_user
-      debug:
-        var: check_user
-        ##############################################
-
-    - name: Check if argocd-initial-admin-secret exists using kubectl
-      become: yes
-      become_user: k8sadmin
-      shell: |
-        kubectl get secret argocd-initial-admin-secret -n argocd --no-headers
+    - name: Check if argocd-initial-admin-secret exists
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: argocd-initial-admin-secret
+        namespace: argocd
       register: secret_check
-      failed_when: false
-      changed_when: false
 
     - name: Debug secret_check result  # DELETE ####################
       debug:
@@ -135,6 +112,7 @@
       debug:
         var: argocd_password_init.stdout
       no_log: false
+
 
     - name: Set ArgoCD password
       set_fact:
@@ -194,7 +172,7 @@
     #   command: nc -z {{ argocd_clusterip}} 443
     #   register: result
     #   until: result.rc == 0
-    #   retries: 30
+    #   retries: 15
     #   delay: 10
     
     # - name: Login to ArgoCD
