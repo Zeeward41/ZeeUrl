@@ -152,8 +152,12 @@ jobs:
           #   attempt=$((attempt+1))
           #   sleep 2
           # done
-          echo "add key ssh"
+
+          echo "check key"
+          ls ~/.ssh
+
           # Add key to SSH agent
+          echo "add key ssh"
           ssh-add ~/.ssh/key_ssh
           
           # Add host keys
