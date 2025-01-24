@@ -153,12 +153,17 @@ jobs:
           #   sleep 2
           # done
 
-          echo "check key"
-          ls ~/.ssh
-
           # Add key to SSH agent
-          echo "add key ssh"
-          ssh-add ~/.ssh/key_ssh
+          
+          max_attempts=5
+          attempt=0
+          while [ $attempt -lt $max_attempts ]; do
+            if ssh-add ~/.ssh/key_ssh; then
+              break
+            fi
+            attempt=$((attempt+1))
+            sleep 5
+          done
           
           # Add host keys
           ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> ~/.ssh/known_hosts
