@@ -24,6 +24,20 @@
       become_user: k8sadmin
       command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/baremetal/deploy.yaml
     
+    - name: Update Ingress Nginx Controller NodePort
+      kubernetes.core.k8s:
+        state: patched
+        kind: Service
+        name: ingress-nginx-controller
+        namespace: ingress-nginx
+        definition:
+          spec:
+            ports:
+            - port: 80
+              nodePort: 30984
+              targetPort: 80
+              protocol: TCP
+    
     - name: Get DOCKER info
       set_fact:
         docker_user: "{{ lookup('env', 'ANSIBLE_DOCKER_USER') }}"
