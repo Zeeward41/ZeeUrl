@@ -86,10 +86,6 @@
       failed_when: false
       changed_when: false
 
-    - name: Debug secret_check result  # DELETE ####################
-      debug:
-        var: secret_check
-
     - name: Get initial password if secret exists
       become: yes
       become_user: k8sadmin
@@ -98,33 +94,17 @@
       register: argocd_password_init
       when: secret_check.rc == 0
       changed_when: false
-    
-    - name: Display password_init normal(for demonstration) # DELETE##########################
-      debug:
-        var: argocd_password_init
-      no_log: false
-      
-    - name: Display password_init stdout(for demonstration) # DELETE##########################
-      debug:
-        var: argocd_password_init.stdout
-      no_log: false
-
 
     - name: Set ArgoCD password
       set_fact:
         argocd_password_env: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
       when: secret_check.rc != 0
-      #no_log: true
+      no_log: true
     
     - name: Consolidate ArgoCD password
       set_fact:
         argocd_password: "{{ argocd_password_init.stdout if secret_check.rc == 0 else argocd_password_env }}"
-      #no_log: true
-
-    - name: Display password (for demonstration) # DELETE##########################
-      debug:
-        var: argocd_password
-      no_log: false
+      no_log: true
 
     - name: Check if ArgoCD CLI is already installed
       become_user: k8sadmin
@@ -178,10 +158,6 @@
       changed_when: false
       failed_when: login_result.rc != 0
 
-    - name: Display login result
-      debug:
-        var: login_result.stdout_lines
-
     - name: Change initial ArgoCD admin password
       become_user: k8sadmin
       when: secret_check.rc == 0
@@ -189,12 +165,8 @@
         - name: Set new password fact
           set_fact:
             new_password: "{{ lookup('env', 'ANSIBLE_ARGOCD_SECRET') }}"
-          #no_log: true
+          no_log: true
         
-        - name: Debug new password # DELETTEEEEEEE
-          debug:
-            msg: "New password value: {{ new_password }}"
-
         - name: Update ArgoCD admin password
           command: argocd account update-password --current-password {{ argocd_password }} --new-password {{ new_password }}
           register: password_change
@@ -219,7 +191,7 @@
       register: repo_add
       changed_when: repo_add.rc == 0
       failed_when: repo_add.rc != 0
-      #no_log: true
+      no_log: true
 
     - name: Create application
       become_user: k8sadmin
