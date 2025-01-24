@@ -120,80 +120,28 @@ jobs:
           sudo apt-get install -y ansible python3-pip
           pip3 install boto3 botocore
 
-        ######################################################################################
-
       - name: Setup SSH key Kubernetes Server
         env:
           INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
           INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
           INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
         run: |
-          set -e  # Exit on any error
+          eval `ssh-agent -s`
+          mkdir -p /home/runner/.ssh/
+          echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
+          sleep 1
+          chmod 600 /home/runner/.ssh/key_ssh
           
-          # Start SSH agent
-          echo "start ssh agent"
-          eval $(ssh-agent -s)
-          
-          # Prepare SSH key
-          echo "prepare ssh key"
-          mkdir -p ~/.ssh/
-          echo "secret.ssh_private"
-          echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > ~/.ssh/key_ssh
-          echo "chmod"
-          chmod 600 ~/.ssh/key_ssh
+          # Verify key format
+          ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
 
-          # Validate key with retry
-          # max_attempts=5
-          # attempt=0
-          # while [ $attempt -lt $max_attempts ]; do
-          #   if ssh-keygen -y -f ~/.ssh/key_ssh; then
-          #     break
-          #   fi
-          #   attempt=$((attempt+1))
-          #   sleep 2
-          # done
+          # add key to SSH agent
+          ssh-add /home/runner/.ssh/key_ssh
 
-          # Add key to SSH agent
-          
-          max_attempts=5
-          attempt=0
-          while [ $attempt -lt $max_attempts ]; do
-            if ssh-add ~/.ssh/key_ssh; then
-              break
-            fi
-            attempt=$((attempt+1))
-            sleep 5
-          done
-          
-          # Add host keys
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> ~/.ssh/known_hosts
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> ~/.ssh/known_hosts
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> ~/.ssh/known_hosts
-            
-          ######################################################################################
-
-      # - name: Setup SSH key Kubernetes Server
-      #   env:
-      #     INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
-      #     INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
-      #     INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
-      #   run: |
-      #     eval `ssh-agent -s`
-      #     mkdir -p /home/runner/.ssh/
-      #     echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
-      #     sleep 1
-      #     chmod 600 /home/runner/.ssh/key_ssh
-          
-      #     # Verify key format
-      #     ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
-
-      #     # add key to SSH agent
-      #     ssh-add /home/runner/.ssh/key_ssh
-
-      #     # Add host key
-      #     ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
-      #     ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
-      #     ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
+          # Add host key
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
       
       - name: Configure Ansible
         env:
