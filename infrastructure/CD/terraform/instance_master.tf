@@ -15,10 +15,12 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh_kubernetes" {
 }
 
 # Ingress rule ####################### A DELETE
-resource "aws_vpc_security_group_ingress_rule" "allow_all_kubernetes" {
+resource "aws_vpc_security_group_ingress_rule" "allow_only_loadBalancer" {
   security_group_id = aws_security_group.kubernetes_servers.id
-  ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port = var.ingress_port
+  to_port = var.ingress_port
+  referenced_security_group_id = aws_security_group.k8s_ingress_alb_SG.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_traffic_in_cluster" {
