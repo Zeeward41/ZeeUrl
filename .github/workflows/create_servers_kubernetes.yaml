@@ -139,15 +139,15 @@ jobs:
           chmod 600 ~/.ssh/key_ssh
           
           # Validate key with retry
-          max_attempts=5
-          attempt=0
-          while [ $attempt -lt $max_attempts ]; do
-            if ssh-keygen -y -f ~/.ssh/key_ssh; then
-              break
-            fi
-            attempt=$((attempt+1))
-            sleep 2
-          done
+          # max_attempts=5
+          # attempt=0
+          # while [ $attempt -lt $max_attempts ]; do
+          #   if ssh-keygen -y -f ~/.ssh/key_ssh; then
+          #     break
+          #   fi
+          #   attempt=$((attempt+1))
+          #   sleep 2
+          # done
           
           # Add key to SSH agent
           ssh-add ~/.ssh/key_ssh
