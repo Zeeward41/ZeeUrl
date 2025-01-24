@@ -131,13 +131,17 @@ jobs:
           set -e  # Exit on any error
           
           # Start SSH agent
+          echo "start ssh agent"
           eval $(ssh-agent -s)
           
           # Prepare SSH key
+          echo "prepare ssh key"
           mkdir -p ~/.ssh/
+          echo "secret.ssh_private"
           echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > ~/.ssh/key_ssh
+          echo "chmod"
           chmod 600 ~/.ssh/key_ssh
-          
+
           # Validate key with retry
           # max_attempts=5
           # attempt=0
@@ -148,7 +152,7 @@ jobs:
           #   attempt=$((attempt+1))
           #   sleep 2
           # done
-          
+          echo "add key ssh"
           # Add key to SSH agent
           ssh-add ~/.ssh/key_ssh
           
