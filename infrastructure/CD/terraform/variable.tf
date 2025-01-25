@@ -26,5 +26,5 @@ variable "mon_ip" {
 }
 
 variable "ingress_port" {
-    
+
 }
