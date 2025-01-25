@@ -16,10 +16,10 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh_kubernetes" {
 
 # Ingress rule ####################### A DELETE
 resource "aws_vpc_security_group_ingress_rule" "allow_only_loadBalancer" {
-  security_group_id = aws_security_group.kubernetes_servers.id
-  ip_protocol       = "tcp"
-  from_port = var.ingress_port
-  to_port = var.ingress_port
+  security_group_id            = aws_security_group.kubernetes_servers.id
+  ip_protocol                  = "tcp"
+  from_port                    = var.ingress_port
+  to_port                      = var.ingress_port
   referenced_security_group_id = aws_security_group.k8s_ingress_alb_SG.id
 }
 

@@ -26,7 +26,7 @@ resource "aws_lb_target_group" "k8s_ingress_http" {
   name     = "k8s-ingress-http"
   port     = var.ingress_port
   protocol = "HTTP"
-    vpc_id      = data.aws_vpc.default.id
+  vpc_id   = data.aws_vpc.default.id
   health_check {
     path                = "/"
     protocol            = "HTTP"
@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "k8s_ingress_http" {
 # Ajouter les instances au Target Group
 resource "aws_lb_target_group_attachment" "worker_1" {
   target_group_arn = aws_lb_target_group.k8s_ingress_http.arn
-  target_id        =  aws_instance.node_one_kubernetes.id
+  target_id        = aws_instance.node_one_kubernetes.id
   port             = var.ingress_port
 }
 
