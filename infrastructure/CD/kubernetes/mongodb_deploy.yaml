@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      securityContext:
+        runAsUser: 1000  # User non-root
+        fsGroup: 1000    # Group for volume
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /data/db"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+      containers:
+      - name: aws-cli
+        image: amazon/aws-cli:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region eu-north-1
+          aws s3 sync s3://zeeurl-db-41/ /data/db
+
+          # keep alive container
+          while true; do sleep 3600; done
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SECRET_ACCESS_KEY
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+      - name: mongodb
+        image: mongo:8.0.4
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Start MongoDB background
+          mongod --bind_ip_all --fork --logpath /data/db/mongodb.log
+
+          # W8
+          sleep 15
+
+          # Import DB
+          mongoimport --db ZeeurlDB --collection linkurls --file /data/db/ZeeurlDB.linkurls.json --jsonArray
+          mongoimport --db ZeeurlDB --collection linkvisits --file /data/db/ZeeurlDB.linkvisits.json --jsonArray
+          mongoimport --db ZeeurlDB --collection users --file /data/db/ZeeurlDB.users.json --jsonArray
+
+          # STOP MongoDB
+          mongod --shutdown
+
+          # START MongoDB (normal - foreground)
+          exec mongod --bind_ip_all
+        env:
+        - name: GLIBC_TUNABLES
+          value: "glibc.pthread.rseq=0"
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mongodb-pvc
+          readOnly: false
