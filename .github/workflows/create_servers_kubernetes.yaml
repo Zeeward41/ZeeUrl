@@ -213,17 +213,18 @@ jobs:
           ansible-galaxy collection install kubernetes.core --upgrade
           # sudo apt-get install python3-kubernetes
 
+          echo "Install and config Vim"
+          ansible-playbook -i inventory miscellanous_config.yaml
+
           #install nginx_ingress
           ansible-playbook -i inventory install_ingress_nginx.yaml
+      
+          echo "Create Secret kubernetes"
+          ansible-playbook -i inventory create_secret_k8s.yaml
 
           echo "Install and config ArgoCD"
           ansible-playbook -i inventory install_argocd.yaml
 
-          echo "Install and config Vim"
-          ansible-playbook -i inventory miscellanous_config.yaml
-
-          echo "Create Secret kubernetes"
-          ansible-playbook -i inventory create_secret_k8s.yaml
 
         working-directory: infrastructure/CD/ansible
       
