@@ -1,6 +1,5 @@
 - hosts: all
   become: yes
-  become_user: k8sadmin
   tasks:
     - name: Update apt-get cache
       apt:
@@ -39,6 +38,7 @@
       no_log: true
     
     - name: Create kubernetes Secret with AWS credentials
+      become_user: k8sadmin
       kubernetes.core.k8s:
         state: present
         definition:
