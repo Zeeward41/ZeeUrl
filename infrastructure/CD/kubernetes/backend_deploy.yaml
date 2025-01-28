@@ -15,7 +15,7 @@ spec:
         app: backend
     spec:
       containers:
-      - image: docker.io/zeeward41/test:backend_v2
+      - image: docker.io/zeeward41/test:backend_v3
         name: backend
         ports:
         - containerPort: 5000
