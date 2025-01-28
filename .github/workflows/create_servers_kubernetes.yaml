@@ -176,14 +176,18 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER}}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
           DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
 
         run: |
-          # Exporter le secret comme variable d'environnement pour Ansible
+          # Export secret as env var for Ansible
           export ANSIBLE_ARGOCD_SECRET="${ARGOCD_SECRET}"
           export ANSIBLE_GH_TOKEN="${GH_TOKEN}"
           export ANSIBLE_DOCKER_USER="${DOCKER_USER}"
           export ANSIBLE_DOCKER_PASSWORD="${DOCKER_PASSWORD}"
           export ANSIBLE_DOCKER_EMAIL="${DOCKER_EMAIL}"
+          export ANSIBLE_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+          export ANSIBLE_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
 
           #Run ansible
           echo "Setup User k8sadmin"
@@ -204,9 +208,6 @@ jobs:
           echo "setup Workers nodes"
           ansible-playbook -i inventory setup_workers.yaml
 
-          echo "Install and config Vim"
-          ansible-playbook -i inventory miscellanous_config.yaml
-
           #install kubernetes.core
           ansible-galaxy collection install kubernetes.core
           ansible-galaxy collection install kubernetes.core --upgrade
@@ -218,6 +219,8 @@ jobs:
           echo "Install and config ArgoCD"
           ansible-playbook -i inventory install_argocd.yaml
 
+          echo "Install and config Vim"
+          ansible-playbook -i inventory miscellanous_config.yaml
 
         working-directory: infrastructure/CD/ansible
       
