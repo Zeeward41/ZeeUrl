@@ -222,6 +222,9 @@ jobs:
           echo "Install and config Vim"
           ansible-playbook -i inventory miscellanous_config.yaml
 
+          echo "Create Secret kubernetes"
+          ansible-playbook -i inventory create_secret_k8s.yaml
+
         working-directory: infrastructure/CD/ansible
       
       - name: Delete Github Actions IP to SG kubernetes Servers
