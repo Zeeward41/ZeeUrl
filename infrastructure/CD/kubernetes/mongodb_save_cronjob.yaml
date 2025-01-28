@@ -15,7 +15,7 @@ spec:
             - /bin/sh
             - -c
             - |
-              mongoexport --host mongodb-service --port 27017--db ZeeurlDB --collection linkurls --out /data/backup/ZeeurlDB.linkurls.json --jsonArray
+              mongoexport --host mongodb-service --port 27017 --db ZeeurlDB --collection linkurls --out /data/backup/ZeeurlDB.linkurls.json --jsonArray
               mongoexport --host mongodb-service --port 27017 --db ZeeurlDB --collection linkvisits --out /data/backup/ZeeurlDB.linkvisits.json --jsonArray
               mongoexport --host mongodb-service --port 27017 --db ZeeurlDB --collection users --out /data/backup/ZeeurlDB.users.json --jsonArray
           - name: save-mongodb
