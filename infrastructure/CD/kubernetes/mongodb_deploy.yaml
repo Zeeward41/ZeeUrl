@@ -13,12 +13,12 @@ spec:
         app: mongodb
     spec:
       securityContext:
-        runAsUser: 1000  # User non-root
-        fsGroup: 1000    # Group for volume
+        runAsUser: 1001 # User non-root
+        fsGroup: 1001    # Group for volume
       initContainers:
       - name: fix-permissions
         image: busybox
-        command: ["sh", "-c", "chown -R 1000:1000 /data/db"]
+        command: ["sh", "-c", "chown -R 1001:1001 /data/db"]
         securityContext:
           runAsUser: 0
         volumeMounts:
