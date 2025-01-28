@@ -1,5 +1,6 @@
 - hosts: all
   become: yes
+  become_user: k8sadmin
   tasks:
     - name: Update apt-get cache
       apt:
@@ -35,6 +36,7 @@
       set_fact:
         aws_access_key_id: "{{ lookup('env', 'ANSIBLE_AWS_ACCESS_KEY_ID') }}"
         aws_secret_access_key: "{{ lookup('env', 'ANSIBLE_AWS_SECRET_ACCESS_KEY') }}"
+      no_log: true
     
     - name: Create kubernetes Secret with AWS credentials
       kubernetes.core.k8s:
