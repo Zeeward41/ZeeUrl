@@ -31,23 +31,4 @@
         #-x: matches the entire line
         #-F: interprets the pattern as a fixed string, not a regular expression
     
-    - name: Get AWS credential
-      set_fact:
-        aws_access_key_id: "{{ lookup('env', 'ANSIBLE_AWS_ACCESS_KEY_ID') }}"
-        aws_secret_access_key: "{{ lookup('env', 'ANSIBLE_AWS_SECRET_ACCESS_KEY') }}"
-      no_log: true
     
-    - name: Create kubernetes Secret with AWS credentials
-      become_user: k8sadmin
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: aws-credentials
-            namespace: default  
-          type: Opaque
-          stringData:
-            AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
-            AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
