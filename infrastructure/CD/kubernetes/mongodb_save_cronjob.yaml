@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: save-mongodb
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: save-mongodb
+            image: amazon/aws-cli:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - |
+              aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+              aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+              aws configure set default.region eu-north-1
+              aws s3 cp /data/db/ZeeurlDB.linkurls.json s3://zeeurl-db-41/ZeeurlDB.linkurls.json
+              aws s3 cp /data/db/ZeeurlDB.linkvisits.json s3://zeeurl-db-41/ZeeurlDB.linkvisits.json
+              aws s3 cp /data/db/ZeeurlDB.users.json s3://zeeurl-db-41/ZeeurlDB.users.json
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+            volumeMounts:
+            - name: data
+              mountPath: /data/db
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: mongodb-pvc
+          restartPolicy: OnFailure
