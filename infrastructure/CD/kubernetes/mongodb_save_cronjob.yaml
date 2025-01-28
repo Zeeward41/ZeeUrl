@@ -9,6 +9,15 @@ spec:
       template:
         spec:
           containers:
+          - name: mongo-export
+            image: mongo:8.0.4
+            command:
+            - /bin/sh
+            - -c
+            - |
+              mongoexport --host mongodb-service --port 27017--db ZeeurlDB --collection linkurls --out /data/backup/ZeeurlDB.linkurls.json --jsonArray
+              mongoexport --host mongodb-service --port 27017 --db ZeeurlDB --collection linkvisits --out /data/backup/ZeeurlDB.linkvisits.json --jsonArray
+              mongoexport --host mongodb-service --port 27017 --db ZeeurlDB --collection users --out /data/backup/ZeeurlDB.users.json --jsonArray
           - name: save-mongodb
             image: amazon/aws-cli:latest
             imagePullPolicy: IfNotPresent
@@ -19,6 +28,7 @@ spec:
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
               aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
               aws configure set default.region eu-north-1
+              sleep 10
               aws s3 cp /data/db/ZeeurlDB.linkurls.json s3://zeeurl-db-41/ZeeurlDB.linkurls.json
               aws s3 cp /data/db/ZeeurlDB.linkvisits.json s3://zeeurl-db-41/ZeeurlDB.linkvisits.json
               aws s3 cp /data/db/ZeeurlDB.users.json s3://zeeurl-db-41/ZeeurlDB.users.json
