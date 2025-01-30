@@ -28,6 +28,7 @@
         update_cache: yes
 
     - name: Add Helm repository
+      become_user: root 
       become: yes
       apt_repository:
         repo: "deb [arch={{ ansible_architecture }} signed-by=/etc/apt/trusted.gpg.d/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
