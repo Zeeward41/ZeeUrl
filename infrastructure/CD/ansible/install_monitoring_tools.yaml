@@ -4,10 +4,10 @@
   gather_facts: yes
   tasks:
     - name: Add Helm GPG key
-    become: yes
-    apt_key:
-      url: https://baltocdn.com/helm/signing.asc
-      keyring: /usr/share/keyrings/helm.gpg
+      become: yes
+      apt_key:
+        url: https://baltocdn.com/helm/signing.asc
+        keyring: /usr/share/keyrings/helm.gpg
 
     - name: Install apt-transport-https
       become: yes
