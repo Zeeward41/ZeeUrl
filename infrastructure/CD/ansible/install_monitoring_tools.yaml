@@ -1,9 +1,10 @@
 - hosts: control_plane
   become: yes
-  become_user: root
+  become_user: k8sadmin
   gather_facts: yes
   tasks:
     - name: Ensure /etc/apt/trusted.gpg.d directory exists
+      become_user: root 
       become: yes
       file:
         path: /etc/apt/trusted.gpg.d
@@ -11,6 +12,7 @@
         mode: '0755'
 
     - name: Download Helm GPG key
+      become_user: root 
       become: yes
       get_url:
         url: "https://baltocdn.com/helm/signing.asc"
@@ -18,6 +20,7 @@
         mode: '0644'
 
     - name: Install apt-transport-https
+      become_user: root 
       become: yes
       apt:
         name: apt-transport-https
