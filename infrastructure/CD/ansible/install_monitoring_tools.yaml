@@ -20,6 +20,7 @@
         mode: '0644'
 
     - name: Install apt-transport-https
+      become_user: root
       become: yes
       apt:
         name: apt-transport-https
