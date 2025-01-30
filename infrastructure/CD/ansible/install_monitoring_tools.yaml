@@ -1,13 +1,36 @@
 - hosts: control_plane
   become: yes
   become_user: k8sadmin
+  gather_facts: yes
   tasks:
-    - name: Install helm
-      become_user: root
+    - name: Add Helm GPG key
+    become: yes
+    apt_key:
+      url: https://baltocdn.com/helm/signing.asc
+      keyring: /usr/share/keyrings/helm.gpg
+
+    - name: Install apt-transport-https
+      become: yes
+      apt:
+        name: apt-transport-https
+        state: present
+        update_cache: yes
+
+    - name: Add Helm repository
+      become: yes
+      apt_repository:
+        repo: "deb [arch={{ ansible_architecture }} signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
+        state: present
+        filename: helm-stable-debian.list
+
+    - name: Install Helm
+      become: yes
       apt:
         name: helm
         state: present
         update_cache: yes
+
+      ##########
 
     - name: Add Helm repositories (prometheus and graphana)
       shell: |
@@ -37,8 +60,8 @@
     #   kubernetes.core.k8s:
     #     api_version: v1
     #     kind: Service
-    #     namespace: argocd
-    #     name: argocd-server
+    #     namespace: monitoring
+    #     name: prometheus-server
     #     definition:
     #       spec:
     #         type: NodePort
@@ -46,11 +69,11 @@
     #         - name: http
     #           port: 80
     #           protocol: TCP
-    #           targetPort: 8080
+    #           targetPort: 9000
     #           nodePort: 30080
     #         - name: https
     #           port: 443
     #           protocol: TCP
-    #           targetPort: 8080
+    #           targetPort: 9000
     #           nodePort: 30443
     #     state: patched
