@@ -3,25 +3,25 @@
   become_user: k8sadmin
   gather_facts: yes
   tasks:
-    - name: Ensure /etc/apt/trusted.gpg.d directory exists
-      become_user: root 
-      become: yes
-      file:
-        path: /etc/apt/trusted.gpg.d
-        state: directory
-        mode: '0755'
+    # - name: Ensure /etc/apt/trusted.gpg.d directory exists
+    #   become_user: root 
+    #   become: yes
+    #   file:
+    #     path: /etc/apt/trusted.gpg.d
+    #     state: directory
+    #     mode: '0755'
 
-    - name: Install required packages
-      become_user: root 
-      become: yes
-      apt:
-        name: 
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg
-        state: present
-        update_cache: yes
+    # - name: Install required packages
+    #   become_user: root 
+    #   become: yes
+    #   apt:
+    #     name: 
+    #       - apt-transport-https
+    #       - ca-certificates
+    #       - curl
+    #       - gnupg
+    #     state: present
+    #     update_cache: yes
 
     - name: Add Helm GPG key
       become_user: root 
@@ -40,6 +40,7 @@
         filename: helm-stable-debian
 
     - name: Install Helm
+      become_user: root
       become: yes
       apt:
         name: helm
