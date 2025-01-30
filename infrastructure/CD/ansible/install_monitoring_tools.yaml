@@ -81,27 +81,48 @@
         helm install grafana grafana/grafana \
           --namespace monitoring \
           --set service.type=ClusterIP \
-          --set persistence.enabled=true \
           --set adminPassword={{ graphana_password_env}}
 
-    # - name: Change Service 
-    #   kubernetes.core.k8s:
-    #     api_version: v1
-    #     kind: Service
-    #     namespace: monitoring
-    #     name: prometheus-server
-    #     definition:
-    #       spec:
-    #         type: NodePort
-    #         ports:
-    #         - name: http
-    #           port: 80
-    #           protocol: TCP
-    #           targetPort: 9000
-    #           nodePort: 30080
-    #         - name: https
-    #           port: 443
-    #           protocol: TCP
-    #           targetPort: 9000
-    #           nodePort: 30443
-    #     state: patched
+    - name: Change Service 
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Service
+        namespace: monitoring
+        name: prometheus-server
+        definition:
+          spec:
+            type: NodePort
+            ports:
+            - name: http
+              port: 80
+              protocol: TCP
+              targetPort: 9090
+              nodePort: 32562
+            - name: https
+              port: 443
+              protocol: TCP
+              targetPort: 9090
+              nodePort: 30443
+        state: patched
+
+    - name: Change Service 
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Service
+        namespace: monitoring
+        name: graphana
+        definition:
+          spec:
+            type: NodePort
+            ports:
+            - name: http
+              port: 80
+              protocol: TCP
+              targetPort: 3000
+              nodePort: 31587
+            - name: https
+              port: 443
+              protocol: TCP
+              targetPort: 3000
+              nodePort: 33443
+        state: patched
