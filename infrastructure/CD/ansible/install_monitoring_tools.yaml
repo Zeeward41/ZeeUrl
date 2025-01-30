@@ -3,6 +3,7 @@
   become_user: k8sadmin
   tasks:
     - name: Install helm
+      become_user: root
       apt:
         name: helm
         state: present
