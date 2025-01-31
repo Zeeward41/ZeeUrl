@@ -13,6 +13,30 @@ resource "aws_vpc_security_group_ingress_rule" "allow_me_ssh_kubernetes" {
   ip_protocol       = "tcp"
   cidr_ipv4         = var.mon_ip
 }
+resource "aws_vpc_security_group_ingress_rule" "allow_all_argocd" {
+  security_group_id = aws_security_group.kubernetes_servers.id
+  from_port         = var.argocd_port
+  to_port           = var.argocd_port
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/32"
+  description       = "argocd"
+}
+resource "aws_vpc_security_group_ingress_rule" "allow_all_prometheus" {
+  security_group_id = aws_security_group.kubernetes_servers.id
+  from_port         = var.prometheus_port
+  to_port           = var.prometheus_port
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/32"
+  description       = "prometheus"
+}
+resource "aws_vpc_security_group_ingress_rule" "allow_all_grafana" {
+  security_group_id = aws_security_group.kubernetes_servers.id
+  from_port         = var.grafana_port
+  to_port           = var.grafana_port
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/32"
+  description       = "grafana"
+}
 
 # Ingress rule ####################### A DELETE
 resource "aws_vpc_security_group_ingress_rule" "allow_only_loadBalancer" {
@@ -22,6 +46,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_only_loadBalancer" {
   to_port                      = var.ingress_port
   referenced_security_group_id = aws_security_group.k8s_ingress_alb_SG.id
 }
+
 
 resource "aws_vpc_security_group_ingress_rule" "allow_traffic_in_cluster" {
   security_group_id = aws_security_group.kubernetes_servers.id

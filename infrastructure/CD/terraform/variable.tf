@@ -28,3 +28,13 @@ variable "mon_ip" {
 variable "ingress_port" {
 
 }
+
+variable "argocd_port" {
+
+}
+variable "grafana_port" {
+
+}
+variable "prometheus_port" {
+
+}
