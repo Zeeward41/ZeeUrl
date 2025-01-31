@@ -79,15 +79,30 @@
         state: present
       when: namespace_info.resources | length == 0
 
+    - name: Check if prometheus is already installed
+      shell: |
+        helm list --namespace monitoring --output json | jq -r '.[] | select(.name == "prometheus") | .name'
+      register: prometheus_status
+      changed_when: false   # this task doen't modify the state of the system
+      ignore_errors: yes   # ignore error if command failed 
+
     - name: Install Prometheus using Helm
       shell: |
         helm install prometheus prometheus-community/prometheus \
           --namespace monitoring \
+      when: prometheus_status.stdout != "prometheus"
           
+    - name: Check if grafana is already installed
+      shell: |
+        helm list --namespace monitoring --output json | jq -r '.[] | select(.name == "grafana") | .name'
+      register: grafana_status
+      changed_when: false   # this task doen't modify the state of the system
+      ignore_errors: yes   # ignore error if command failed 
 
     - name: Get Graphana password
       set_fact:
         graphana_password_env: "{{ lookup('env', 'ANSIBLE_GRAPHANA_PASSWORD') }}"
+      when: grafana_status.stdout != "grafana"
 
     - name: Install Grafana using Helm
       shell: |
@@ -95,6 +110,7 @@
           --namespace monitoring \
           --set service.type=ClusterIP \
           --set adminPassword={{ graphana_password_env}}
+      when: grafana_status.stdout != "grafana"
 
     - name: Change Service prometheus
       kubernetes.core.k8s:
