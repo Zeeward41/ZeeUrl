@@ -83,7 +83,7 @@
           --set service.type=ClusterIP \
           --set adminPassword={{ graphana_password_env}}
 
-    - name: Change Service 
+    - name: Change Service prometheus
       kubernetes.core.k8s:
         api_version: v1
         kind: Service
@@ -98,14 +98,9 @@
               protocol: TCP
               targetPort: 9090
               nodePort: 32562
-            - name: https
-              port: 443
-              protocol: TCP
-              targetPort: 9090
-              nodePort: 30443
         state: patched
 
-    - name: Change Service 
+    - name: Change Service graphana
       kubernetes.core.k8s:
         api_version: v1
         kind: Service
@@ -120,9 +115,4 @@
               protocol: TCP
               targetPort: 3000
               nodePort: 31587
-            - name: https
-              port: 443
-              protocol: TCP
-              targetPort: 3000
-              nodePort: 33443
         state: patched
