@@ -129,12 +129,12 @@
               nodePort: 32562
         state: patched
 
-    - name: Change Service graphana
+    - name: Change Service grafana
       kubernetes.core.k8s:
         api_version: v1
         kind: Service
         namespace: monitoring
-        name: graphana
+        name: grafana
         definition:
           spec:
             type: NodePort
