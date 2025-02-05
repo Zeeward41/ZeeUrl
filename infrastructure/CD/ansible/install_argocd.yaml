@@ -197,7 +197,7 @@
       become_user: k8sadmin
       command: argocd app create zeeurl \
         --repo https://github.com/Zeeward41/ZeeUrl.git \
-        --path infrastructure/CD/kubernetes \
+        --path infrastructure/CD/kubernetes/* \
         --dest-namespace default \
         --dest-server https://kubernetes.default.svc
       register: app_create
