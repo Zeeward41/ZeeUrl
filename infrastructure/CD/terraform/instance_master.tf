@@ -18,7 +18,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_all_argocd" {
   from_port         = var.argocd_port
   to_port           = var.argocd_port
   ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/32"
+  cidr_ipv4         = "0.0.0.0/0"
   description       = "argocd"
 }
 resource "aws_vpc_security_group_ingress_rule" "allow_all_prometheus" {
@@ -26,7 +26,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_all_prometheus" {
   from_port         = var.prometheus_port
   to_port           = var.prometheus_port
   ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/32"
+  cidr_ipv4         = "0.0.0.0/0"
   description       = "prometheus"
 }
 resource "aws_vpc_security_group_ingress_rule" "allow_all_grafana" {
@@ -34,7 +34,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_all_grafana" {
   from_port         = var.grafana_port
   to_port           = var.grafana_port
   ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/32"
+  cidr_ipv4         = "0.0.0.0/0"
   description       = "grafana"
 }
 
