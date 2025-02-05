@@ -90,7 +90,7 @@
       shell: |
         helm install prometheus prometheus-community/prometheus \
           --namespace monitoring \
-          --set server.persistentVolume.enabled=false
+          --set server.persistentVolume.enabled=false \
           --set alertmanager.persistentVolume.enabled=false
       when: prometheus_status.stdout != "prometheus"
           
