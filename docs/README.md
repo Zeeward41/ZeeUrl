@@ -1,4 +1,4 @@
-Welcome to Zeeurl project (DEMO)!
+# Welcome to Zeeurl project (DEMO)!
 
 ![diagram](diagram.png)
 
@@ -34,7 +34,7 @@ Security scanning and quality checks throughout the pipeline
 
 ### Improve Code Quality and Organization
 Use React best practices for cleaner and more maintainable code.
-Organize CSS code efficiently (e.g., modular CSS, CSS-in-JS, or utility-first frameworks like Tailwind CSS).
+Organize CSS code efficiently.
 
 ### Enhance System Resilience
 Deploy redundant infrastructure for critical components:
@@ -47,7 +47,7 @@ Distribute servers across different regions for high availability and disaster r
 Replace SSH with AWS Session Manager for secure and auditable connections to instances.
 
 ### Ensure Database Resilience
-Implement a highly available database setup (e.g., multi-AZ RDS, Aurora Global Database, or database clustering).
+Implement a highly available database setup (multi-AZ RDS, Aurora Global Database, or database clustering).
 
 ### Optimize Performance with Caching
 Set up a Redis cache to reduce database load and improve application performance.
