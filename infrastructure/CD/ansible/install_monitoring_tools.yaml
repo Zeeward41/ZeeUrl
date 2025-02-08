@@ -101,9 +101,9 @@
       changed_when: false   # this task doen't modify the state of the system
       ignore_errors: yes   # ignore error if command failed 
 
-    - name: Get Graphana password
+    - name: Get Grafana password
       set_fact:
-        graphana_password_env: "{{ lookup('env', 'ANSIBLE_GRAPHANA_PASSWORD') }}"
+        grafana_password_env: "{{ lookup('env', 'ANSIBLE_GRAFANA_PASSWORD') }}"
       when: grafana_status.stdout != "grafana"
 
     - name: Install Grafana using Helm
@@ -111,7 +111,7 @@
         helm install grafana grafana/grafana \
           --namespace monitoring \
           --set service.type=ClusterIP \
-          --set adminPassword={{ graphana_password_env}}
+          --set adminPassword={{ grafana_password_env}}
       when: grafana_status.stdout != "grafana"
 
     - name: Change Service prometheus

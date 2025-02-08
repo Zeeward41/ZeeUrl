@@ -178,7 +178,7 @@ jobs:
           DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          GRAPHANA_PASSWORD: ${{ secrets.GRAPHANA_PASSWORD}}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD}}
 
         run: |
           # Export secret as env var for Ansible
@@ -189,7 +189,7 @@ jobs:
           export ANSIBLE_DOCKER_EMAIL="${DOCKER_EMAIL}"
           export ANSIBLE_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
           export ANSIBLE_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-          export ANSIBLE_GRAPHANA_PASSWORD="$[GRAPHANA_PASSWORD]"
+          export ANSIBLE_GRAFANA_PASSWORD="${GRAFANA_PASSWORD}"
 
           #Run ansible
           echo "Setup User k8sadmin"
