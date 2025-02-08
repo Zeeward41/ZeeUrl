@@ -8,8 +8,10 @@
 
 :root {
     --border-radius-profile: 20px;
-    --main-color: rgb(48,68,68);
-    --second-color: rgb(240,84,36);
+    /* --main-color: rgb(48,68,68);
+    --second-color: rgb(240,84,36); */
+    --main-color: rgb(8, 72, 128);
+    --second-color: rgb(241, 59, 141);
     --nav-color-text: #fff;
     --shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
  }
