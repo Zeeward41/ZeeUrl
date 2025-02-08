@@ -111,7 +111,7 @@
         helm install grafana grafana/grafana \
           --namespace monitoring \
           --set service.type=ClusterIP \
-          --set adminPassword={{ grafana_password_env}}
+          --set adminPassword="{{ grafana_password_env}}"
       when: grafana_status.stdout != "grafana"
 
     - name: Change Service prometheus
