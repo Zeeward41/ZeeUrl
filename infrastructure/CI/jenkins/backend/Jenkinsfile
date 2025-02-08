@@ -1,0 +1,104 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'NodeJS'
+    }
+    
+    environment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git credentialsId: 'github-token', url: 'git@github.com:Zeeward41/ZeeUrl.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('backend') {
+                    sh 'npm install'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            steps {
+                dir('backend') {
+                    sh 'npm run test-vite'
+                }
+            }
+        }
+        
+        stage('File System Scan') {
+            steps {
+                dir('backend') {
+                    sh 'trivy fs --format table -o trivy-fs-backend-report.html .'
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                dir('backend') {
+                    withSonarQubeEnv('sonarQube'){
+                        sh ' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=ZeeURL-Backend -Dsonar.projectKey=ZeeURL-Backend '
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Code') {
+            steps {
+                dir('backend') {
+                    script {
+                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    }
+                }
+            }
+        }
+        
+        stage('OWASP Dependency Check') {
+            steps {
+                dir('backend') {
+                    dependencyCheck additionalArguments: '--scan ./ --nvdApiKey 82421bee-8c36-4e04-a807-7cde03396a0d', odcInstallation: 'OWASP-DC'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
+        }
+        
+        stage('Build and Tag Docker Image') {
+            steps {
+                dir('backend') {
+                    script {
+                        withDockerRegistry(credentialsId: 'dockerHub-cred', toolName: 'docker') {
+                            sh "docker build -t zeeward41/test:backend_v1 ."
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Docker Image Scan') {
+            steps {
+                dir('backend') {
+                    sh 'trivy image --format table -o trivy-image-backend-report.html zeeward41/test:backend_v1'
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                dir('backend') {
+                    script {
+                        withDockerRegistry(credentialsId: 'dockerHub-cred', toolName: 'docker') {
+                                sh "docker push zeeward41/test:backend_v1"
+                        }
+                    }
+                }
+            }
+        }
+}
+}
