@@ -1,0 +1,109 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'NodeJS'
+    }
+    
+    environment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git credentialsId: 'github-token', url: 'git@github.com:Zeeward41/ZeeUrl.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('range-server') {
+                    sh 'npm install'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            steps {
+                dir('range-server') {
+                    sh 'npm run test-vite'
+                }
+            }
+        }
+        
+        stage('File System Scan') {
+            steps {
+                dir('range-server') {
+                    sh 'trivy fs --format table -o trivy-fs-rangeServer-report.html .'
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                dir('range-server') {
+                    withSonarQubeEnv('sonarQube'){
+                        sh ' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=ZeeURL-RangeServer -Dsonar.projectKey=ZeeURL-RangeServer '
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Code') {
+            steps {
+                dir('range-server') {
+                    script {
+                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    }
+                }
+            }
+        }
+        
+        stage('OWASP Dependency Check') {
+            steps {
+                dir('range-server') {
+                    dependencyCheck additionalArguments: '--scan ./ --nvdApiKey 82421bee-8c36-4e04-a807-7cde03396a0d', odcInstallation: 'OWASP-DC'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
+        }
+        
+        stage('Build and Tag Docker Image') {
+            steps {
+                dir('range-server') {
+                    script {
+                        withDockerRegistry(credentialsId: 'dockerHub-cred', toolName: 'docker') {
+                            sh "docker build -t zeeward41/test:range_v1 ."
+                    }
+                    }
+                }
+            }
+        }
+        
+        stage('Docker Image Scan') {
+            steps {
+                dir('range-server') {
+                    sh 'trivy image --format table -o trivy-image-rangeServer-report.html zeeward41/test:range_v1'
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                dir('range-server') {
+                    script {
+                        withDockerRegistry(credentialsId: 'dockerHub-cred', toolName: 'docker') {
+                                sh "docker push zeeward41/test:range_v1"
+                    }
+                    }
+                }
+            }
+        }
+
+        
+
+    
+    
+}
+}
