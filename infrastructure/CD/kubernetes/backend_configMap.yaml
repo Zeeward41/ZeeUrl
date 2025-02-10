@@ -5,4 +5,4 @@ metadata:
 data:
   RANGE_SERVER: "http://range-service.default.svc.cluster.local:8000"
   #FRONTEND_SERVER: "http://13.60.23.37:31423/"
-  FRONTEND_SERVER: "http://k8s-ingress-alb-960776852.eu-north-1.elb.amazonaws.com"
+  FRONTEND_SERVER: "http://k8s-ingress-alb-1805547110.eu-north-1.elb.amazonaws.com"
