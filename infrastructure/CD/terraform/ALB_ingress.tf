@@ -13,6 +13,15 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_only" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+# Ingress rule
+resource "aws_vpc_security_group_ingress_rule" "allow_https_only" {
+  security_group_id = aws_security_group.k8s_ingress_alb_SG.id
+  from_port         = 443 
+  to_port           = 443
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
 # Egress rule
 resource "aws_vpc_security_group_egress_rule" "allow_all_http" {
   security_group_id = aws_security_group.k8s_ingress_alb_SG.id
@@ -59,13 +68,30 @@ resource "aws_lb" "k8s_ingress_alb" {
   subnets            = data.aws_subnets.default_vpc_subnets.ids
 }
 
-##### Listener
+##### Listener forward 443 https
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_lb.k8s_ingress_alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn = aws_acm_certificate.zeeurl_acm.arn
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.k8s_ingress_http.arn
+  }
+}
+
+##### Listener redirect 443 https
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.k8s_ingress_alb.arn
   port              = 80
   protocol          = "HTTP"
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.k8s_ingress_http.arn
+    type             = "redirect"
+    redirect {
+      port = 443
+      protocol = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
