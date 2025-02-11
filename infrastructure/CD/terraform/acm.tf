@@ -24,5 +24,10 @@ resource "aws_acm_certificate" "zeeurl_acm" {
 resource "aws_acm_certificate_validation" "zeeurl_cert_validate" {
   provider                = aws.global
   certificate_arn         = aws_acm_certificate.zeeurl_acm.arn
-  validation_record_fqdns = [aws_route53_record.zeeurl_cert_dns.fqdn]
+#   validation_record_fqdns = [aws_route53_record.zeeurl_cert_dns.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.zeeurl_cert_dns : record.fqdn]
+
+  timeouts {
+    create = "32m"
+  }
 }
