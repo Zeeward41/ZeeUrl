@@ -17,7 +17,7 @@ resource "aws_route53_record" "zeeurl_cert_dns" {
 }
 
 resource "aws_route53_record" "zeeurl_dns" {
-  zone_id = data.aws_route53_zone.zeeurl_hosted_zone.id
+  zone_id = data.aws_route53_zone.zeeurl_hosted_zone.zone_id
   name    = var.web_site
   type    = "A"
 
