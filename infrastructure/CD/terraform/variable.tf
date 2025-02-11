@@ -38,3 +38,7 @@ variable "grafana_port" {
 variable "prometheus_port" {
 
 }
+
+variable "web_site" {
+    
+}
