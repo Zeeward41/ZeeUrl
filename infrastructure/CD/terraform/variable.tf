@@ -40,5 +40,5 @@ variable "prometheus_port" {
 }
 
 variable "web_site" {
-    
+
 }
