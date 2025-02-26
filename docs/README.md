@@ -14,14 +14,14 @@ Jenkins and SonarQube for continuous integration and code quality analysis
 Docker Hub for container image management
 Implements unit testing, file system scanning, and OWASP dependency checks
 
-### Continuous Delivery Infrastructure
+### Continuous Deplyment Infrastructure
 Utilizes GitHub Actions for version control and workflow automation
 Terraform for infrastructure-as-code provisioning
 Kubernetes cluster for container orchestration
 Ansible for configuration management and deployment automation
 Multi-tier architecture (Frontend, Backend, Database)
 AWS Route 53 and load balancing
-ArgoCD for GitOps-based continuous delivery
+ArgoCD for GitOps-based continuous deployment
 
 ### Monitoring & Observability
 Grafana and Prometheus for infrastructure and application monitoring
