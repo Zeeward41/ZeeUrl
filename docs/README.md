@@ -14,7 +14,7 @@ Jenkins and SonarQube for continuous integration and code quality analysis
 Docker Hub for container image management
 Implements unit testing, file system scanning, and OWASP dependency checks
 
-### Continuous Deplyment Infrastructure
+### Continuous Deployment Infrastructure
 Utilizes GitHub Actions for version control and workflow automation
 Terraform for infrastructure-as-code provisioning
 Kubernetes cluster for container orchestration
