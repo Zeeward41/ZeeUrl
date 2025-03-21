@@ -19,6 +19,7 @@ infrastructure/CI/terraform/ip_jenkins_server.txt
 infrastructure/CI/terraform/ip_sonarQube_server.txt
 infrastructure/CI/terraform/group_name_jenkins_SG.txt
 infrastructure/CI/terraform/group_name_sonarQube_SG.txt
+infrastructure/CI/terraform/env.tfvars
 
 
 infrastructure/CD/terraform/.terraform
@@ -29,3 +30,4 @@ infrastructure/CD/terraform/dns_master.txt
 infrastructure/CD/terraform/dns_node1.txt
 infrastructure/CD/terraform/dns_node2.txt
 infrastructure/CD/terraform/sg_kubernetes_name.txt
+infrastructure/CD/terraform/env.tfvars
