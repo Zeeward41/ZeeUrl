@@ -67,8 +67,10 @@ jobs:
             - name: Get group name SG servers Jenkins and SonarQube
               id: get_group_name
               run: |
-                  GROUP_NAME_JENKINS=$(cat infrastructure/CI/terraform/group_name_jenkins_SG.txt)
-                  GROUP_NAME_SONARQUBE=$(cat infrastructure/CI/terraform/group_name_sonarQube_SG.txt)
+                  GROUP_NAME_JENKINS=$(cat infrastructure/CI/terraform/group_name_jenkins_SG.txt | tr -d '\r' | xargs)
+                  GROUP_NAME_SONARQUBE=$(cat infrastructure/CI/terraform/group_name_sonarQube_SG.txt | tr -d '\r' | xargs)
+                  # Vérification de sécurité pour le debug
+                  if [ -z "$GROUP_NAME_JENKINS" ]; then echo "ERREUR: Nom SG Jenkins vide"; exit 1; fi
                   # Store data as Output
                   echo "file_group_name_jenkins=$GROUP_NAME_JENKINS" >> $GITHUB_OUTPUT
                   echo "file_group_name_sonarQube=$GROUP_NAME_SONARQUBE" >> $GITHUB_OUTPUT
@@ -222,4 +224,3 @@ jobs:
                   aws ec2 revoke-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_jenkins}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
                   aws ec2 revoke-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_sonarQube}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
               if: always()
-
