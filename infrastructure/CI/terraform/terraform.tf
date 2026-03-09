@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "zeeurl-backend-41"
-    region = "eu-north-1"
+    region = "eu-west-3"
     key    = "CI/terraform.tfstate"
   }
 
@@ -27,7 +27,7 @@ terraform {
     }
 
     github = {
-      source = "integrations/github"
+      source  = "integrations/github"
       version = "6.4.0"
     }
   }
