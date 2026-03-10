@@ -2,78 +2,78 @@
 - hosts: jenkins
   become: true
   tasks:
-    - name: Update and Upgrade
-      apt:
-        update_cache: yes
-        name: '*'
-        state: latest
+      - name: Update and Upgrade
+        apt:
+            update_cache: yes
+            name: '*'
+            state: latest
 
-    - name: Installing Java
-      apt:
-        name: 'openjdk-17-jdk'
-        update-cache: yes
-        state: latest
+      - name: Installing Java
+        apt:
+            name: 'openjdk-17-jdk'
+            update-cache: yes
+            state: latest
 
-# Installation des prérequis
-    - name: Installation des dépendances
-      apt:
-        name:
-          - curl
-          - gnupg
-          - ca-certificates
-          - gpg
-          - apt-transport-https
-        state: present
-        update_cache: yes
+      # Installation des prérequis
+      - name: Installation des dépendances
+        apt:
+            name:
+                - curl
+                - gnupg
+                - ca-certificates
+                - gpg
+                - apt-transport-https
+            state: present
+            update_cache: yes
 
-    - name: Ajouter la clé GPG de Jenkins
-      ansible.builtin.get_url:
-        url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
-        dest: /usr/share/keyrings/jenkins-keyring.asc
-        mode: '0644'
+      - name: Ajouter la clé GPG de Jenkins
+        ansible.builtin.get_url:
+            url: https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+            dest: /usr/share/keyrings/jenkins-keyring.asc
+            mode: '0644'
 
-    - name: Ajouter le dépot Jenkins 
-      ansible.builtin.apt_repository:
-        repo:  "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
-        state: present
+      - name: Ajouter le dépot Jenkins
+        ansible.builtin.apt_repository:
+            repo: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
+            state: present
 
-    - name: Update Repo
-      ansible.builtin.apt:
-        update_cache: yes
+      - name: Update Repo
+        ansible.builtin.apt:
+            update_cache: yes
 
-    - name: Installing Jenkins
-      apt:
-        name: jenkins
-        state: present
+      - name: Installing Jenkins
+        apt:
+            name: jenkins
+            state: present
 
-    - name: Enable Jenkins
-      systemd:
-        name: jenkins
-        enabled: yes
-        state: started
+      - name: Enable Jenkins
+        systemd:
+            name: jenkins
+            enabled: yes
+            state: started
 
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+      - name: Add Docker GPG apt Key
+        apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
 
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
+      - name: Add Docker Repository
+        apt_repository:
+            repo: deb https://download.docker.com/linux/ubuntu focal stable
+            state: present
 
-    - name: Update apt and install docker-ce
-      apt:
-        name: docker-ce
-        state: latest
-        update_cache: true
-        
-    - name: Make sure Docker is started
-      service:
-        name: docker
-        state: started
-        enabled: yes
+      - name: Update apt and install docker-ce
+        apt:
+            name: docker-ce
+            state: latest
+            update_cache: true
 
-    - name: Grant permissions to Docker socket
-      shell: |
-        chmod 666 /var/run/docker.sock
+      - name: Make sure Docker is started
+        service:
+            name: docker
+            state: started
+            enabled: yes
+
+      - name: Grant permissions to Docker socket
+        shell: |
+            chmod 666 /var/run/docker.sock
