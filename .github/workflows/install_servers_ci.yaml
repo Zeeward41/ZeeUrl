@@ -228,25 +228,40 @@ jobs:
               env:
                   INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
                   INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
-                  SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  SSH_KKEY: ${{ steps.read_file.outputs.file_content }}
               run: |
                   # chmod 400 infrastructure/CI/terraform/la_clef_private.pem
-                  echo "$SSH_KKEY" > /home/runner/my_key.pem
+                  echo "$SSH_KKEY" | base64 -d > /home/runner/my_key.pem
                   chmod 400 /home/runner/my_key.pem
 
-                  # Creation config SSH
-                  echo "Config SSH"
-                  echo -e "Host jenkins\n\t Hostname $INSTANCE_DNS_JENKINS\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
-                  echo -e "Host sonarqube\n\t Hostname $INSTANCE_DNS_SONARQUBE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+                  # Creation config SSH (alias)
+                  echo "Config SSH Alias"
+                  mkdir -p ~/.ssh
+                  cat <<-EOF > ~/.ssh/config
+                  Host jenkins
+                    Hostname $INSTANCE_DNS_JENKINS
+                    User ubuntu
+                    IdentityFile /home/runner/my_key.pem
+                    StrictHostKeyChecking no
+
+                  Host sonarqube
+                    Hostname $INSTANCE_DNS_SONARQUBE
+                    User ubuntu
+                    IdentityFile /home/runner/my_key.pem
+                    StrictHostKeyChecking no
+                  EOF
+
                   cat /home/runner/.ssh/config
 
                   # Creation inventory
                   echo "Creation inventory"
-                  echo -e "[jenkins]\njenkins\n" > infrastructure/CI/ansible/inventory
-                  echo -e "[sonarqube]\nsonarqube\n" >> infrastructure/CI/ansible/inventory
+                  echo -e "[jenkins_group]\njenkins ansible_host=jenkins" > infrastructure/CI/ansible/inventory
+                  echo -e "[sonarqube_group]\nsonarqube ansible_host=sonarqube" >> infrastructure/CI/ansible/inventory
                   cat infrastructure/CI/ansible/inventory
 
                   #Run ansible
+                  export ANSIBLE_HOST_KEY_CHECKING=False
+
                   echo "Install and Configure Jenkins"
                   ansible-playbook -i infrastructure/CI/ansible/inventory infrastructure/CI/ansible/configuration_jenkins.yaml
 
