@@ -1,46 +1,83 @@
 name: Cleanup CI
 on: workflow_dispatch
 jobs:
-  CleanupCI:
-    runs-on: ubuntu-latest
+    CleanupCI:
+        runs-on: ubuntu-latest
 
-    env:
-      TF_VERSION: '1.10.1'
-      AWS_REGION: 'eu-west-3'
-    steps:
-      - name: obtenir le code github
-        uses: actions/checkout@v4
-
-      - name: Configurer AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION}}
-
-      - name: Terraform init
-        run: terraform init
-        working-directory: infrastructure/CI/terraform
-
-      - name: Terraform Format
-        run: terraform fmt
-        working-directory: infrastructure/CI/terraform
-
-      - name: Terraform Plan Destroy
-        run: terraform plan -destroy -var-file="env.tfvars" -out=tfplan-destroy
-        working-directory: infrastructure/CI/terraform
-
-      - name: Terraform destroy
-        run: terraform apply -var-file="env.tfvars" -auto-approve tfplan-destroy
-        working-directory: infrastructure/CI/terraform
-
-      - name: Delete Secret Github SSH_PRIVATE_KEY
         env:
-          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-        run: 
-          gh secret delete SSH_PRIVATE_KEY
+            TF_VERSION: 1.10.1
+            AWS_REGION: eu-west-3
+        steps:
+            - name: obtenir le code github
+              uses: actions/checkout@v4
+
+            - name: Configurer AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ env.AWS_REGION }}
+
+            - name: get Variables
+              id: get_variables
+              env:
+                  GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+              run: |
+                  # ami instance
+                  INSTANCE_AMI=$(gh variable get AMI_INSTANCE)
+                  echo "ami_instance=$INSTANCE_AMI" >> $GITHUB_OUTPUT
+
+                  # environment
+                  ENVI=$(gh variable get ENVIRONMENT)
+                  echo "environment=$ENVI" >> $GITHUB_OUTPUT
+
+                  # instance Type
+                  TYPE_INSTANCE=$(gh variable get INSTANCE_TYPE)
+                  echo "instance_type=$TYPE_INSTANCE" >> $GITHUB_OUTPUT
+
+                  # Name
+                  ADMIN_NAME=$(gh variable get NAME)
+                  echo "name=$ADMIN_NAME" >> $GITHUB_OUTPUT
+
+                  # Project Name
+                  NAME_PROJECT=$(gh variable get PROJECT_NAME)
+                  echo "project_name=$NAME_PROJECT" >> $GITHUB_OUTPUT
+
+            - name: Create env.tfvars
+              run: |
+                  cat <<EOF > infrastructure/CI/terraform/env.tfvars
+                  name = "${{ steps.get_variables.outputs.name}}"
+                  project_name  = "${{ steps.get_variables.outputs.project_name}}"
+                  environment   = "${{ steps.get_variables.outputs.environment}}"
+                  region        = "${{ env.AWS_REGION}}"
+                  ami_instance  = "${{ steps.get_variables.outputs.ami_instance}}"
+                  instance_type = "${{ steps.get_variables.outputs.instance_type}}"
+                  mon_ip = "${{ secrets.MY_IP}}"
+                  EOF
+
+            - name: Set up Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: ${{ env.TF_VERSION}}
+
+            - name: Terraform init
+              run: terraform init
+              working-directory: infrastructure/CI/terraform
+
+            - name: Terraform Format
+              run: terraform fmt
+              working-directory: infrastructure/CI/terraform
+
+            - name: Terraform Plan Destroy
+              run: terraform plan -destroy -var-file="env.tfvars" -out=tfplan-destroy
+              working-directory: infrastructure/CI/terraform
+
+            - name: Terraform destroy
+              run: terraform apply -var-file="env.tfvars" -auto-approve tfplan-destroy
+              working-directory: infrastructure/CI/terraform
+
+            - name: Delete Secret Github SSH_PRIVATE_KEY
+              env:
+                  GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+              run: gh secret delete SSH_PRIVATE_KEY
+
