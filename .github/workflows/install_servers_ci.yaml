@@ -200,26 +200,17 @@ jobs:
 
             - name: Setup SSH key Jenkins and SonarQube
               env:
+                  SSH_KEY: ${{ steps.read_file.outputs.file_content }}
                   INSTANCE_DNS_JENKINS: ${{ steps.get_dns.outputs.file_dns_jenkins}}
                   INSTANCE_DNS_SONARQUBE: ${{ steps.get_dns.outputs.file_dns_sonarqube}}
               run: |
                   mkdir -p /home/runner/.ssh/
                   chmod 700 /home/runner/.ssh/
 
-                  # Cat to keep exact format
-                  cat <<EOF > /home/runner/.ssh/key_ssh
-                  ${{ secrets.SSH_PRIVATE_KEY }}
-                  EOF
-
-                  # remove windows character (^M) + empty line at the end
-                  sed -i 's/\r//' /home/runner/.ssh/key_ssh
-                  echo "" >> /home/runner/.ssh/key_ssh
+                  echo $SSH_KEY | base64 -d > /home/runner/.ssh/key_ssh
 
                   chmod 400 /home/runner/.ssh/key_ssh
 
-                  # Debug key
-                  head -n 1 /home/runner/.ssh/key_ssh
-                  tail -n 1 /home/runner/.ssh/key_ssh
 
                   # add key to SSH agent
                   eval "$(ssh-agent -s)"
