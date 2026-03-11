@@ -1,239 +1,290 @@
 name: Create Servers for Kubernetes
 on: workflow_dispatch
 jobs:
-  CreateServers:
-    runs-on: ubuntu-latest
+    CreateServers:
+        runs-on: ubuntu-latest
 
-    env:
-      TF_VERSION: '1.10.1'
-      AWS_REGION: 'eu-west-3'
-    steps:
-      - name: get github code
-        uses: actions/checkout@v4
-      
-      - name: Add my IP to env.tfvars
-        env: 
-          MY_IP: ${{ secrets.MY_IP }}
-        run: |
-
-          # delete last line (mon_ip = 0.0.0.0/0 (default))
-          #sed -i '$ d' infrastructure/CD/terraform/env.tfvars
-
-          # delete line who starts with mon_ip
-          sed -i '/^mon_ip/d' infrastructure/CD/terraform/env.tfvars
-
-          # Add saut de ligne a la fin du fichier si besoin
-          if [ "$(tail -c1 infrastructure/CD/terraform/env.tfvars)" != "" ]; then
-            echo "" >> infrastructure/CD/terraform/env.tfvars
-          fi
-
-          # add my ip to env.tfvars
-          echo "mon_ip = $MY_IP" >> infrastructure/CD/terraform/env.tfvars
-
-      - name: Get Runner IP
-        id: get_ip_runner
-        run: |
-          RUNNER_IP=$(curl -s https://api.ipify.org)
-          echo "runner_ip=$RUNNER_IP" >> $GITHUB_OUTPUT
-          echo "Runner IP is: $RUNNER_IP"
-
-      - name: Config AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION}}
-
-      - name: Terraform init
-        run: terraform init
-        working-directory: infrastructure/CD/terraform
-
-      - name: Terraform Format
-        run: terraform fmt
-        working-directory: infrastructure/CD/terraform
-
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: infrastructure/CD/terraform
-
-      - name: Terraform Plan
-        run: terraform plan -var-file=env.tfvars -out=tfplan
-        working-directory: infrastructure/CD/terraform
-
-      - name: Terraform apply
-        if: github.ref == 'refs/heads/master'
-        run: terraform apply -var-file=env.tfvars -auto-approve tfplan
-        working-directory: infrastructure/CD/terraform
-
-      - name: Get group name SG Kubernetes Servers
-        id: get_group_name
-        run: |
-          GROUP_NAME_KUBERNETES=$(cat infrastructure/CD/terraform/sg_kubernetes_name.txt)
-          # Store data as Output
-          echo "file_group_name_kubernetes=$GROUP_NAME_KUBERNETES" >> $GITHUB_OUTPUT
-      
-      - name: Add Github Runner IP to SG Kubernetes servers 
-        run: |
-          aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
-          
-      - name: Get Private Key
-        id: read_file
-        run: |
-          if [ -f infrastructure/CD/terraform/private_key.pem ]; then
-            FILE_CONTENT=$(base64 -w 0 infrastructure/CD/terraform/private_key.pem)
-
-            # store data as Output
-            echo "$FILE_CONTENT"
-            echo file_content=$FILE_CONTENT >> $GITHUB_OUTPUT
-          else
-            echo "File not Found"
-            exit 0
-          fi
-      
-      - name: Get DNS Kubernetes Servers
-        id: get_dns
-        run: |
-          FILE_DNS_MASTER=$(cat infrastructure/CD/terraform/dns_master.txt)
-          FILE_DNS_NODE1=$(cat infrastructure/CD/terraform/dns_node1.txt)
-          FILE_DNS_NODE2=$(cat infrastructure/CD/terraform/dns_node2.txt)
-          # Store data as Output
-          echo file_dns_master=$FILE_DNS_MASTER >> $GITHUB_OUTPUT
-          echo file_dns_node1=$FILE_DNS_NODE1 >> $GITHUB_OUTPUT
-          echo file_dns_node2=$FILE_DNS_NODE2 >> $GITHUB_OUTPUT
-
-      - name: Add SSH Key to Github Secrets
         env:
-          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          SSH_KEY: ${{ steps.read_file.outputs.file_content }}
-        run: |
-          SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
-          gh secret set SSH_PRIVATE_KEY_KUBERNETES --body "$SSH_KEY"
-      
-      - name: install Ansible and Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible python3-pip
-          pip3 install boto3 botocore
+            TF_VERSION: '1.10.1'
+            AWS_REGION: 'eu-west-3'
+        steps:
+            - name: get github code
+              uses: actions/checkout@v4
 
-      - name: Setup SSH key Kubernetes Server
-        env:
-          INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
-          INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
-          INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
-        run: |
-          eval `ssh-agent -s`
-          mkdir -p /home/runner/.ssh/
-          echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
-          sleep 1
-          chmod 600 /home/runner/.ssh/key_ssh
-          
-          # Verify key format
-          ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
+            - name: get Variables
+              id: get_variables
+              env:
+                  GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+              run: |
+                  # ami instance
+                  INSTANCE_AMI=$(gh variable get AMI_INSTANCE)
+                  echo "ami_instance=$INSTANCE_AMI" >> $GITHUB_OUTPUT
 
-          # add key to SSH agent
-          ssh-add /home/runner/.ssh/key_ssh
+                  # environment
+                  ENVI=$(gh variable get ENVIRONMENT)
+                  echo "environment=$ENVI" >> $GITHUB_OUTPUT
 
-          # Add host key
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
-      
-      - name: Configure Ansible
-        env:
-          INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
-          INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
-          INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
-          SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY_KUBERNETES }}
-        run: |
-          # chmod 400 infrastructure/CD/terraform/private_key.pem
-          echo "$SSH_KKEY" > /home/runner/my_key.pem
-          chmod 400 /home/runner/my_key.pem
-          
-          # Creation config SSH
-          echo "Config SSH"
-          echo -e "Host master_node\n\t Hostname $INSTANCE_DNS_MASTER\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+                  # instance Type
+                  TYPE_INSTANCE=$(gh variable get INSTANCE_TYPE)
+                  echo "instance_type=$TYPE_INSTANCE" >> $GITHUB_OUTPUT
 
-          echo -e "Host node1\n\t Hostname $INSTANCE_DNS_NODE_ONE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+                  # Name
+                  ADMIN_NAME=$(gh variable get NAME)
+                  echo "name=$ADMIN_NAME" >> $GITHUB_OUTPUT
 
-          echo -e "Host node2\n\t Hostname $INSTANCE_DNS_NODE_TWO\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+                  # Project Name
+                  NAME_PROJECT=$(gh variable get PROJECT_NAME)
+                  echo "project_name=$NAME_PROJECT" >> $GITHUB_OUTPUT
 
-          cat /home/runner/.ssh/config
+                  # ARGOCD PORT
+                  PORT_ARGOCD=$(gh variable get ARGOCD_PORT)
+                  echo "argocd_port=$PORT_ARGOCD" >> $GITHUB_OUTPUT
 
-          # Creation inventory
-          echo "Creation inventory"
-          echo -e "[workers]\nnode1\nnode2\n\n[control_plane]\nmaster_node" > infrastructure/CD/ansible/inventory
-          cat infrastructure/CD/ansible/inventory
+                  # GRAFANA PORT
+                  PORT_GRAFANA=$(gh variable get GRAFANA_PORT)
+                  echo "grafana_port=$PORT_GRAFANA" >> $GITHUB_OUTPUT
 
-      - name: Run Ansible Playbook
-        env:
-          ARGOCD_SECRET: ${{ secrets.ARGOCD_SECRET}}
-          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
-          DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL}}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD}}
+                  # INGRESS PORT
+                  PORT_INGRESS=$(gh variable get INGRESS_PORT)
+                  echo "ingress_port=$PORT_INGRESS" >> $GITHUB_OUTPUT
 
-        run: |
-          # Export secret as env var for Ansible
-          export ANSIBLE_ARGOCD_SECRET="${ARGOCD_SECRET}"
-          export ANSIBLE_GH_TOKEN="${GH_TOKEN}"
-          export ANSIBLE_DOCKER_USER="${DOCKER_USER}"
-          export ANSIBLE_DOCKER_PASSWORD="${DOCKER_PASSWORD}"
-          export ANSIBLE_DOCKER_EMAIL="${DOCKER_EMAIL}"
-          export ANSIBLE_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-          export ANSIBLE_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-          export ANSIBLE_GRAFANA_PASSWORD="${GRAFANA_PASSWORD}"
+                  # PROMETHEUS PORT
+                  PORT_PROMETHEUS=$(gh variable get PROMETHEUS_PORT)
+                  echo "prometheus_port=$PORT_PROMETHEUS" >> $GITHUB_OUTPUT
 
-          #Run ansible
-          echo "Setup User k8sadmin"
-          ansible-playbook -i inventory setup_user.yaml
+                  # Instance Type Master
+                  MASTER_INSTANCE_TYPE=$(gh variable get INSTANCE_TYPE_MASTER)
+                  echo "instance_type_master=$MASTER_INSTANCE_TYPE" >> $GITHUB_OUTPUT
 
-          echo "Ensure IPv4 packet forwarding"
-          ansible-playbook -i inventory ensure_IPv4_forwarding.yaml
+                  # Instance Type workers
+                  WORKERS_INSTANCE_TYPE=$(gh variable get INSTANCE_TYPE_WORKERS)
+                  echo "instance_type_workers=$WORKERS_INSTANCE_TYPE" >> $GITHUB_OUTPUT
 
-          echo "Install containerD"
-          ansible-playbook -i inventory install_containerd.yaml
+                  # WEBSITE URL
+                  SITE_URL=$(gh variable get WEBSITE_URL)
+                  echo "website_url=$SITE_URL" >> $GITHUB_OUTPUT
 
-          echo "install kubeadm"
-          ansible-playbook -i inventory install_kubeadm.yaml
+            - name: Create env.tfvars
+              run: |
+                  cat <<EOF > infrastructure/CI/terraform/env.tfvars
+                  name = "${{ steps.get_variables.outputs.name}}"
+                  project_name  = "${{ steps.get_variables.outputs.project_name}}"
+                  environment   = "${{ steps.get_variables.outputs.environment}}"
+                  region        = "${{ env.AWS_REGION}}"
+                  ami_instance  = "${{ steps.get_variables.outputs.ami_instance}}"
+                  instance_type_workers = "${{ steps.get_variables.outputs.instance_type_workers}}"
+                  instance_type_master = "${{ steps.get_variables.outputs.instance_type_master}}"
+                  mon_ip = "${{ secrets.MY_IP}}"
+                  ingress_port = "${{ steps.get_variables.outputs.ingress_port}}"
+                  argocd_port = "${{ steps.get_variables.outputs.argocd_port}}"
+                  grafana_port = "${{ steps.get_variables.outputs.grafana_port}}"
+                  prometheus_port = "${{ steps.get_variables.outputs.prometheus_port}}"
+                  web_site = "${{ steps.get_variables.outputs.website_url}}"
+                  EOF
 
-          echo "create cluster"
-          ansible-playbook -i inventory create_cluster.yaml
+            - name: Get Runner IP
+              id: get_ip_runner
+              run: |
+                  RUNNER_IP=$(curl -s https://api.ipify.org)
+                  echo "runner_ip=$RUNNER_IP" >> $GITHUB_OUTPUT
+                  echo "Runner IP is: $RUNNER_IP"
 
-          echo "setup Workers nodes"
-          ansible-playbook -i inventory setup_workers.yaml
+            - name: Config AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ env.AWS_REGION }}
 
-          #install kubernetes.core
-          ansible-galaxy collection install kubernetes.core
-          ansible-galaxy collection install kubernetes.core --upgrade
-          # sudo apt-get install python3-kubernetes
+            - name: Set up Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: ${{ env.TF_VERSION}}
 
-          echo "Install and config Vim"
-          ansible-playbook -i inventory miscellanous_config.yaml
+            - name: Terraform init
+              run: terraform init
+              working-directory: infrastructure/CD/terraform
 
-          #install nginx_ingress
-          ansible-playbook -i inventory install_ingress_nginx.yaml
-      
-          echo "Create Secret kubernetes"
-          ansible-playbook -i inventory create_secret_k8s.yaml
+            - name: Terraform Format
+              run: terraform fmt
+              working-directory: infrastructure/CD/terraform
 
-          echo "Install and config ArgoCD"
-          ansible-playbook -i inventory install_argocd.yaml
+            - name: Terraform Validate
+              run: terraform validate
+              working-directory: infrastructure/CD/terraform
 
-          echo "Install monitoring tools"
-          ansible-playbook -i inventory install_monitoring_tools.yaml
+            - name: Terraform Plan
+              run: terraform plan -var-file=env.tfvars -out=tfplan
+              working-directory: infrastructure/CD/terraform
 
+            - name: Terraform apply
+              if: github.ref == 'refs/heads/master'
+              run: terraform apply -var-file=env.tfvars -auto-approve tfplan
+              working-directory: infrastructure/CD/terraform
 
-        working-directory: infrastructure/CD/ansible
-      
-      - name: Delete Github Actions IP to SG kubernetes Servers
-        run: |
-          aws ec2 revoke-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
-        if: always()
+            - name: Get group name SG Kubernetes Servers
+              id: get_group_name
+              run: |
+                  GROUP_NAME_KUBERNETES=$(cat infrastructure/CD/terraform/sg_kubernetes_name.txt)
+                  # Store data as Output
+                  echo "file_group_name_kubernetes=$GROUP_NAME_KUBERNETES" >> $GITHUB_OUTPUT
+
+            - name: Add Github Runner IP to SG Kubernetes servers
+              run: |
+                  aws ec2 authorize-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+
+            - name: Get Private Key
+              id: read_file
+              run: |
+                  if [ -f infrastructure/CD/terraform/private_key.pem ]; then
+                    FILE_CONTENT=$(base64 -w 0 infrastructure/CD/terraform/private_key.pem)
+
+                    # store data as Output
+                    echo "$FILE_CONTENT"
+                    echo file_content=$FILE_CONTENT >> $GITHUB_OUTPUT
+                  else
+                    echo "File not Found"
+                    exit 0
+                  fi
+
+            - name: Get DNS Kubernetes Servers
+              id: get_dns
+              run: |
+                  FILE_DNS_MASTER=$(cat infrastructure/CD/terraform/dns_master.txt)
+                  FILE_DNS_NODE1=$(cat infrastructure/CD/terraform/dns_node1.txt)
+                  FILE_DNS_NODE2=$(cat infrastructure/CD/terraform/dns_node2.txt)
+                  # Store data as Output
+                  echo file_dns_master=$FILE_DNS_MASTER >> $GITHUB_OUTPUT
+                  echo file_dns_node1=$FILE_DNS_NODE1 >> $GITHUB_OUTPUT
+                  echo file_dns_node2=$FILE_DNS_NODE2 >> $GITHUB_OUTPUT
+
+            - name: Add SSH Key to Github Secrets
+              env:
+                  GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+                  SSH_KEY: ${{ steps.read_file.outputs.file_content }}
+              run: |
+                  SSH_KEY=$(echo "$SSH_KEY" | base64 -d)
+                  gh secret set SSH_PRIVATE_KEY_KUBERNETES --body "$SSH_KEY"
+
+            - name: install Ansible and Dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ansible python3-pip
+                  pip3 install boto3 botocore
+
+            - name: Setup SSH key Kubernetes Server
+              env:
+                  INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+                  INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
+                  INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
+              run: |
+                  eval `ssh-agent -s`
+                  mkdir -p /home/runner/.ssh/
+                  echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
+                  sleep 1
+                  chmod 600 /home/runner/.ssh/key_ssh
+
+                  # Verify key format
+                  ssh-keygen -y -f /home/runner/.ssh/key_ssh || echo "Error Validation key"
+
+                  # add key to SSH agent
+                  ssh-add /home/runner/.ssh/key_ssh
+
+                  # Add host key
+                  ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_MASTER >> /home/runner/.ssh/known_hosts
+                  ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_ONE >> /home/runner/.ssh/known_hosts
+                  ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $INSTANCE_DNS_NODE_TWO >> /home/runner/.ssh/known_hosts
+
+            - name: Configure Ansible
+              env:
+                  INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
+                  INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
+                  INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
+                  SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY_KUBERNETES }}
+              run: |
+                  # chmod 400 infrastructure/CD/terraform/private_key.pem
+                  echo "$SSH_KKEY" > /home/runner/my_key.pem
+                  chmod 400 /home/runner/my_key.pem
+
+                  # Creation config SSH
+                  echo "Config SSH"
+                  echo -e "Host master_node\n\t Hostname $INSTANCE_DNS_MASTER\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" > /home/runner/.ssh/config
+
+                  echo -e "Host node1\n\t Hostname $INSTANCE_DNS_NODE_ONE\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+
+                  echo -e "Host node2\n\t Hostname $INSTANCE_DNS_NODE_TWO\n\t User ubuntu\n\t IdentityFile /home/runner/my_key.pem\n" >> /home/runner/.ssh/config
+
+                  cat /home/runner/.ssh/config
+
+                  # Creation inventory
+                  echo "Creation inventory"
+                  echo -e "[workers]\nnode1\nnode2\n\n[control_plane]\nmaster_node" > infrastructure/CD/ansible/inventory
+                  cat infrastructure/CD/ansible/inventory
+
+            - name: Run Ansible Playbook
+              env:
+                  ARGOCD_SECRET: ${{ secrets.ARGOCD_SECRET}}
+                  GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+                  DOCKER_USER: ${{ secrets.DOCKER_USER}}
+                  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
+                  DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL}}
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+                  GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD}}
+
+              run: |
+                  # Export secret as env var for Ansible
+                  export ANSIBLE_ARGOCD_SECRET="${ARGOCD_SECRET}"
+                  export ANSIBLE_GH_TOKEN="${GH_TOKEN}"
+                  export ANSIBLE_DOCKER_USER="${DOCKER_USER}"
+                  export ANSIBLE_DOCKER_PASSWORD="${DOCKER_PASSWORD}"
+                  export ANSIBLE_DOCKER_EMAIL="${DOCKER_EMAIL}"
+                  export ANSIBLE_AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+                  export ANSIBLE_AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+                  export ANSIBLE_GRAFANA_PASSWORD="${GRAFANA_PASSWORD}"
+
+                  #Run ansible
+                  echo "Setup User k8sadmin"
+                  ansible-playbook -i inventory setup_user.yaml
+
+                  echo "Ensure IPv4 packet forwarding"
+                  ansible-playbook -i inventory ensure_IPv4_forwarding.yaml
+
+                  echo "Install containerD"
+                  ansible-playbook -i inventory install_containerd.yaml
+
+                  echo "install kubeadm"
+                  ansible-playbook -i inventory install_kubeadm.yaml
+
+                  echo "create cluster"
+                  ansible-playbook -i inventory create_cluster.yaml
+
+                  echo "setup Workers nodes"
+                  ansible-playbook -i inventory setup_workers.yaml
+
+                  #install kubernetes.core
+                  ansible-galaxy collection install kubernetes.core
+                  ansible-galaxy collection install kubernetes.core --upgrade
+                  # sudo apt-get install python3-kubernetes
+
+                  echo "Install and config Vim"
+                  ansible-playbook -i inventory miscellanous_config.yaml
+
+                  #install nginx_ingress
+                  ansible-playbook -i inventory install_ingress_nginx.yaml
+
+                  echo "Create Secret kubernetes"
+                  ansible-playbook -i inventory create_secret_k8s.yaml
+
+                  echo "Install and config ArgoCD"
+                  ansible-playbook -i inventory install_argocd.yaml
+
+                  echo "Install monitoring tools"
+                  ansible-playbook -i inventory install_monitoring_tools.yaml
+
+              working-directory: infrastructure/CD/ansible
+
+            - name: Delete Github Actions IP to SG kubernetes Servers
+              run: |
+                  aws ec2 revoke-security-group-ingress --group-name ${{steps.get_group_name.outputs.file_group_name_kubernetes}} --protocol tcp --port 22 --cidr ${{steps.get_ip_runner.outputs.runner_ip}}/32
+              if: always()
