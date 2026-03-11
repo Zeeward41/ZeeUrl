@@ -181,6 +181,7 @@ jobs:
                   eval `ssh-agent -s`
                   mkdir -p /home/runner/.ssh/
                   echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
+                  echo "${{ steps.read_file.outputs.file_content}}" > /home/runner/.ssh/key_ssh
                   sleep 1
                   chmod 600 /home/runner/.ssh/key_ssh
 
@@ -200,7 +201,7 @@ jobs:
                   INSTANCE_DNS_MASTER: ${{ steps.get_dns.outputs.file_dns_master}}
                   INSTANCE_DNS_NODE_ONE: ${{ steps.get_dns.outputs.file_dns_node1}}
                   INSTANCE_DNS_NODE_TWO: ${{ steps.get_dns.outputs.file_dns_node2}}
-                  SSH_KKEY: ${{ secrets.SSH_PRIVATE_KEY_KUBERNETES }}
+                  SSH_KKEY: ${{ steps.read_file.outputs.file_content}}
               run: |
                   # chmod 400 infrastructure/CD/terraform/private_key.pem
                   echo "$SSH_KKEY" > /home/runner/my_key.pem
