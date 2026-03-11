@@ -66,7 +66,7 @@ jobs:
 
             - name: Create env.tfvars
               run: |
-                  cat <<EOF > infrastructure/CI/terraform/env.tfvars
+                  cat <<EOF > infrastructure/CD/terraform/env.tfvars
                   name = "${{ steps.get_variables.outputs.name}}"
                   project_name  = "${{ steps.get_variables.outputs.project_name}}"
                   environment   = "${{ steps.get_variables.outputs.environment}}"
