@@ -1,0 +1,7 @@
+name          = ""
+project_name  = ""
+environment   = ""
+region        = ""
+ami_instance  = ""
+instance_type = ""
+mon_ip        = ""
