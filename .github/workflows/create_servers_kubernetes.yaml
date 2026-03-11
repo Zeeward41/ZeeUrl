@@ -180,8 +180,7 @@ jobs:
               run: |
                   eval `ssh-agent -s`
                   mkdir -p /home/runner/.ssh/
-                  echo "${{secrets.SSH_PRIVATE_KEY_KUBERNETES}}" > /home/runner/.ssh/key_ssh
-                  echo "${{ steps.read_file.outputs.file_content}}" > /home/runner/.ssh/key_ssh
+                  echo "${{ steps.read_file.outputs.file_content}}" | base64 -d > /home/runner/.ssh/key_ssh
                   sleep 1
                   chmod 600 /home/runner/.ssh/key_ssh
 
