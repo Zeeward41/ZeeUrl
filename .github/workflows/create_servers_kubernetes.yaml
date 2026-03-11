@@ -203,7 +203,7 @@ jobs:
                   SSH_KKEY: ${{ steps.read_file.outputs.file_content}}
               run: |
                   # chmod 400 infrastructure/CD/terraform/private_key.pem
-                  echo "$SSH_KKEY" > /home/runner/my_key.pem
+                  echo "$SSH_KKEY" | base64 -d > /home/runner/my_key.pem
                   chmod 400 /home/runner/my_key.pem
 
                   # Creation config SSH
