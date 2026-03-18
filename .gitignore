@@ -20,9 +20,13 @@ infrastructure/CI/terraform/ip_sonarQube_server.txt
 infrastructure/CI/terraform/group_name_jenkins_SG.txt
 infrastructure/CI/terraform/group_name_sonarQube_SG.txt
 infrastructure/CI/terraform/env.tfvars
+infrastructure/CI/terraform/.tflint.hcl
+infrastructure/CI/terraform/.terraform.lock.hcl
 
 
+infrastructure/CD/terraform/.terraform.lock.hcl
 infrastructure/CD/terraform/.terraform
+infrastructure/CD/terraform/.tflint.hcl
 infrastructure/CD/terraform/*.tfstate
 infrastructure/CD/terraform/*.tfstate.backup
 infrastructure/CD/terraform/private_key.pem
