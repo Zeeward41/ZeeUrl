@@ -2,7 +2,7 @@
 
 [![CI Status](https://github.com/Zeeward41/ZeeUrl/actions/workflows/create_servers_kubernetes.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions)
 
-![Architecture ZeeURL](docs/diagram.png)
+![Architecture ZeeURL](diagram.png)
 
 Full-stack + DevOps project: a complete, self-hosted URL shortener with visit tracking (total + unique), user dashboard, and GitOps deployment on Kubernetes.
 
@@ -117,7 +117,9 @@ To understand how it works:
 3. Review ArgoCD & Kubernetes manifests: `infrastructure/CD/kubernetes/`
 4. Review Ansible playbooks: `infrastructure/CD/ansible/`
 5. Review Terraform (CI + CD): `infrastructure/CI/terraform/` and `infrastructure/CD/terraform/`
-6. **Manual initial Jenkins setup** (CI servers stay online) → `docs/jenkins-setup-EN.md`
+6. **Manual initial Jenkins setup** (CI servers stay online) →
+   ![Step by Step Jenkins - EN](jenkins-setup-EN.md)
+   ![Step by Step Jenkins - FR](jenkins-setup-FR.md)
 
 ---
 
