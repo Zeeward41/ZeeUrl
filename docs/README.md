@@ -118,8 +118,8 @@ To understand how it works:
 4. Review Ansible playbooks: `infrastructure/CD/ansible/`
 5. Review Terraform (CI + CD): `infrastructure/CI/terraform/` and `infrastructure/CD/terraform/`
 6. **Manual initial Jenkins setup** (CI servers stay online) →
-   ![Step by Step Jenkins - EN](jenkins-setup-EN.md)
-   ![Step by Step Jenkins - FR](jenkins-setup-FR.md)
+   [Step by Step Jenkins - EN](jenkins-setup-EN.md)
+   [Step by Step Jenkins - FR](jenkins-setup-FR.md)
 
 ---
 
