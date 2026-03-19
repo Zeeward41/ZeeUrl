@@ -1,10 +1,16 @@
 # ZeeURL – URL Shortener "Production-Grade" (DEMO)
 
-[![CI Status](https://github.com/Zeeward41/ZeeUrl/actions/workflows/create_servers_kubernetes.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions)
+[![Infra Creation](https://github.com/Zeeward41/ZeeUrl/actions/workflows/create_servers_kubernetes.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions/workflows/create_servers_kubernetes.yaml)
+[![CI Servers Setup](https://github.com/Zeeward41/ZeeUrl/actions/workflows/install_servers_ci.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions/workflows/install_servers_ci.yaml)
+[![Cleanup CI](https://github.com/Zeeward41/ZeeUrl/actions/workflows/delete_jenkins_server.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions/workflows/delete_jenkins_server.yaml)
+[![Cleanup Kubernetes](https://github.com/Zeeward41/ZeeUrl/actions/workflows/delete_kubernetes.yaml/badge.svg)](https://github.com/Zeeward41/ZeeUrl/actions/workflows/delete_kubernetes.yaml)
 
 ![Architecture ZeeURL](diagram.png)
 
 Full-stack + DevOps project: a complete, self-hosted URL shortener with visit tracking (total + unique), user dashboard, and GitOps deployment on Kubernetes.
+
+**Evolution from my previous project**  
+After completing the [Cloud Resume Challenge](https://github.com/Zeeward41/cloud_resume_challenge) (static site + serverless + basic Terraform), I decided to push the limits further with a real multi-service architecture on Kubernetes.
 
 **TL;DR**  
 ZeeURL is a production-grade URL shortener designed to demonstrate end-to-end DevOps practices (CI/CD, GitOps, IaC) and scalable system design.  
